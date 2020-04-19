@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="http://schemas.android.com/tools"
     android:id="@+id/card_view"
     android:layout_width="match_parent"
     android:layout_height="200dp"
     android:layout_margin="4dp"
-    app:cardCornerRadius="4dp"
+    app:cardCornerRadius="1dp"
     app:cardElevation="2dp">
 
     <LinearLayout
@@ -14,24 +15,21 @@
         android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/image"
+            android:id="@+id/card_image"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginTop="4dp"
             android:layout_weight="1.0"
-            android:scaleType="centerCrop" />
+            android:contentDescription="@string/movie_image" />
 
         <TextView
-            android:id="@+id/title"
+            android:id="@+id/card_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginBottom="4dp" />
-
-        <TextView
-            android:id="@+id/description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginBottom="4dp" />
+            android:layout_marginBottom="4dp"
+            android:textAlignment="center"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            tool:text="adasd" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

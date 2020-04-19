@@ -6,9 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat.getColor
 import androidx.recyclerview.widget.RecyclerView
 
-class MovieAdapter(val context: Context, val movies: ArrayList<Movie>) :
+class MovieAdapter(
+    private val context: Context,
+    private val movies: ArrayList<Movie>,
+    private val itemClickListener: (Movie) -> Unit
+) :
     RecyclerView.Adapter<MovieAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -22,13 +27,16 @@ class MovieAdapter(val context: Context, val movies: ArrayList<Movie>) :
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         viewHolder.itemImage.setImageResource(movies[position].imageId)
         viewHolder.itemTitle.text = movies[position].title
-        viewHolder.itemDescription.text = movies[position].description
-
+        if (movies[position].selected) {
+            viewHolder.itemTitle.setTextColor(getColor(context, R.color.selected))
+        }
+        viewHolder.itemTitle.setOnClickListener {
+            itemClickListener(movies[position])
+        }
     }
 
     inner class ViewHolder(item: View) : RecyclerView.ViewHolder(item) {
-        var itemImage: ImageView = item.findViewById(R.id.image)
-        var itemTitle: TextView = item.findViewById(R.id.title)
-        var itemDescription: TextView = item.findViewById(R.id.description)
+        var itemImage: ImageView = item.findViewById(R.id.card_image)
+        var itemTitle: TextView = item.findViewById(R.id.card_title)
     }
 }
