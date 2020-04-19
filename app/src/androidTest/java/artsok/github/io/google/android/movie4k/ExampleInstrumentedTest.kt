@@ -34,7 +34,7 @@ class ExampleInstrumentedTest {
     }
 
     @Test
-    fun greeterSaysHello() {
+    fun shouldBeSelectedColorWhenClickOnItem() {
         val firstItem = 0
         onView(withId(R.id.recyclerView)).perform(
                 RecyclerViewActions.actionOnItemAtPosition<MovieAdapter.ViewHolder>(
