@@ -18,7 +18,7 @@
             android:contentDescription="@string/movie_image"
             android:padding="4dp"
             android:scaleType="centerInside"
-            tool:src="@drawable/image_2" />
+            tool:src="@drawable/image_6" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -27,12 +27,12 @@
 
             <TextView
                 android:id="@+id/movie_title"
+                style="@style/title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_weight="1"
                 android:textAlignment="textStart"
-                android:textColor="@android:color/black"
                 android:textSize="32sp"
                 android:textStyle="bold"
                 tool:text="Один" />
@@ -43,9 +43,9 @@
                 android:layout_height="match_parent"
                 android:layout_weight="4"
                 android:contentDescription="@string/share"
-                android:padding="2dp"
                 android:onClick="shareMovieClick"
-                android:src="@drawable/ic_action_name_link" />
+                android:padding="4dp"
+                android:src="@drawable/ic_share" />
 
             <ImageView
                 android:id="@+id/movie_like"
@@ -53,35 +53,35 @@
                 android:layout_height="match_parent"
                 android:layout_weight="4"
                 android:contentDescription="@string/movie_like"
-                android:padding="4dp"
                 android:onClick="likeClick"
-                android:src="@drawable/ic_action_name" />
+                android:padding="4dp"
+                android:src="@drawable/ic_like" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/movie_description"
+            style="@style/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="4dp"
             android:textAlignment="gravity"
-            android:textColor="@android:color/black"
             tool:text="Один ушлый американец ещё со студенческих лет приторговывал наркотиками, а теперь придумал схему нелегального обогащения с использованием поместий обедневшей английской аристократии и очень неплохо на этом разбогател. Другой пронырливый журналист приходит к Рэю, правой руке американца, и предлагает тому купить киносценарий, в котором подробно описаны преступления его босса при участии других представителей лондонского криминального мира — партнёра-еврея, китайской диаспоры, чернокожих спортсменов и даже русского олигарха." />
 
         <TextView
             android:id="@+id/movie_comments"
+            style="@style/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:layout_marginTop="8dp"
             android:text="@string/movie_feedback"
             android:textAlignment="gravity"
-            android:textColor="@android:color/black"
             android:textSize="18sp"
             android:textStyle="bold" />
 
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/movie_comment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -1,11 +1,43 @@
 <resources>
+    <!-- Base application theme.
+    android:colorPrimary: основной цвет для интерфейса программы - панель, кнопки и т.д.
+    android:colorPrimaryDark: цвет для системных элементов - строка состояния
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+    Это для MaterialComponents
+    colorPrimary — наиболее часто используемый цвет в приложении (как и в AppCompat);
+    colorPrimaryVariant — оттенок основного цвета (аналог colorPrimaryDark из AppCompat);
+    colorSecondary — второй по частоте использования цвет в приложении (аналог colorAccent из AppCompat);
+    colorSecondaryVariant — оттенок вторичного цвета.
+    -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorSecondary">@color/green_200</item>
+        <item name="colorSecondaryVariant">@color/green_500</item>
+        <!--colorBackground appears behind scrollable content and is used for the default window-->
+        <!--background. colorSurface is mapped to the surface of components such as cards, sheets-->
+        <!--and menus. colorError is used to indicate an error state for components such as-->
+        <!--text fields.-->
+        <item name="android:colorBackground">@color/white_50</item>
+        <item name="colorSurface">@color/white_50</item>
+        <item name="colorError">@color/red_600</item>
+        <!--"On" colors define how text, icons and strokes are colored in relation to the surface-->
+        <!--on which they appear.-->
+        <item name="colorOnPrimary">@color/white_50</item>
+        <item name="colorOnSecondary">@color/black_900</item>
+        <item name="colorOnBackground">@color/black_900</item>
+        <item name="colorOnSurface">@color/black_900</item>
+        <item name="colorOnError">@color/white_50</item>
     </style>
+
+    <style name="title" parent="TextAppearance.MaterialComponents.Headline1">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="text" parent="title">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
 
 </resources>
