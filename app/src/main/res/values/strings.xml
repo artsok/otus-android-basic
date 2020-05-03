@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">movie4k</string>
+    <string name="movie_hint">Оставьте свой отзыв</string>
+    <string name="movie_feedback">Рецензии</string>
+    <string name="movie_like">Лайк</string>
+    <string name="share">Поделиться</string>
+    <string name="movie_image">Обложка фильма</string>
+</resources>
