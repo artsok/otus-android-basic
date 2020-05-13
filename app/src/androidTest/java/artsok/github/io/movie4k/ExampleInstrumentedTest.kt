@@ -1,4 +1,4 @@
-package artsok.github.io.google.android.movie4k
+package artsok.github.io.movie4k
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
@@ -20,17 +20,17 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 
-/**
- * Instrumented test, which will execute on an Android device.
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
 @RunWith(AndroidJUnit4::class)
 class ExampleInstrumentedTest {
 
     @Before
     fun launchActivity() {
         ActivityScenario.launch(MainActivity::class.java)
+    }
+
+    fun shouldProvideThemeChanging() {
+        onView(withId(R.id.change_theme)).perform(click())
+        //TODO: add tests
     }
 
     @Test

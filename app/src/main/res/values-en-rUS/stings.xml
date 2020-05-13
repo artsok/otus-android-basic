@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">movie4k</string>
+    <string name="movie_hint">Share your feedback</string>
+    <string name="movie_feedback">Feedback</string>
+    <string name="movie_like">Like</string>
+    <string name="share">Share</string>
+    <string name="movie_image">Image</string>
+    <string name="custom_dialog_title">Warning</string>
+    <string name="custom_dialog_warning_text">Are you want to exit from movies catalog?</string>
+    <string name="submit">Yes</string>
+    <string name="cancel">No</string>
+    <string name="night_theme">Night Theme</string>
+</resources>

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tool="http://schemas.android.com/tools"
     android:id="@+id/card_view"
     android:layout_width="match_parent"
     android:layout_height="200dp"
-    android:layout_margin="4dp"
+    android:layout_margin="8dp"
     app:cardCornerRadius="1dp"
     app:cardElevation="2dp">
 
@@ -18,18 +18,19 @@
             android:id="@+id/card_image"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="12dp"
             android:layout_weight="1.0"
-            android:contentDescription="@string/movie_image" />
+            android:contentDescription="@string/movie_image"
+            tool:src="@drawable/image_6" />
 
         <TextView
             android:id="@+id/card_title"
+            style="@style/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
             android:textAlignment="center"
-            android:textColor="@android:color/black"
             android:textStyle="bold"
-            tool:text="adasd" />
+            tool:text="Название фильма" />
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

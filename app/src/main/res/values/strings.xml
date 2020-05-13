@@ -5,4 +5,9 @@
     <string name="movie_like">Лайк</string>
     <string name="share">Поделиться</string>
     <string name="movie_image">Обложка фильма</string>
+    <string name="custom_dialog_title">Внимание</string>
+    <string name="custom_dialog_warning_text">Вы действительно хотите выйти и завершить работу с каталогом фильмов?</string>
+    <string name="submit">Да</string>
+    <string name="cancel">Нет</string>
+    <string name="night_theme">Ночная тема</string>
 </resources>

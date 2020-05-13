@@ -1,4 +1,4 @@
-package artsok.github.io.google.android.movie4k
+package artsok.github.io.movie4k
 
 import android.content.Context
 import android.view.LayoutInflater
