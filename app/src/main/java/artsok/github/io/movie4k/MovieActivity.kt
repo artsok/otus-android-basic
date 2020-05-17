@@ -23,26 +23,49 @@ class MovieActivity : AppCompatActivity() {
     private lateinit var title: TextView
     private lateinit var description: TextView
     private lateinit var comment: EditText
+    private lateinit var like: ImageView
+
     private lateinit var movie: Movie
 
-    private var chosenLike: Boolean = false
+    private var favorite: Boolean = false
     private var userComment: StringBuilder = StringBuilder()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie)
+        initView()
+        setDataToView()
+        initListeners()
+    }
 
-        movie = intent.getParcelableExtra(MARKER)!!
+    override fun onPause() {
+        super.onPause()
+        Log.d(
+            TAG, "Movie is '${title.text}'. Favorite checkbox is enabled: '$favorite'. " +
+                    "Comment is '$userComment' "
+        )
+    }
 
+    private fun initView() {
         imageView = findViewById(R.id.movie_image)
         title = findViewById(R.id.movie_title)
         description = findViewById(R.id.movie_description)
         comment = findViewById(R.id.movie_comment)
+        like = findViewById(R.id.movie_like)
+    }
+
+    private fun setDataToView() {
+        movie = intent.getParcelableExtra(MARKER)!!
 
         imageView.setImageResource(movie.imageId)
         title.text = movie.title
         description.text = movie.description
+        if (movie.favorite) {
+            like.setImageResource(R.drawable.ic_favorite_border_black_24dp)
+        }
+    }
 
+    private fun initListeners() {
         comment.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
                 userComment.clear()
@@ -55,16 +78,7 @@ class MovieActivity : AppCompatActivity() {
         })
     }
 
-
-    override fun onPause() {
-        super.onPause()
-        Log.d(
-            TAG, "Movie is '${title.text}. Like checkbox is enabled: '$chosenLike'. " +
-                    "Comment is '$userComment' "
-        )
-    }
-
-    fun shareMovieClick(view: View) {
+    fun shareClick(view: View) {
         val sendIntent = Intent().apply {
             action = Intent.ACTION_SEND
             putExtra(Intent.EXTRA_TEXT, "Hi, It's a good choose - ${movie.title}")
@@ -75,13 +89,14 @@ class MovieActivity : AppCompatActivity() {
         }
     }
 
-    fun likeClick(view: View) {
-        val like = findViewById<ImageView>(R.id.movie_like)
-        chosenLike = if (chosenLike) {
+    fun clickOnFavorite(view: View) {
+        favorite = if (favorite) {
             like.setImageResource(R.drawable.ic_like)
+            DataStore.movies.find { it.uniqueId == movie.uniqueId }?.favorite = false
             false
         } else {
             like.setImageResource(R.drawable.ic_favorite_border_black_24dp)
+            DataStore.movies.find { it.uniqueId == movie.uniqueId }?.favorite = true
             true
         }
     }

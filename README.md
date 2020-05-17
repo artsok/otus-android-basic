@@ -47,3 +47,37 @@ RUS:
 7. * Добавьте кнопку переключения темы в приложении, например дневной\ночной 
 
 P.S. Задание со звездочкой * - повышенной сложности. Если вы с ним не справитесь - ничего страшного, оно не является обязательным. 
+
+
+## Homework #3
+ENG:
+Work with RecyclerView.
+1. Switch your application to display lists using RecyclerView
+2. Add functionality to your application by saving movies to your favorites list (for now, keep your favorites in a List at the Activity level).
+To do this, use either a long press on the list item or tap on the ImageView (like icon) in the movie activity
+3. Create a screen where the Favorites list will be displayed
+4. Make it so that you can add items to the list and delete them (Only delete)
+5. * Write your own ItemDecoration
+6. * Explore ReciclerView.ItemAnimator yourself, create your own animations
+
+P.S. Task with  * - increased complexity. If you can’t deal with it, it’s okay, it is not obligatory.
+Evaluation Criteria: +1 point per attempt
++1 point for completing the main task
++1 point for completing a task with *
+
+
+RUS:
+Работа со списками.
+1. Переведите ваше приложение на отображение списков с помощью RecyclerView 
+2. Дополните функционал вашего приложения сохранением фильмов в список избранного (избранное пока храните в обычном List на уровне Activity). 
+Используйте для этого или долгое нажатие на элемент списка, или тап на ImageView в виде сердечка рядом с названием фильма
+3. Создайте экран, где будет отображаться список Избранного 
+4. Сделайте так, чтобы в список можно было добавлять элементы и удалять их (Только удалять)
+5. * Написать собственный ItemDecoration
+6. * Самостоятельно изучите ReciclerView.ItemAnimator, создайте свои собственные анимации
+
+P.S. Задание со звездочкой * - повышенной сложности. Если вы с ним не справитесь - ничего страшного, оно не является обязательным.
+Критерии оценки: +1 балл за попытку
++1 балл за выполнение основного задания
++1 балл за выполнения задания со звездочкой * 
+

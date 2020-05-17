@@ -27,7 +27,7 @@ class MovieAdapter(
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         viewHolder.itemImage.setImageResource(movies[position].imageId)
         viewHolder.itemTitle.text = movies[position].title
-        if (movies[position].selected) {
+        if (movies[position].selected) { //Refactor: use selected approach as discuss on the animation lecture
             viewHolder.itemTitle.setTextColor(getColor(context, R.color.selected))
         }
         viewHolder.itemTitle.setOnClickListener {
