@@ -1,10 +1,12 @@
-package artsok.github.io.movie4k
+package artsok.github.io.movie4k.recycler
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import artsok.github.io.movie4k.Movie
+import artsok.github.io.movie4k.R
 
 class FavoriteAdapter(
     private val parent: ViewGroup,

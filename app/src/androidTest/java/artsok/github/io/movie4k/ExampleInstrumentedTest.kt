@@ -13,6 +13,7 @@ import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.BoundedMatcher
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import artsok.github.io.movie4k.recycler.MovieAdapter
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.junit.Before

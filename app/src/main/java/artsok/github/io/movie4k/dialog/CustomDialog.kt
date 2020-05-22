@@ -1,10 +1,11 @@
-package artsok.github.io.movie4k
+package artsok.github.io.movie4k.dialog
 
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.ViewGroup
+import artsok.github.io.movie4k.R
 import kotlinx.android.synthetic.main.exit_dialog.*
 
 

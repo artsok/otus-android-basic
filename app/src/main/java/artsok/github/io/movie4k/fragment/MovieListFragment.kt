@@ -10,19 +10,15 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import artsok.github.io.movie4k.DataStore
-import artsok.github.io.movie4k.Movie
-import artsok.github.io.movie4k.MovieAdapter
 import artsok.github.io.movie4k.R
+import artsok.github.io.movie4k.listener.OnMovieClickListener
+import artsok.github.io.movie4k.recycler.MovieAdapter
 
 class MovieListFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
 
     private var listener: OnMovieClickListener? = null
-
-    interface OnMovieClickListener {
-        fun onMovieTextClick(item: Movie)
-    }
 
     companion object {
         const val TAG = "MovieListFragment"
@@ -41,7 +37,10 @@ class MovieListFragment : Fragment() {
         recyclerView = view.findViewById(R.id.recyclerViewFragment)
         setGridByOrientation(resources.configuration.orientation)
         recyclerView.adapter =
-            MovieAdapter(requireContext(), DataStore.movies) {
+            MovieAdapter(
+                requireContext(),
+                DataStore.movies
+            ) {
                 listener?.onMovieTextClick(it)
             }
     }

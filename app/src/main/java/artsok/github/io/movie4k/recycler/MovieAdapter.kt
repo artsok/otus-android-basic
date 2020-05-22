@@ -1,4 +1,4 @@
-package artsok.github.io.movie4k
+package artsok.github.io.movie4k.recycler
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -8,6 +8,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat.getColor
 import androidx.recyclerview.widget.RecyclerView
+import artsok.github.io.movie4k.Movie
+import artsok.github.io.movie4k.R
 
 class MovieAdapter(
     private val context: Context,
@@ -28,7 +30,9 @@ class MovieAdapter(
         viewHolder.itemImage.setImageResource(movies[position].imageId)
         viewHolder.itemTitle.text = movies[position].title
         if (movies[position].selected) { //Refactor: use selected approach as discuss on the animation lecture
-            viewHolder.itemTitle.setTextColor(getColor(context, R.color.selected))
+            viewHolder.itemTitle.setTextColor(getColor(context,
+                R.color.selected
+            ))
         }
         viewHolder.itemTitle.setOnClickListener {
             itemClickListener(movies[position])

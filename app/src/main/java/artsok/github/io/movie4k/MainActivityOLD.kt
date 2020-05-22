@@ -42,17 +42,9 @@
 //        recyclerView.adapter = MovieAdapter(this, movies, this@MainActivityOLD::personItemClicked)
 //    }
 //
-//    override fun onBackPressed() {
-//        val dialog = CustomDialog(this@MainActivityOLD)
-//        dialog.show()
-//    }
+
 //
-//    private fun initViews() {
-//        themeButton = findViewById(R.id.change_theme)
-//        favoriteButton = findViewById(R.id.favorite_list)
-//        recyclerView = findViewById(R.id.recyclerViewFragment)
-//        swipeRefreshLayout = findViewById((R.id.swipeRefreshLayout))
-//    }
+
 //
 //    private fun initClickListeners() {
 //        themeButton.setOnClickListener { changeTheme() }
