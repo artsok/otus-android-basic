@@ -25,7 +25,7 @@ class ExampleInstrumentedTest {
 
     @Before
     fun launchActivity() {
-        ActivityScenario.launch(MainActivity::class.java)
+        ActivityScenario.launch(MainActivityOLD::class.java)
     }
 
     fun shouldProvideThemeChanging() {
@@ -36,7 +36,7 @@ class ExampleInstrumentedTest {
     @Test
     fun shouldBeSelectedColorWhenClickOnItem() {
         val firstItem = 0
-        onView(withId(R.id.recyclerView)).perform(
+        onView(withId(R.id.recyclerViewFragment)).perform(
                 RecyclerViewActions.actionOnItemAtPosition<MovieAdapter.ViewHolder>(
                     firstItem,
                     clickOnViewChild(R.id.card_title)
@@ -51,7 +51,7 @@ class ExampleInstrumentedTest {
         onView(withId(R.id.movie_comment)).perform(typeText("feedback"),
             pressImeActionButton())
         pressBack()
-        onView(withId(R.id.recyclerView))
+        onView(withId(R.id.recyclerViewFragment))
             .perform(RecyclerViewActions.scrollToPosition<MovieAdapter.ViewHolder>(firstItem))
             .check(matches(atPositionOnView(firstItem, hasTextColor(R.color.selected), R.id.card_title)))
     }
