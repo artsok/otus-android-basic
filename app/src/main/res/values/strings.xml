@@ -10,4 +10,7 @@
     <string name="submit">Да</string>
     <string name="cancel">Нет</string>
     <string name="night_theme">Ночная тема</string>
+    <string name="favorite">Избранное</string>
+    <string name="empty_list_text">Список любимых фильмов пуст</string>
+    <string name="empty_favorite_icon">Иконка для пустого спика</string>
 </resources>

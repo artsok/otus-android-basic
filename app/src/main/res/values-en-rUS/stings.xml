@@ -11,4 +11,7 @@
     <string name="submit">Yes</string>
     <string name="cancel">No</string>
     <string name="night_theme">Night Theme</string>
+    <string name="favorite">Favorite</string>
+    <string name="empty_list_text">Your Favorites List is Empty</string>
+    <string name="empty_favorite_icon">empty favorite icon</string>
 </resources>

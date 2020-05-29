@@ -5,11 +5,13 @@ import android.content.res.Configuration
 import android.content.res.Configuration.ORIENTATION_LANDSCAPE
 import android.content.res.Configuration.ORIENTATION_PORTRAIT
 import android.os.Bundle
+import android.os.Handler
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate.*
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import artsok.github.io.movie4k.DataStore.Companion.movies
 
 class MainActivity : AppCompatActivity() {
@@ -20,20 +22,55 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var themeButton: Button
+    private lateinit var favoriteButton: Button
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        themeButton = findViewById(R.id.change_theme)
-        recyclerView = findViewById(R.id.recyclerView)
+        initViews()
+        initClickListeners()
         setGridByOrientation(resources.configuration.orientation)
-        recyclerView.adapter = MovieAdapter(this, movies) { movie -> personItemClicked(movie) }
-        themeButton.setOnClickListener { changeTheme() }
+        recyclerView.adapter = MovieAdapter(this, movies, this@MainActivity::personItemClicked)
+        swipeRefreshLayout.setOnRefreshListener {
+            fetchMovies()
+        }
     }
 
     override fun onRestart() {
         super.onRestart()
-        recyclerView.adapter = MovieAdapter(this, movies) { movie -> personItemClicked(movie) }
+        recyclerView.adapter = MovieAdapter(this, movies, this@MainActivity::personItemClicked)
+    }
+
+    override fun onBackPressed() {
+        val dialog = CustomDialog(this@MainActivity)
+        dialog.show()
+    }
+
+    private fun initViews() {
+        themeButton = findViewById(R.id.change_theme)
+        favoriteButton = findViewById(R.id.favorite_list)
+        recyclerView = findViewById(R.id.recyclerView)
+        swipeRefreshLayout = findViewById((R.id.swipeRefreshLayout))
+    }
+
+    private fun initClickListeners() {
+        themeButton.setOnClickListener { changeTheme() }
+        favoriteButton.setOnClickListener {
+            startActivity(Intent(this@MainActivity, FavoriteActivity::class.java))
+        }
+    }
+
+    /*
+        Test stub
+     */
+    private fun fetchMovies() {
+        val handle = Handler()
+        handle.postDelayed({
+            if (swipeRefreshLayout.isRefreshing) {
+                swipeRefreshLayout.isRefreshing = false
+            }
+        }, 1000)
     }
 
     private fun setGridByOrientation(orientation: Int) {
@@ -59,14 +96,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onBackPressed() {
-        val dialog = CustomDialog(this@MainActivity)
-        dialog.show()
-    }
-
     private fun personItemClicked(movie: Movie) {
-        val intent = Intent(this@MainActivity, MovieActivity::class.java)
         movie.selected = true
+        val intent = Intent(this@MainActivity, MovieActivity::class.java)
         with(intent) {
             putExtra(MARKER, movie)
         }
