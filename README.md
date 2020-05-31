@@ -83,12 +83,21 @@ P.S. Задание со звездочкой * - повышенной слож�
 
 
 ## Homework #4
+ENG:
+Fragments and navigation.
+1. Change your application to a single Activity and fragments
+2. Use NavigationDrawer or BottomNavigation to navigate between fragments.
+3. Add CoordinatorLayout + CollapsingToolbar to the movie detail screen
+4. Add a Snackbar or Toast, indicating the success of adding / removing from favorites
+5. * Add undo option to snackbar in favorite list
+
+RUS:
 Фрагменты и навигация.
-1. Переведите свое приложение на единственную Activity и несколько фрагментов
-2. Для навигации между фрагментами используйте NavigationDrawer или BottomNavigation (https://habr.com/ru/post/449776/)
-3. Добавьте CoordinatorLayout + CollapsingToolbar на детальный экран фильма
-4. Добавьте Snackbar или Toast, сообщающий об успехе добавления\удаления из избранного
-5. * Добавьте возможность отмены действия в snackbar
+1. Переведите свое приложение на единственную Activity и несколько фрагментов  (https://medium.com/androiddevelopers/the-android-lifecycle-cheat-sheet-part-i-single-activities-e49fd3d202ab)
+2. Для навигации между фрагментами используйте NavigationDrawer или BottomNavigation (https://habr.com/ru/post/449776/), (https://material.io/components/bottom-navigation), (https://androidwave.com/bottom-navigation-bar-android-example/), (https://ahsensaeed.com/bottom-navigation-view-android-example/)
+3. Добавьте CoordinatorLayout + CollapsingToolbar на детальный экран фильма 
+4. Добавьте Snackbar или Toast, сообщающий об успехе добавления\удаления из избранного 
+5. * Добавьте возможность отмены действия в snackbar 
 
 P.S. Задание со звездочкой * - повышенной сложности. Если вы с ним не справитесь - ничего страшного, оно не является обязательным.
 Критерии оценки: +1 балл за попытку
@@ -97,3 +106,24 @@ P.S. Задание со звездочкой * - повышенной слож�
 
 Идеи:
 - Добавить  Bottom Sheet Dialog, чтобы быстро просматривать про фильм
+
+Заметки:
+
+```kotlin
+ override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        if (savedInstanceState == null) { //Check if bundle null (Init for first time)
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainer, MovieListFragment(), MovieListFragment.TAG)
+                .commit()
+            initViews()
+            initClickListeners()
+        } else { //Restore last screen from backstack
+            val fragment = supportFragmentManager.fragments.last()
+            supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer, fragment, fragment.tag)
+                .commit()
+        }
+        //...Other init like initViews(), initClickListeners()
+    }
+```

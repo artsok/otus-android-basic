@@ -1,4 +1,6 @@
-package artsok.github.io.movie4k
+package artsok.github.io.movie4k.data
+
+import artsok.github.io.movie4k.R
 
 open class DataStore {
     companion object {

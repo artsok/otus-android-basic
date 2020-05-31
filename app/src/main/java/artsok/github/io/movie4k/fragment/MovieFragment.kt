@@ -12,6 +12,8 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import artsok.github.io.movie4k.data.DataStore
+import artsok.github.io.movie4k.data.Movie
 
 
 class MovieFragment : Fragment() {
@@ -39,6 +41,11 @@ class MovieFragment : Fragment() {
             fragment.arguments = bundle
             return fragment
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d(TAG, "In onResume method")
     }
 
     override fun onCreateView(

@@ -4,16 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!--    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout-->
-    <!--        android:id="@+id/swipeRefreshLayout"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="match_parent">-->
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewFragment"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="8dp"
-        tool:listitem="@layout/card_movie" />
-    <!--    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>-->
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="8dp"
+            tool:listitem="@layout/card_movie" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </FrameLayout>

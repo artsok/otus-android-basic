@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/bottomNavigationMain"
+        android:icon="@drawable/ic_ondemand_video_black_24dp"
+        android:title="@string/movie_list" />
+    <item
+        android:id="@+id/bottomNavigationFavorite"
+        android:icon="@drawable/ic_favorite_border_black_24dp"
+        android:title="@string/favorite" />
+
+    <item
+        android:id="@+id/bottomNavigationTheme"
+        android:icon="@drawable/ic_collections_black_24dp"
+        android:title="@string/theme" />
+</menu>

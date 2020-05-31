@@ -5,8 +5,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import artsok.github.io.movie4k.Movie
 import artsok.github.io.movie4k.R
+import artsok.github.io.movie4k.data.Movie
 
 class FavoriteAdapter(
     private val parent: ViewGroup,

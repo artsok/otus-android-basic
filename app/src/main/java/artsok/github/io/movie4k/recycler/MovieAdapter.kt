@@ -8,7 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat.getColor
 import androidx.recyclerview.widget.RecyclerView
-import artsok.github.io.movie4k.Movie
+import artsok.github.io.movie4k.data.Movie
 import artsok.github.io.movie4k.R
 
 class MovieAdapter(
