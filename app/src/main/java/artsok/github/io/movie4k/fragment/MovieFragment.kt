@@ -74,7 +74,7 @@ class MovieFragment : Fragment() {
 
     private fun setDataToView() {
         movie = arguments?.getParcelable(MOVIE)!!
-        imageView.setImageResource(movie.imageId)
+        //imageView.setImageResource(movie.imageId)
         title.text = movie.title
         description.text = movie.description
         if (movie.favorite) {

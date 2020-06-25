@@ -11,7 +11,7 @@ import artsok.github.io.movie4k.data.Movie
 class FavoriteAdapter(
     private val parent: ViewGroup,
     private val context: Context,
-    private val movies: ArrayList<Movie>,
+    private val movies: List<Movie>,
     private val itemClickListener: (Movie) -> Unit
 ) : RecyclerView.Adapter<ViewHolder>() {
 
@@ -25,10 +25,10 @@ class FavoriteAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val movie = movies.filter { it.favorite }[position]
-        (holder as MovieViewHolder).itemImage.setImageResource(movie.imageId)
-        holder.itemTitle.text = movie.title
-        holder.itemTitle.setOnClickListener {
-            itemClickListener(movie)
-        }
+        //(holder as MovieViewHolder).itemImage.setImageResource(movie.imageId)
+//        holder.itemTitle.text = movie.title
+//        holder.itemTitle.setOnClickListener {
+//            itemClickListener(movie)
+//        }
     }
 }

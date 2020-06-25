@@ -4,17 +4,26 @@ import android.content.res.Configuration.ORIENTATION_LANDSCAPE
 import android.content.res.Configuration.ORIENTATION_PORTRAIT
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import artsok.github.io.movie4k.R
 import artsok.github.io.movie4k.data.DataStore
+import artsok.github.io.movie4k.data.Movie
 import artsok.github.io.movie4k.listener.OnMovieClickListener
+import artsok.github.io.movie4k.network.MovieApi
+import artsok.github.io.movie4k.network.PopularFilms
 import artsok.github.io.movie4k.recycler.MovieAdapter
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MovieListFragment : Fragment() {
 
@@ -40,6 +49,8 @@ class MovieListFragment : Fragment() {
         recyclerView = view.findViewById(R.id.recyclerViewFragment)
         swipeRefreshLayout = view.findViewById((R.id.swipeRefreshLayout))
         setGridByOrientation(resources.configuration.orientation)
+        fetchPopularFilms()
+
         recyclerView.adapter =
             MovieAdapter(
                 requireContext(),
@@ -47,7 +58,38 @@ class MovieListFragment : Fragment() {
             ) {
                 listener?.onMovieTextClick(it)
             }
-        initSwipeRefreshListener()
+
+//        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+//            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+//                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+//                if (layoutManager.findLastVisibleItemPosition() == DataStore.movies.size) {
+//                    Log.d("movieService", "Подгрузить еще данные")
+//                }
+//            }
+//        })
+
+        //initSwipeRefreshListener()
+    }
+
+    private fun fetchPopularFilms() {
+        MovieApi.movieService.getPopularFilms().enqueue(object : Callback<PopularFilms> {
+            override fun onFailure(call: Call<PopularFilms>, t: Throwable) {
+                Log.d("movieService", "${t.message}")
+                Toast.makeText(activity, "${t.message}", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onResponse(
+                call: Call<PopularFilms>,
+                response: Response<PopularFilms>
+            ) {
+                if (response.isSuccessful) {
+                    val dtos = response.body()!!.results
+                    DataStore.movies.addAll(dtos.map(::Movie))
+                    //recyclerView.adapter!!.notifyItemRangeInserted(0, DataStore.movies.size)
+                    recyclerView.adapter!!.notifyDataSetChanged()
+                }
+            }
+        })
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
