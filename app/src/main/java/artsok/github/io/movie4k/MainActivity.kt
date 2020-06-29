@@ -1,91 +1,100 @@
 package artsok.github.io.movie4k
 
-import android.content.Intent
 import android.content.res.Configuration
-import android.content.res.Configuration.ORIENTATION_LANDSCAPE
-import android.content.res.Configuration.ORIENTATION_PORTRAIT
 import android.os.Bundle
-import android.os.Handler
-import android.widget.Button
+import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate.*
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import artsok.github.io.movie4k.DataStore.Companion.movies
+import androidx.fragment.app.Fragment
+import artsok.github.io.movie4k.data.Movie
+import artsok.github.io.movie4k.dialog.CustomDialog
+import artsok.github.io.movie4k.fragment.FavoriteListFragment
+import artsok.github.io.movie4k.fragment.MovieListFragment
+import artsok.github.io.movie4k.listener.OnMovieClickListener
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), OnMovieClickListener {
 
-    companion object {
-        const val MARKER = "movies"
-    }
-
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var themeButton: Button
-    private lateinit var favoriteButton: Button
-    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private lateinit var bottomNavigation: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        initViews()
-        initClickListeners()
-        setGridByOrientation(resources.configuration.orientation)
-        recyclerView.adapter = MovieAdapter(this, movies, this@MainActivity::personItemClicked)
-        swipeRefreshLayout.setOnRefreshListener {
-            fetchMovies()
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainer, MovieListFragment(), MovieListFragment.TAG)
+                .commit()
         }
-    }
-
-    override fun onRestart() {
-        super.onRestart()
-        recyclerView.adapter = MovieAdapter(this, movies, this@MainActivity::personItemClicked)
+        initViews()
+        initClickListener()
     }
 
     override fun onBackPressed() {
-        val dialog = CustomDialog(this@MainActivity)
-        dialog.show()
-    }
-
-    private fun initViews() {
-        themeButton = findViewById(R.id.change_theme)
-        favoriteButton = findViewById(R.id.favorite_list)
-        recyclerView = findViewById(R.id.recyclerView)
-        swipeRefreshLayout = findViewById((R.id.swipeRefreshLayout))
-    }
-
-    private fun initClickListeners() {
-        themeButton.setOnClickListener { changeTheme() }
-        favoriteButton.setOnClickListener {
-            startActivity(Intent(this@MainActivity, FavoriteActivity::class.java))
+        if (supportFragmentManager.backStackEntryCount > 0) {
+            supportFragmentManager.popBackStack()
+        } else {
+            val dialog = CustomDialog(this@MainActivity)
+            dialog.show()
         }
     }
 
-    /*
-        Test stub
-     */
-    private fun fetchMovies() {
-        val handle = Handler()
-        handle.postDelayed({
-            if (swipeRefreshLayout.isRefreshing) {
-                swipeRefreshLayout.isRefreshing = false
-            }
-        }, 1000)
+    override fun onMovieTextClick(item: Movie) {
+        openMovie(item)
     }
 
-    private fun setGridByOrientation(orientation: Int) {
-        val landscapeTableSpan = 3
-        val portraitTableSpan = 2
-        when (orientation) {
-            ORIENTATION_LANDSCAPE -> {
-                recyclerView.layoutManager =
-                    GridLayoutManager(this, landscapeTableSpan, GridLayoutManager.VERTICAL, false)
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.bottom_nav_menu, menu)
+        return true
+    }
 
+    private fun initViews() {
+        bottomNavigation = findViewById(R.id.bottom_navigation)
+    }
+
+    private fun openMovie(item: Movie) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainer, MovieFragment.newInstance(item), MovieFragment.TAG)
+            .addToBackStack(null)
+            .commit()
+        item.selected = true
+    }
+
+    private fun openFavoriteList() {
+        val favoriteList: FavoriteListFragment? =
+            supportFragmentManager.findFragmentByTag(FavoriteListFragment.TAG) as FavoriteListFragment?
+        if (favoriteList == null || !favoriteList.isAdded) {
+            commitFragment(FavoriteListFragment(), FavoriteListFragment.TAG)
+        }
+    }
+
+    private fun commitFragment(fragment: Fragment, tag: String, backStackName: String? = null) {
+        val beginTransaction = supportFragmentManager.beginTransaction()
+        beginTransaction
+            .replace(R.id.fragmentContainer, fragment, tag)
+            .addToBackStack(backStackName)
+            .commit()
+    }
+
+    private fun initClickListener() {
+        bottomNavigation.setOnNavigationItemSelectedListener {
+            when (it.itemId) {
+                R.id.bottomNavigationMain -> {
+                    val fragment = MovieListFragment()
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragmentContainer, fragment, MovieListFragment.TAG)
+                        .commit()
+                    return@setOnNavigationItemSelectedListener true
+                }
+                R.id.bottomNavigationFavorite -> {
+                    openFavoriteList()
+                    return@setOnNavigationItemSelectedListener true
+                }
+                R.id.bottomNavigationTheme -> {
+                    changeTheme()
+                    return@setOnNavigationItemSelectedListener true
+                }
             }
-            ORIENTATION_PORTRAIT -> {
-                recyclerView.layoutManager =
-                    GridLayoutManager(this, portraitTableSpan, GridLayoutManager.VERTICAL, false)
-            }
+            false
         }
     }
 
@@ -96,12 +105,4 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun personItemClicked(movie: Movie) {
-        movie.selected = true
-        val intent = Intent(this@MainActivity, MovieActivity::class.java)
-        with(intent) {
-            putExtra(MARKER, movie)
-        }
-        startActivity(intent)
-    }
 }
