@@ -104,5 +104,4 @@ class MainActivity : AppCompatActivity(), OnMovieClickListener {
             Configuration.UI_MODE_NIGHT_NO -> setDefaultNightMode(MODE_NIGHT_YES)
         }
     }
-
 }

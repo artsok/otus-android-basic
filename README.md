@@ -129,14 +129,33 @@ P.S. Задание со звездочкой * - повышенной слож�
 ```
 
 ## Homework #5
+ENG:
+Connecting the application to the Internet.
+1. Connect the movie server API and download movie data from the server when the application starts. At the load indicator of data
+2. Use Glide to upload images
+3. Add pagination (loading new films when scrolling)
+4. * Add pull to refresh
+
 RUS:
 Подключение приложения к интернету.
-1. Подключите API сервера с фильмами и загружайте данные о фильмах с сервера при запуске приложения. Во время загрузки должен отображаться индикатор на ваш выбор
-2. Используйте Glide для загрузки изображений
-3. Добавьте пагинацию (подгрузку новых фильмов при скролле)
+1. Подключите API сервера с фильмами и загружайте данные о фильмах с сервера при запуске приложения. Во время загрузки должен отображаться индикатор на ваш выбор +
+2. Используйте Glide для загрузки изображений +
+3. Добавьте пагинацию (подгрузку новых фильмов при скролле) +
 4. * Добавьте pull to refresh
 
 Что было прочитано:
 https://proandroiddev.com/the-real-repository-pattern-in-android-efba8662b754 (Рассказ о правильной архитектуре repository pattern)
 https://medium.com/nuances-of-programming/%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD-repository-%D0%B2-android-a561d4bbd9ee
 https://medium.com/@bapspatil/caching-with-retrofit-store-responses-offline-71439ed32fda
+https://startandroid.ru/ru/uroki/vse-uroki-spiskom/490-urok-181-constraintslayout-advanced.html (Работа с constraintslayout)
+https://riptutorial.com/android/example/20493/material-linear-progressbar
+https://stackoverflow.com/questions/42301818/retrofit-2-how-to-show-progress-bar-on-receiving-json-response
+https://habr.com/ru/post/314028/ (Retrofit)
+https://material.io/components/progress-indicators#usage
+https://shurikus57.github.io/post/2018/04/lint_in_android_studio/ (Code Quality)
+https://stackoverflow.com/questions/48151918/how-to-cache-images-in-glide (Thread about cache types)
+https://medium.com/@ankit.sinhal/handler-in-android-d138c1f4980e
+https://guides.codepath.com/android/implementing-pull-to-refresh-guide
+
+Улучшение на будущее:
+https://developer.android.com/topic/libraries/architecture/paging

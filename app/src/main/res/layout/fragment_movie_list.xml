@@ -16,4 +16,15 @@
             android:layout_margin="8dp"
             tool:listitem="@layout/card_movie" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="@android:style/Widget.Material.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:paddingStart="100dp"
+        android:paddingEnd="100dp"
+        android:visibility="invisible" />
 </FrameLayout>

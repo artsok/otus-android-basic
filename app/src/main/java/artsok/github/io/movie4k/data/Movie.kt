@@ -18,7 +18,7 @@ data class Movie(
         dto.id,
         dto.title,
         dto.overview,
-        dto.posterPath,
-        dto.posterPath
+        posterPath = dto.posterPath ?: "",
+        backdropPath = dto.posterPath ?: "" //TODO: Разобраться с постером
     )
 }

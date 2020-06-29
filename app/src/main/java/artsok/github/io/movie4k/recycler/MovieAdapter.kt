@@ -8,9 +8,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat.getColor
 import androidx.recyclerview.widget.RecyclerView
-import artsok.github.io.movie4k.data.Movie
 import artsok.github.io.movie4k.R
+import artsok.github.io.movie4k.data.Movie
 import com.bumptech.glide.Glide
+
+const val path = "https://image.tmdb.org/t/p/w500"
 
 class MovieAdapter(
     private val context: Context,
@@ -40,11 +42,9 @@ class MovieAdapter(
         viewHolder.itemTitle.setOnClickListener {
             itemClickListener(movies[position])
         }
-
-        //viewHolder.itemImage.setImageResource(movies[position].uniqueId)
-
         Glide.with(viewHolder.itemImage.context)
-            .load("https://image.tmdb.org/t/p/w500${movies[position].posterPath}")
+            .load("$path${movies[position].backdropPath}")
+            .error(R.drawable.ic_error)
             .into(viewHolder.itemImage)
     }
 

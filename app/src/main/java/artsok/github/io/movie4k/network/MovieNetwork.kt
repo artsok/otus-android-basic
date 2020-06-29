@@ -10,7 +10,7 @@ data class PopularFilms(
 )
 
 data class MovieNetwork(
-    @SerializedName("poster_path") val posterPath: String,
+    @SerializedName("poster_path") val posterPath: String?,
     @SerializedName("adult") val adult: Boolean,
     @SerializedName("overview") val overview: String,
     @SerializedName("release_date") val release_date: String,
