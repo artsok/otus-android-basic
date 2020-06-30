@@ -159,3 +159,12 @@ https://guides.codepath.com/android/implementing-pull-to-refresh-guide
 
 Улучшение на будущее:
 https://developer.android.com/topic/libraries/architecture/paging
+
+
+## Homework #6
+Архитектурные компоненты.
+1. Переведите свое приложение на архитектурные компоненты и MVVM
+2. Обменивайтесь данными между фрагментами используя ViewModel
+3. Добавьте отображение ошибок, в случае ошибки сервера или отсутствия интернета
+4. Добавьте возможность повторить запрос в случае ошибки
+5. * Создайте ViewModel с помощью фабрики
