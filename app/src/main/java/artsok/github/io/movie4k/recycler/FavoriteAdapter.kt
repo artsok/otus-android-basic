@@ -7,11 +7,12 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import artsok.github.io.movie4k.R
 import artsok.github.io.movie4k.data.Movie
+import com.bumptech.glide.Glide
 
 class FavoriteAdapter(
     private val parent: ViewGroup,
     private val context: Context,
-    private val movies: ArrayList<Movie>,
+    private val movies: List<Movie>,
     private val itemClickListener: (Movie) -> Unit
 ) : RecyclerView.Adapter<ViewHolder>() {
 
@@ -25,8 +26,11 @@ class FavoriteAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val movie = movies.filter { it.favorite }[position]
-        (holder as MovieViewHolder).itemImage.setImageResource(movie.imageId)
-        holder.itemTitle.text = movie.title
+        (holder as MovieViewHolder).itemTitle.text = movie.title
+        Glide.with(holder.itemImage.context)
+            .load("$path${movie.backdropPath}")
+            .error(R.drawable.ic_error)
+            .into(holder.itemImage)
         holder.itemTitle.setOnClickListener {
             itemClickListener(movie)
         }

@@ -8,12 +8,15 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat.getColor
 import androidx.recyclerview.widget.RecyclerView
-import artsok.github.io.movie4k.data.Movie
 import artsok.github.io.movie4k.R
+import artsok.github.io.movie4k.data.Movie
+import com.bumptech.glide.Glide
+
+const val path = "https://image.tmdb.org/t/p/w500"
 
 class MovieAdapter(
     private val context: Context,
-    private val movies: ArrayList<Movie>,
+    private val movies: List<Movie>,
     private val itemClickListener: (Movie) -> Unit
 ) :
     RecyclerView.Adapter<MovieAdapter.ViewHolder>() {
@@ -27,16 +30,22 @@ class MovieAdapter(
     override fun getItemCount(): Int = movies.size
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        viewHolder.itemImage.setImageResource(movies[position].imageId)
         viewHolder.itemTitle.text = movies[position].title
         if (movies[position].selected) { //Refactor: use selected approach as discuss on the animation lecture
-            viewHolder.itemTitle.setTextColor(getColor(context,
-                R.color.selected
-            ))
+            viewHolder.itemTitle.setTextColor(
+                getColor(
+                    context,
+                    R.color.selected
+                )
+            )
         }
         viewHolder.itemTitle.setOnClickListener {
             itemClickListener(movies[position])
         }
+        Glide.with(viewHolder.itemImage.context)
+            .load("$path${movies[position].backdropPath}")
+            .error(R.drawable.ic_error)
+            .into(viewHolder.itemImage)
     }
 
     inner class ViewHolder(item: View) : RecyclerView.ViewHolder(item) {

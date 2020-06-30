@@ -14,6 +14,8 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import artsok.github.io.movie4k.data.DataStore
 import artsok.github.io.movie4k.data.Movie
+import artsok.github.io.movie4k.recycler.path
+import com.bumptech.glide.Glide
 
 
 class MovieFragment : Fragment() {
@@ -74,9 +76,12 @@ class MovieFragment : Fragment() {
 
     private fun setDataToView() {
         movie = arguments?.getParcelable(MOVIE)!!
-        imageView.setImageResource(movie.imageId)
         title.text = movie.title
         description.text = movie.description
+        Glide.with(requireContext())
+            .load("$path${movie.posterPath}")
+            .into(imageView)
+
         if (movie.favorite) {
             like.setImageResource(R.drawable.ic_favorite_border_black_24dp)
         }
