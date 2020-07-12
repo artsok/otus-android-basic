@@ -1,9 +1,9 @@
-package artsok.github.io.movie4k.network
+package artsok.github.io.movie4k.data.retrofit
 
 import artsok.github.io.movie4k.BuildConfig
+import artsok.github.io.movie4k.data.model.MovieListDataModel
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -46,13 +46,17 @@ fun <T> buildService(service: Class<T>): T {
 interface MovieApiService {
 
     @GET("movie/popular")
-    fun getPopularFilms(): Call<PopularFilms>
+    suspend fun getPopularFilms(): MovieListDataModel
 
     @GET("movie/popular")
-    fun getPopularFilmsByPage(@Query("page") page: Int): Call<PopularFilms>
+    suspend fun getPopularFilmsByPage(@Query("page") page: Int): MovieListDataModel
 
 }
 
 object MovieApi {
-    val movieService: MovieApiService by lazy { buildService(MovieApiService::class.java) }
+    val movieService: MovieApiService by lazy {
+        buildService(
+            MovieApiService::class.java
+        )
+    }
 }

@@ -1,4 +1,4 @@
-package artsok.github.io.movie4k.fragment
+package artsok.github.io.movie4k.presentation.fragment
 
 import android.content.res.Configuration.ORIENTATION_LANDSCAPE
 import android.content.res.Configuration.ORIENTATION_PORTRAIT
@@ -12,34 +12,34 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import artsok.github.io.movie4k.R
 import artsok.github.io.movie4k.data.DataStore
-import artsok.github.io.movie4k.data.Movie
-import artsok.github.io.movie4k.listener.OnMovieClickListener
-import artsok.github.io.movie4k.network.MovieApi
-import artsok.github.io.movie4k.network.PopularFilms
-import artsok.github.io.movie4k.recycler.MovieAdapter
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import artsok.github.io.movie4k.domain.model.MovieDomainModel
+import artsok.github.io.movie4k.presentation.listener.OnMovieClickListener
+import artsok.github.io.movie4k.presentation.recycler.MovieAdapter
+import artsok.github.io.movie4k.presentation.viewmodel.MovieListViewModel
 
 class MovieListFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var loadProgress: ProgressBar
+    private lateinit var movieListViewModel: MovieListViewModel
+    //private val movieListViewModel by lazy { ViewModelProvider(this).get(MovieListViewModel::class.java) }
 
-    private var page = 0
+
+    private var page = 1
     private var listener: OnMovieClickListener? = null
 
     companion object {
         const val PAGE = "pageNumber"
         const val TAG = "MovieListFragment"
         const val visibleThreshold = 10
-        const val defaultPage = 1
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -66,16 +66,45 @@ class MovieListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        recyclerView = view.findViewById(R.id.recyclerViewFragment)
-        swipeRefreshLayout = view.findViewById((R.id.swipeRefreshLayout))
-        loadProgress = view.findViewById(R.id.progressBar)
+        initSwipeRefreshLayout()
+        initLoadProgress()
+        initRecycler()
         setGridByOrientation(resources.configuration.orientation)
-        fetchPopularMoviesByPage(defaultPage)
 
+        movieListViewModel = ViewModelProvider(this).get(MovieListViewModel::class.java)
+        movieListViewModel.movies.observe(
+            this.viewLifecycleOwner,
+            Observer<List<MovieDomainModel>> {
+                val storeSize = DataStore.movies.size
+                DataStore.movies.addAll(it)
+                recyclerView.adapter?.notifyItemRangeInserted(
+                    storeSize, storeSize + it.size
+                )
+            })
+        movieListViewModel.error.observe(
+            this.viewLifecycleOwner,
+            Observer<String> { error -> Toast.makeText(context, error, Toast.LENGTH_LONG).show() })
+//
+//        movieListViewModel.getMoviesByPage(1)
+
+        fetchPopularMoviesByPage()
+
+        initSwipeRefreshListener()
+    }
+
+    private fun initSwipeRefreshLayout() {
+        swipeRefreshLayout = view!!.findViewById((R.id.swipeRefreshLayout))
+    }
+
+    private fun initLoadProgress() {
+        loadProgress = view!!.findViewById(R.id.progressBar)
+    }
+
+    private fun initRecycler() {
+        recyclerView = view!!.findViewById(R.id.recyclerViewFragment)
         recyclerView.adapter =
             MovieAdapter(
-                requireContext(),
-                DataStore.movies
+                requireContext(), DataStore.movies
             ) {
                 listener?.onMovieTextClick(it)
             }
@@ -90,42 +119,51 @@ class MovieListFragment : Fragment() {
                         TAG,
                         "Подгрузить еще данные ${gridLayoutManager.findLastVisibleItemPosition()}"
                     )
-                    fetchPopularMoviesByPage(this@MovieListFragment.page, false)
+                    fetchPopularMoviesByPage(page)
                 }
             }
         })
-        initSwipeRefreshListener()
     }
 
-    private fun fetchPopularMoviesByPage(page: Int, isLoadProgress: Boolean = true) {
+    private fun fetchPopularMoviesByPage(page: Int = 1, isLoadProgress: Boolean = true) {
         if (DataStore.movies.isEmpty() && isLoadProgress) {
             loadProgress.visibility = View.VISIBLE
         }
-        MovieApi.movieService.getPopularFilmsByPage(page)
-            .enqueue(object : Callback<PopularFilms> {
-                override fun onFailure(call: Call<PopularFilms>, t: Throwable) {
-                    Toast.makeText(requireContext(), "${t.message}", Toast.LENGTH_SHORT).show()
-                }
-
-                override fun onResponse(
-                    call: Call<PopularFilms>,
-                    response: Response<PopularFilms>
-                ) {
-                    if (response.isSuccessful) {
-                        val dtos = response.body()!!.results
-                        val storeSize = DataStore.movies.size
-                        DataStore.movies.addAll(dtos.map(::Movie))
-                        recyclerView.adapter?.notifyItemRangeInserted(
-                            storeSize,
-                            storeSize + dtos.size
-                        )
-                        loadProgress.visibility = GONE
-                    }
-                }
-            })
-
+        movieListViewModel.getMoviesByPage(page)
+        loadProgress.visibility = GONE
         this.page = page.inc()
     }
+
+
+//    private fun fetchPopularMoviesByPage(page: Int = 1, isLoadProgress: Boolean = true) {
+//        if (DataStore.movies.isEmpty() && isLoadProgress) {
+//            loadProgress.visibility = View.VISIBLE
+//        }
+//        MovieApi.movieService.getPopularFilmsByPage(page)
+//            .enqueue(object : Callback<MovieListDataModel> {
+//                override fun onFailure(call: Call<MovieListDataModel>, t: Throwable) {
+//                    Toast.makeText(requireContext(), "${t.message}", Toast.LENGTH_SHORT).show()
+//                }
+//
+//                override fun onResponse(
+//                    call: Call<MovieListDataModel>,
+//                    response: Response<MovieListDataModel>
+//                ) {
+//                    if (response.isSuccessful) {
+//                        val dtos = response.body()!!.results
+//                        val storeSize = DataStore.movies.size
+//                        DataStore.movies.addAll(dtos.map { MovieDomainModel(it.id, it.overview, it.backdropPath, it.title, it.backdropPath)})
+//                        recyclerView.adapter?.notifyItemRangeInserted(
+//                            storeSize,
+//                            storeSize + dtos.size
+//                        )
+//                        loadProgress.visibility = GONE
+//                    }
+//                }
+//            })
+//
+//        this.page = page.inc()
+//    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -174,7 +212,7 @@ class MovieListFragment : Fragment() {
         val task = Runnable {
             DataStore.movies.clear()
             recyclerView.adapter?.notifyDataSetChanged()
-            fetchPopularMoviesByPage(defaultPage, false)
+            fetchPopularMoviesByPage( isLoadProgress = false)
         }
         handle.post(task)
     }

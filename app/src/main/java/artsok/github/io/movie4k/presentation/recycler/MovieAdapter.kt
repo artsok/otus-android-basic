@@ -1,4 +1,4 @@
-package artsok.github.io.movie4k.recycler
+package artsok.github.io.movie4k.presentation.recycler
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -9,15 +9,15 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat.getColor
 import androidx.recyclerview.widget.RecyclerView
 import artsok.github.io.movie4k.R
-import artsok.github.io.movie4k.data.Movie
+import artsok.github.io.movie4k.domain.model.MovieDomainModel
 import com.bumptech.glide.Glide
 
 const val path = "https://image.tmdb.org/t/p/w500"
 
 class MovieAdapter(
     private val context: Context,
-    private val movies: List<Movie>,
-    private val itemClickListener: (Movie) -> Unit
+    private val movies: List<MovieDomainModel>,
+    private val itemClickListener: (MovieDomainModel) -> Unit
 ) :
     RecyclerView.Adapter<MovieAdapter.ViewHolder>() {
 

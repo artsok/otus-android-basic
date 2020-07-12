@@ -13,8 +13,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import artsok.github.io.movie4k.data.DataStore
-import artsok.github.io.movie4k.data.Movie
-import artsok.github.io.movie4k.recycler.path
+import artsok.github.io.movie4k.domain.model.MovieDomainModel
+import artsok.github.io.movie4k.presentation.recycler.path
 import com.bumptech.glide.Glide
 
 
@@ -26,7 +26,7 @@ class MovieFragment : Fragment() {
     private lateinit var comment: EditText
     private lateinit var like: ImageView
     private lateinit var share: ImageView
-    private lateinit var movie: Movie
+    private lateinit var movie: MovieDomainModel
 
     private var favorite: Boolean = false
     private var userComment: StringBuilder = StringBuilder()
@@ -36,7 +36,7 @@ class MovieFragment : Fragment() {
         const val TAG = "MovieFragment"
         private const val MOVIE = "MOVIE"
 
-        fun newInstance(movie: Movie): MovieFragment {
+        fun newInstance(movie: MovieDomainModel): MovieFragment {
             val fragment = MovieFragment()
             val bundle = Bundle()
             bundle.putParcelable(MOVIE, movie)

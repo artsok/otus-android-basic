@@ -1,4 +1,4 @@
-package artsok.github.io.movie4k.fragment
+package artsok.github.io.movie4k.presentation.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,9 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
 import artsok.github.io.movie4k.R
 import artsok.github.io.movie4k.data.DataStore.Companion.movies
-import artsok.github.io.movie4k.data.Movie
-import artsok.github.io.movie4k.listener.OnMovieClickListener
-import artsok.github.io.movie4k.recycler.FavoriteAdapter
+import artsok.github.io.movie4k.domain.model.MovieDomainModel
+import artsok.github.io.movie4k.presentation.listener.OnMovieClickListener
+import artsok.github.io.movie4k.presentation.recycler.FavoriteAdapter
 import com.google.android.material.snackbar.Snackbar
 
 
@@ -83,7 +83,7 @@ class FavoriteListFragment : Fragment() {
         favoriteAdapter.registerAdapterDataObserver(Observer(favoriteRecycler))
     }
 
-    private fun showShackBar(movie: Movie, position: Int) {
+    private fun showShackBar(movie: MovieDomainModel, position: Int) {
         val snackBar = Snackbar.make(requireView(), R.string.delete_message, Snackbar.LENGTH_LONG)
         snackBar.setAction(R.string.revert_delete_message) {
             movie.favorite = true
@@ -109,7 +109,7 @@ class FavoriteListFragment : Fragment() {
         }
 
         private fun isFavoriteRecyclerEmpty() {
-            val emptyViewVisible = movies.count(Movie::favorite) == 0
+            val emptyViewVisible = movies.count(MovieDomainModel::favorite) == 0
             if (recyclerView.adapter != null && emptyViewVisible) {
                 val layout = inflateEmptyView(recyclerView)
                 layout.visibility = if (emptyViewVisible) View.VISIBLE else View.GONE
@@ -118,7 +118,7 @@ class FavoriteListFragment : Fragment() {
         }
 
         private fun isFavoriteRecyclerNotEmpty() {
-            val emptyViewVisible = movies.count(Movie::favorite) > 0
+            val emptyViewVisible = movies.count(MovieDomainModel::favorite) > 0
             if (recyclerView.adapter != null && emptyViewVisible) {
                 recyclerView.visibility = if (emptyViewVisible) View.VISIBLE else View.GONE
             }

@@ -1,4 +1,4 @@
-package artsok.github.io.movie4k.recycler
+package artsok.github.io.movie4k.presentation.recycler
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -6,14 +6,14 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import artsok.github.io.movie4k.R
-import artsok.github.io.movie4k.data.Movie
+import artsok.github.io.movie4k.domain.model.MovieDomainModel
 import com.bumptech.glide.Glide
 
 class FavoriteAdapter(
     private val parent: ViewGroup,
     private val context: Context,
-    private val movies: List<Movie>,
-    private val itemClickListener: (Movie) -> Unit
+    private val movies: List<MovieDomainModel>,
+    private val itemClickListener: (MovieDomainModel) -> Unit
 ) : RecyclerView.Adapter<ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
