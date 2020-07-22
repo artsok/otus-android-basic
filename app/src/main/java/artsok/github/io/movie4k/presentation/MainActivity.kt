@@ -2,13 +2,13 @@ package artsok.github.io.movie4k.presentation
 
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate.*
 import androidx.fragment.app.Fragment
 import artsok.github.io.movie4k.MovieFragment
 import artsok.github.io.movie4k.R
-import artsok.github.io.movie4k.domain.model.MovieDomainModel
 import artsok.github.io.movie4k.presentation.dialog.CustomDialog
 import artsok.github.io.movie4k.presentation.fragment.FavoriteListFragment
 import artsok.github.io.movie4k.presentation.fragment.MovieListFragment
@@ -19,8 +19,13 @@ class MainActivity : AppCompatActivity(), OnMovieClickListener {
 
     private lateinit var bottomNavigation: BottomNavigationView
 
+    companion object {
+        const val TAG = "MainActivity"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d(TAG, "onCreate")
         setContentView(R.layout.activity_main)
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
@@ -40,8 +45,8 @@ class MainActivity : AppCompatActivity(), OnMovieClickListener {
         }
     }
 
-    override fun onMovieTextClick(item: MovieDomainModel) {
-        openMovie(item)
+    override fun onMovieTextClick() {
+        openMovie()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -53,16 +58,15 @@ class MainActivity : AppCompatActivity(), OnMovieClickListener {
         bottomNavigation = findViewById(R.id.bottom_navigation)
     }
 
-    private fun openMovie(item: MovieDomainModel) {
+    private fun openMovie() {
         supportFragmentManager.beginTransaction()
             .replace(
                 R.id.fragmentContainer,
-                MovieFragment.newInstance(item),
+                MovieFragment(),
                 MovieFragment.TAG
             )
             .addToBackStack(null)
             .commit()
-        item.selected = true
     }
 
     private fun openFavoriteList() {

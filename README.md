@@ -175,6 +175,7 @@ https://github.com/android/architecture-samples
 https://github.com/igorwojda/android-showcase
 https://android.jlelse.eu/lets-keep-activity-dumb-using-livedata-53468ed0dc1f
 https://startandroid.ru/ru/courses/dagger-2/27-course/architecture-components/527-urok-4-viewmodel.html
+https://medium.com/@bapspatil/caching-with-retrofit-store-responses-offline-71439ed32fda
 
 ```text
 ViewModel - здесь удобно держать все данные, которые нужны вам для формирования экрана. Они будут жить при поворотах экрана, но умрут, когда приложение будет убито системой.

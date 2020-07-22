@@ -4,16 +4,19 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import artsok.github.io.movie4k.data.DataStore
 import artsok.github.io.movie4k.data.repository.MovieRepositoryImpl
 import artsok.github.io.movie4k.data.retrofit.MovieApi
 import artsok.github.io.movie4k.domain.model.MovieDomainModel
 import artsok.github.io.movie4k.domain.usecase.GetMoviesUseCase
 import kotlinx.coroutines.launch
 
-class MovieListViewModel : ViewModel() {
+class MovieViewModel : ViewModel() {
 
+    private var page = 1
     private val moviesLiveData = MutableLiveData<List<MovieDomainModel>>()
     private val errorLiveData = MutableLiveData<String>()
+    private val selectedMovieLiveData = MutableLiveData<MovieDomainModel>()
     private val useCase = GetMoviesUseCase(MovieRepositoryImpl(MovieApi.movieService))
 
     //Прокидываем LiveData наружу во MovieListFragment
@@ -23,7 +26,32 @@ class MovieListViewModel : ViewModel() {
     val error: LiveData<String>
         get() = errorLiveData
 
-    fun getMoviesByPage(page: Int) {
+    val selectedMovie: LiveData<MovieDomainModel>
+        get() = selectedMovieLiveData
+
+    fun clearAndInitData() {
+        page = 1
+        DataStore.movies.clear()
+        getMoviesByPage()
+    }
+
+    fun isDataStoreEmpty() : Boolean {
+        return DataStore.movies.isEmpty()
+    }
+
+    /**
+     * Read https://stackoverflow.com/questions/44582019/how-to-clear-livedata-stored-value and
+     * use to Event wrapper preferred or SingleLiveEvent
+     */
+    fun resetLiveDataValue() {
+        moviesLiveData.postValue(listOf())
+    }
+
+    fun onErrorDisplayed() {
+        errorLiveData.postValue(null)
+    }
+
+    fun getMoviesByPage() {
         viewModelScope.launch {
             useCase.fetchPopularMovies(page).also { result ->
                 val action = when (result) {
@@ -38,5 +66,10 @@ class MovieListViewModel : ViewModel() {
                 }
             }
         }
+        this.page = page.inc()
+    }
+
+    fun onMovieSelected(movie: MovieDomainModel) {
+        selectedMovieLiveData.postValue(movie)
     }
 }
