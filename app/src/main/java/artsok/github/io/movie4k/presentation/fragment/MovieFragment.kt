@@ -44,14 +44,6 @@ class MovieFragment : Fragment() {
 
     companion object {
         const val TAG = "MovieFragment"
-//        private const val MOVIE = "MOVIE"
-//        fun newInstance(movie: MovieDomainModel): MovieFragment {
-//            val fragment = MovieFragment()
-//            val bundle = Bundle()
-//            bundle.putParcelable(MOVIE, movie)
-//            fragment.arguments = bundle
-//            return fragment
-//        }
     }
 
     override fun onResume() {
