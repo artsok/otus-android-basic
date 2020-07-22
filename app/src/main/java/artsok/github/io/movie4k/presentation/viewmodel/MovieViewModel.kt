@@ -32,7 +32,6 @@ class MovieViewModel : ViewModel() {
     fun clearAndInitData() {
         page = 1
         DataStore.movies.clear()
-        getMoviesByPage()
     }
 
     fun isDataStoreEmpty() : Boolean {
