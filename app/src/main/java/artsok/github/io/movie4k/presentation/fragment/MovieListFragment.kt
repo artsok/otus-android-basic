@@ -5,12 +5,10 @@ import android.content.res.Configuration.ORIENTATION_PORTRAIT
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -19,13 +17,13 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import artsok.github.io.movie4k.R
 import artsok.github.io.movie4k.domain.model.MovieDomainModel
-import artsok.github.io.movie4k.presentation.fragment.MovieListFragment.FetchDataFlow.CONTINUE
-import artsok.github.io.movie4k.presentation.fragment.MovieListFragment.FetchDataFlow.INIT
+import artsok.github.io.movie4k.presentation.fragment.MovieListFragment.FetchDataFlow.*
 import artsok.github.io.movie4k.presentation.listener.OnMovieClickListener
 import artsok.github.io.movie4k.presentation.listener.OnMovieSelectedListener
 import artsok.github.io.movie4k.presentation.recycler.MovieAdapter
 import artsok.github.io.movie4k.presentation.viewmodel.MovieViewModel
 import artsok.github.io.movie4k.presentation.viewmodel.MovieViewModelFactory
+import com.google.android.material.snackbar.Snackbar
 
 class MovieListFragment : Fragment() {
 
@@ -103,16 +101,18 @@ class MovieListFragment : Fragment() {
             this.viewLifecycleOwner,
             Observer<String> { error ->
                 if (!error.isNullOrBlank()) {
-                    val toast = Toast.makeText(
-                        context,
-                        error,
-                        Toast.LENGTH_SHORT
-                    )
-                    toast.setGravity(Gravity.CENTER, 0, 0)
-                    toast.show()
+                    showShackBar(error)
                 }
                 loadProgress.visibility = View.GONE
             })
+    }
+
+    private fun showShackBar(error: String) {
+        val snackBar = Snackbar.make(requireView(), error, Snackbar.LENGTH_LONG)
+        snackBar.setAction(R.string.repeat_message) {
+            fetchData(state = START)
+        }
+        snackBar.show()
     }
 
     private fun initSwipeRefreshLayout() {
@@ -138,7 +138,10 @@ class MovieListFragment : Fragment() {
                 val gridLayoutManager = recyclerView.layoutManager as GridLayoutManager
                 val totalItemCount = gridLayoutManager.itemCount
                 val lastVisibleItemPosition = gridLayoutManager.findLastVisibleItemPosition()
-                Log.d(TAG, "totalItemCount = $totalItemCount, lastVisibleItemPosition = $lastVisibleItemPosition")
+                Log.d(
+                    TAG,
+                    "totalItemCount = $totalItemCount, lastVisibleItemPosition = $lastVisibleItemPosition"
+                )
                 if (totalItemCount <= (lastVisibleItemPosition + visibleThreshold)) {
                     Log.d(
                         TAG,
@@ -150,17 +153,19 @@ class MovieListFragment : Fragment() {
         })
     }
 
-    private fun fetchData(isLoadProgress: Boolean = true, state: FetchDataFlow) {
+    private fun fetchData(isLoadProgress: Boolean = true, state: FetchDataFlow, page: Int = 1) {
         val isEmpty = movieViewModel.isDataStoreEmpty()
         when (state) {
             INIT -> {
                 if (isEmpty && isLoadProgress) {
                     loadProgress.visibility = View.VISIBLE
-                    movieViewModel.getMoviesByPage()
+                    movieViewModel.getMovies()
                 }
             }
             CONTINUE ->
-                movieViewModel.getMoviesByPage()
+                movieViewModel.getMovies()
+            START ->
+                movieViewModel.getMoviesByPage(page)
         }
     }
 
@@ -217,6 +222,6 @@ class MovieListFragment : Fragment() {
     }
 
     enum class FetchDataFlow {
-        INIT, CONTINUE
+        INIT, CONTINUE, START
     }
 }

@@ -15,6 +15,7 @@
     <string name="empty_list_text">Your Favorites List is Empty</string>
     <string name="empty_favorite_icon">empty favorite icon</string>
     <string name="delete_message">Success deleting</string>
+    <string name="repeat_message">Get movies</string>
     <string name="revert_delete_message">Undo</string>
     <string name="movie_list">Movies</string>
     <string name="theme">Theme</string>

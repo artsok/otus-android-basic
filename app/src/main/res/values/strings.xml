@@ -14,6 +14,7 @@
     <string name="empty_list_text">Список любимых фильмов пуст</string>
     <string name="empty_favorite_icon">Иконка для пустого спика</string>
     <string name="delete_message">Запись удалена</string>
+    <string name="repeat_message">Повторить запрос</string>
     <string name="revert_delete_message">Отменить</string>
     <string name="movie_list">КиноПоиск</string>
     <string name="theme">Тема</string>

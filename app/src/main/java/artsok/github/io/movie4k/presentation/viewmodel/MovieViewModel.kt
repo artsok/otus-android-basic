@@ -32,9 +32,10 @@ class MovieViewModel : ViewModel() {
     fun clearAndInitData() {
         page = 1
         DataStore.movies.clear()
+        getMoviesByPage(page)
     }
 
-    fun isDataStoreEmpty() : Boolean {
+    fun isDataStoreEmpty(): Boolean {
         return DataStore.movies.isEmpty()
     }
 
@@ -50,10 +51,28 @@ class MovieViewModel : ViewModel() {
         errorLiveData.postValue(null)
     }
 
-    fun getMoviesByPage() {
+    fun getMovies() {
         viewModelScope.launch {
             useCase.fetchPopularMovies(page).also { result ->
-                val action = when (result) {
+                when (result) {
+                    is GetMoviesUseCase.Result.Success ->
+                        if (result.data.isEmpty()) {
+                            moviesLiveData.postValue(listOf())
+                        } else {
+                            moviesLiveData.postValue(result.data)
+                        }
+                    is GetMoviesUseCase.Result.Error ->
+                        errorLiveData.postValue(result.e.message)
+                }
+            }
+        }
+        this.page = page.inc()
+    }
+
+    fun getMoviesByPage(page: Int) {
+        viewModelScope.launch {
+            useCase.fetchPopularMovies(page).also { result ->
+                when (result) {
                     is GetMoviesUseCase.Result.Success ->
                         if (result.data.isEmpty()) {
                             moviesLiveData.postValue(listOf())
