@@ -1,15 +1,9 @@
-package artsok.github.io.movie4k.network
+package artsok.github.io.movie4k.data.model
 
+import artsok.github.io.movie4k.domain.model.MovieDomainModel
 import com.google.gson.annotations.SerializedName
 
-data class PopularFilms(
-    @SerializedName("page") val page: Int,
-    @SerializedName("total_results") val totalResult: Int,
-    @SerializedName("total_pages") val totalPages: Int,
-    @SerializedName("results") val results: List<MovieNetwork>
-)
-
-data class MovieNetwork(
+data class MovieDataModel(
     @SerializedName("poster_path") val posterPath: String?,
     @SerializedName("adult") val adult: Boolean,
     @SerializedName("overview") val overview: String,
@@ -24,4 +18,12 @@ data class MovieNetwork(
     @SerializedName("vote_count") val voteCount: Int,
     @SerializedName("video") val video: Boolean,
     @SerializedName("vote_average") val voteAverage: Double
+)
+
+internal fun MovieDataModel.toDomainModel() = MovieDomainModel(
+    uniqueId = this.id,
+    title = this.title,
+    description = this.overview,
+    posterPath = this.posterPath ?: "",
+    backdropPath = this.posterPath ?: ""
 )

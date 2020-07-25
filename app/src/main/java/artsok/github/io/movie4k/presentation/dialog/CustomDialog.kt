@@ -1,4 +1,4 @@
-package artsok.github.io.movie4k.dialog
+package artsok.github.io.movie4k.presentation.dialog
 
 import android.app.Dialog
 import android.content.Context

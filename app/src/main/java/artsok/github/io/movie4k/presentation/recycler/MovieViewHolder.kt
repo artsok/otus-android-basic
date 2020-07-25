@@ -1,4 +1,4 @@
-package artsok.github.io.movie4k.recycler
+package artsok.github.io.movie4k.presentation.recycler
 
 import android.view.View
 import android.widget.ImageView

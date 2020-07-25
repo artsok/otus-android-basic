@@ -1,24 +1,31 @@
-package artsok.github.io.movie4k
+package artsok.github.io.movie4k.presentation
 
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate.*
 import androidx.fragment.app.Fragment
-import artsok.github.io.movie4k.data.Movie
-import artsok.github.io.movie4k.dialog.CustomDialog
-import artsok.github.io.movie4k.fragment.FavoriteListFragment
-import artsok.github.io.movie4k.fragment.MovieListFragment
-import artsok.github.io.movie4k.listener.OnMovieClickListener
+import artsok.github.io.movie4k.MovieFragment
+import artsok.github.io.movie4k.R
+import artsok.github.io.movie4k.presentation.dialog.CustomDialog
+import artsok.github.io.movie4k.presentation.fragment.FavoriteListFragment
+import artsok.github.io.movie4k.presentation.fragment.MovieListFragment
+import artsok.github.io.movie4k.presentation.listener.OnMovieClickListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity(), OnMovieClickListener {
 
     private lateinit var bottomNavigation: BottomNavigationView
 
+    companion object {
+        const val TAG = "MainActivity"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d(TAG, "onCreate")
         setContentView(R.layout.activity_main)
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
@@ -38,8 +45,8 @@ class MainActivity : AppCompatActivity(), OnMovieClickListener {
         }
     }
 
-    override fun onMovieTextClick(item: Movie) {
-        openMovie(item)
+    override fun onMovieTextClick() {
+        openMovie()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -51,12 +58,15 @@ class MainActivity : AppCompatActivity(), OnMovieClickListener {
         bottomNavigation = findViewById(R.id.bottom_navigation)
     }
 
-    private fun openMovie(item: Movie) {
+    private fun openMovie() {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragmentContainer, MovieFragment.newInstance(item), MovieFragment.TAG)
+            .replace(
+                R.id.fragmentContainer,
+                MovieFragment(),
+                MovieFragment.TAG
+            )
             .addToBackStack(null)
             .commit()
-        item.selected = true
     }
 
     private fun openFavoriteList() {

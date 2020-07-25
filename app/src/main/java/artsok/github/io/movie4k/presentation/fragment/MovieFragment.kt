@@ -12,9 +12,13 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import artsok.github.io.movie4k.data.DataStore
-import artsok.github.io.movie4k.data.Movie
-import artsok.github.io.movie4k.recycler.path
+import artsok.github.io.movie4k.domain.model.MovieDomainModel
+import artsok.github.io.movie4k.presentation.recycler.path
+import artsok.github.io.movie4k.presentation.viewmodel.MovieViewModel
+import artsok.github.io.movie4k.presentation.viewmodel.MovieViewModelFactory
 import com.bumptech.glide.Glide
 
 
@@ -26,23 +30,20 @@ class MovieFragment : Fragment() {
     private lateinit var comment: EditText
     private lateinit var like: ImageView
     private lateinit var share: ImageView
-    private lateinit var movie: Movie
+    private lateinit var movie: MovieDomainModel
 
     private var favorite: Boolean = false
     private var userComment: StringBuilder = StringBuilder()
 
+    private val movieViewModelFactory by lazy { MovieViewModelFactory() }
+    private val movieViewModel by lazy {
+        ViewModelProvider(requireActivity(), movieViewModelFactory).get(
+            MovieViewModel::class.java
+        )
+    }
 
     companion object {
         const val TAG = "MovieFragment"
-        private const val MOVIE = "MOVIE"
-
-        fun newInstance(movie: Movie): MovieFragment {
-            val fragment = MovieFragment()
-            val bundle = Bundle()
-            bundle.putParcelable(MOVIE, movie)
-            fragment.arguments = bundle
-            return fragment
-        }
     }
 
     override fun onResume() {
@@ -55,13 +56,28 @@ class MovieFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        Log.d(TAG, "In onCreateView method")
         return inflater.inflate(R.layout.fragment_movie, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d(TAG, "In onViewCreated method")
         initViews(view)
-        setDataToView()
+
+        movieViewModel.selectedMovie.observe(
+            this.viewLifecycleOwner,
+            Observer<MovieDomainModel> { movie ->
+                this.movie = movie
+                title.text = movie.title
+                description.text = movie.description
+                Glide.with(requireContext())
+                    .load("$path${movie.posterPath}")
+                    .into(imageView)
+                if (movie.favorite) {
+                    like.setImageResource(R.drawable.ic_favorite_border_black_24dp)
+                }
+            })
         initTextChangedListener()
     }
 
@@ -72,19 +88,6 @@ class MovieFragment : Fragment() {
         comment = view.findViewById(R.id.movie_comment)
         like = view.findViewById(R.id.movie_like)
         share = view.findViewById(R.id.movie_share_friend)
-    }
-
-    private fun setDataToView() {
-        movie = arguments?.getParcelable(MOVIE)!!
-        title.text = movie.title
-        description.text = movie.description
-        Glide.with(requireContext())
-            .load("$path${movie.posterPath}")
-            .into(imageView)
-
-        if (movie.favorite) {
-            like.setImageResource(R.drawable.ic_favorite_border_black_24dp)
-        }
     }
 
     override fun onPause() {

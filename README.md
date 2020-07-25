@@ -159,3 +159,44 @@ https://guides.codepath.com/android/implementing-pull-to-refresh-guide
 
 Улучшение на будущее:
 https://developer.android.com/topic/libraries/architecture/paging
+
+
+## Homework #6
+Архитектурные компоненты.
+1. Переведите свое приложение на архитектурные компоненты и MVVM
+2. Обменивайтесь данными между фрагментами используя ViewModel
+3. Добавьте отображение ошибок, в случае ошибки сервера или отсутствия интернета
+4. Добавьте возможность повторить запрос в случае ошибки
+5. * Создайте ViewModel с помощью фабрики
+
+Что было прочитано:
+https://github.com/android/architecture-samples
+Прочитать: https://www.toptal.com/android/android-apps-mvvm-with-clean-architecture
+https://github.com/igorwojda/android-showcase
+https://android.jlelse.eu/lets-keep-activity-dumb-using-livedata-53468ed0dc1f
+https://startandroid.ru/ru/courses/dagger-2/27-course/architecture-components/527-urok-4-viewmodel.html
+https://medium.com/@bapspatil/caching-with-retrofit-store-responses-offline-71439ed32fda
+
+```text
+ViewModel - здесь удобно держать все данные, которые нужны вам для формирования экрана. Они будут жить при поворотах экрана, но умрут, когда приложение будет убито системой.
+
+onSavedInstanceState - здесь нужно хранить тот минимум данных, который понадобится вам для восстановления состояния экрана и данных в ViewModel после экстренного закрытия Activity системой. Это может быть поисковый запрос, ID и т.п.
+
+Соответственно, когда вы достаете данные из savedInstanceState и предлагаете их модели, это может быть в двух случаях:
+
+1) Был обычный поворот экрана. В этом случае ваша модель должна понять, что ей эти данные не нужны, потому что при повороте экрана модель ничего не потеряла. И уж точно модель не должна заново делать запросы в БД, на сервер и т.п.
+
+2) Приложение было убито, и теперь запущено заново. В этом случае модель берет данные из savedInstanceState и использует их, чтобы восстановить свои данные. Например, берет ID и идет в БД за полными данными.
+```
+
+https://blog.mindorks.com/understanding-livedata-in-android
+
+https://medium.com/mindorks/livedata-viewmodel-making-your-own-magic-73facb06fbb
+LiveData - класс который содержит данные и работает по принципу паттерна Наблюдатель, поддерживает  жизненный цикл lifeCycleOwner(активити, фрагмент)
+ViewModel - класс пощник (где-то его называют контейнером), помогает нам хранить, управлять и подготавливать данные, относящиеся к пользовательскому интерфейсу, с учетом жизненного цикла.
+https://medium.com/mindorks/livedata-viewmodel-making-your-own-magic-73facb06fbb
+
+Про вопросо UseCase и Interactors:
+It introduces a new layer called domain where the Use Cases (also called Interactors) live. 
+The domain layer is where the business logic happens, which is the code that determines what 
+the app does with the data coming from the repository before it's exposed to the UI for display. 

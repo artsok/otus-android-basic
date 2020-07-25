@@ -1,9 +1,9 @@
 package artsok.github.io.movie4k.data
 
-import artsok.github.io.movie4k.R
+import artsok.github.io.movie4k.domain.model.MovieDomainModel
 
 open class DataStore {
     companion object {
-        val movies = mutableListOf<Movie>()
+        val movies = mutableListOf<MovieDomainModel>()
     }
 }
