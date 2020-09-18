@@ -14,7 +14,6 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import artsok.github.io.movie4k.data.DataStore
 import artsok.github.io.movie4k.domain.model.MovieDomainModel
 import artsok.github.io.movie4k.presentation.recycler.path
 import artsok.github.io.movie4k.presentation.viewmodel.MovieViewModel
@@ -35,7 +34,7 @@ class MovieFragment : Fragment() {
     private var favorite: Boolean = false
     private var userComment: StringBuilder = StringBuilder()
 
-    private val movieViewModelFactory by lazy { MovieViewModelFactory() }
+    private val movieViewModelFactory by lazy { MovieViewModelFactory(activity!!.application) }
     private val movieViewModel by lazy {
         ViewModelProvider(requireActivity(), movieViewModelFactory).get(
             MovieViewModel::class.java
@@ -74,6 +73,7 @@ class MovieFragment : Fragment() {
                 Glide.with(requireContext())
                     .load("$path${movie.posterPath}")
                     .into(imageView)
+
                 if (movie.favorite) {
                     like.setImageResource(R.drawable.ic_favorite_border_black_24dp)
                 }
@@ -126,12 +126,14 @@ class MovieFragment : Fragment() {
 
     private fun clickOnFavorite() {
         favorite = if (favorite) {
+            Log.d(TAG, "unselect favorite icon")
             like.setImageResource(R.drawable.ic_like)
-            DataStore.movies.find { it.uniqueId == movie.uniqueId }?.favorite = false
+            movieViewModel.unMoveToFavorite(movie.uniqueId)
             false
         } else {
+            Log.d(TAG, "select favorite icon")
             like.setImageResource(R.drawable.ic_favorite_border_black_24dp)
-            DataStore.movies.find { it.uniqueId == movie.uniqueId }?.favorite = true
+            movieViewModel.moveToFavorite(movie.uniqueId)
             true
         }
     }

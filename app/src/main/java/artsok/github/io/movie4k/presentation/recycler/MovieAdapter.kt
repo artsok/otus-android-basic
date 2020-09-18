@@ -10,7 +10,6 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat.getColor
 import androidx.recyclerview.widget.RecyclerView
 import artsok.github.io.movie4k.R
-import artsok.github.io.movie4k.data.DataStore
 import artsok.github.io.movie4k.domain.model.MovieDomainModel
 import artsok.github.io.movie4k.presentation.listener.OnMovieSelectedListener
 import com.bumptech.glide.Glide
@@ -27,7 +26,8 @@ class MovieAdapter(
         const val TAG = "MovieAdapter"
     }
 
-    private val movies = DataStore.movies
+    //private val movies = DataStore.movies
+    private var movies = emptyList<MovieDomainModel>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val cardView = LayoutInflater.from(parent.context)
@@ -58,10 +58,14 @@ class MovieAdapter(
     }
 
     fun addMovies(movies: List<MovieDomainModel>) {
-        DataStore.movies.addAll(movies)
-        val storeSize = this.movies.size
-        Log.d(TAG, "In addMovies method. Number of size = $storeSize")
-        notifyItemRangeInserted(storeSize, storeSize + movies.size)
+        //DataStore.movies.addAll(movies)
+        this.movies = movies
+        //val storeSize = this.movies.size
+        //Log.d(TAG, "In addMovies method. Number of size = $storeSize")
+
+        //notifyItemRangeInserted(storeSize, storeSize + movies.size)
+        notifyDataSetChanged()
+        Log.d(TAG, "In addMovies method. Number of size = ${movies.size}")
     }
 
     inner class ViewHolder(item: View) : RecyclerView.ViewHolder(item) {

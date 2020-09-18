@@ -13,12 +13,10 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
 import artsok.github.io.movie4k.R
-import artsok.github.io.movie4k.data.DataStore.Companion.movies
 import artsok.github.io.movie4k.domain.model.MovieDomainModel
 import artsok.github.io.movie4k.presentation.listener.OnMovieClickListener
 import artsok.github.io.movie4k.presentation.listener.OnMovieSelectedListener
 import artsok.github.io.movie4k.presentation.recycler.FavoriteAdapter
-import artsok.github.io.movie4k.presentation.viewmodel.FavoriteViewModel
 import artsok.github.io.movie4k.presentation.viewmodel.MovieViewModel
 import artsok.github.io.movie4k.presentation.viewmodel.MovieViewModelFactory
 import com.google.android.material.snackbar.Snackbar
@@ -30,12 +28,7 @@ class FavoriteListFragment : Fragment() {
     private lateinit var favoriteAdapter: FavoriteAdapter
     private var listener: OnMovieClickListener? = null
 
-    private val movieViewModelFactory by lazy { MovieViewModelFactory() }
-    private val favoriteMovieViewModel by lazy {
-        ViewModelProvider(requireActivity(), movieViewModelFactory).get(
-            FavoriteViewModel::class.java
-        )
-    }
+    private val movieViewModelFactory by lazy { MovieViewModelFactory(activity!!.application) }
     private val movieViewModel by lazy {
         ViewModelProvider(requireActivity(), movieViewModelFactory).get(
             MovieViewModel::class.java
@@ -60,18 +53,13 @@ class FavoriteListFragment : Fragment() {
         Log.d(TAG, "onViewCreated")
         initFavoriteRecycler(view)
         initViewModel()
-        fetchFavoritesData()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         Log.d(TAG, "onDestroyView")
-        favoriteMovieViewModel.resetLiveDataValue()
     }
 
-    private fun fetchFavoritesData() {
-        favoriteMovieViewModel.getFavoriteMovies()
-    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -82,7 +70,7 @@ class FavoriteListFragment : Fragment() {
 
 
     private fun initViewModel() {
-        favoriteMovieViewModel.favorites.observe(this.viewLifecycleOwner, Observer {
+        movieViewModel.getFavoriteMovies().observe(this.viewLifecycleOwner, Observer {
             favoriteAdapter.addFavoritesMovies(it)
         })
     }
@@ -111,10 +99,11 @@ class FavoriteListFragment : Fragment() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
-                val movie = movies.filter { it.favorite }[position]
-                movie.favorite = false
-                favoriteRecycler.adapter?.notifyItemRemoved(position)
-                showShackBar(movie, position)
+                Log.d(TAG, "Position for deleting $position")
+                val movie = favoriteAdapter.getItem(position)
+                movieViewModel.deleteMovieFromFavoriteList(movie.title)
+                favoriteAdapter.removeItem(position)
+                showShackBar(movie)
             }
         }
         ItemTouchHelper(itemTouchHelper).attachToRecyclerView(favoriteRecycler)
@@ -122,15 +111,18 @@ class FavoriteListFragment : Fragment() {
         favoriteAdapter.registerAdapterDataObserver(Observer(favoriteRecycler))
     }
 
-    private fun showShackBar(movie: MovieDomainModel, position: Int) {
+    private fun showShackBar(movie: MovieDomainModel) {
         val snackBar = Snackbar.make(requireView(), R.string.delete_message, Snackbar.LENGTH_LONG)
         snackBar.setAction(R.string.revert_delete_message) {
-            movie.favorite = true
-            favoriteRecycler.adapter?.notifyItemInserted(position)
+            movieViewModel.addMovieFromFavoriteList(movie.title)
         }
         snackBar.show()
     }
 
+
+    /**
+     * Observer for favorite list layouts. When list is empty inflate another layout
+     */
     inner class Observer(private val recyclerView: RecyclerView) : AdapterDataObserver() {
 
         init {
@@ -148,7 +140,7 @@ class FavoriteListFragment : Fragment() {
         }
 
         private fun isFavoriteRecyclerEmpty() {
-            val emptyViewVisible = movies.count(MovieDomainModel::favorite) == 0
+            val emptyViewVisible = movieViewModel.getFavoriteMoviesCount() == 0
             if (recyclerView.adapter != null && emptyViewVisible) {
                 val layout = inflateEmptyView(recyclerView)
                 layout.visibility = if (emptyViewVisible) View.VISIBLE else View.GONE
@@ -157,7 +149,7 @@ class FavoriteListFragment : Fragment() {
         }
 
         private fun isFavoriteRecyclerNotEmpty() {
-            val emptyViewVisible = movies.count(MovieDomainModel::favorite) > 0
+            val emptyViewVisible = movieViewModel.getFavoriteMoviesCount() > 0
             if (recyclerView.adapter != null && emptyViewVisible) {
                 recyclerView.visibility = if (emptyViewVisible) View.VISIBLE else View.GONE
             }

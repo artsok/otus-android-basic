@@ -22,8 +22,10 @@ class FavoriteAdapter(
     }
 
     fun addFavoritesMovies(movies: List<MovieDomainModel>) {
-        if (!favorites.containsAll(movies)) {
-            favorites.addAll(movies)
+        movies.forEach {
+            if(!favorites.contains(it)) {
+             favorites.add(it)
+            }
         }
         val storeSize = this.favorites.size
         Log.d(TAG, "In addFavoritesMovies method. Number of size = $storeSize")
@@ -34,6 +36,18 @@ class FavoriteAdapter(
         val cardView = LayoutInflater.from(parent.context)
             .inflate(R.layout.card_movie, parent, false)
         return MovieViewHolder(cardView)
+    }
+
+    //Удалить значения
+    internal fun removeItem(position: Int) {
+        this.favorites.removeAt(position)
+        Log.d(TAG, "Удалили элемент из массива")
+        notifyItemRemoved(position)
+        Log.d(TAG, "Обновить")
+    }
+
+    internal fun getItem(position: Int): MovieDomainModel {
+        return this.favorites[position]
     }
 
     override fun getItemCount(): Int = favorites.size
