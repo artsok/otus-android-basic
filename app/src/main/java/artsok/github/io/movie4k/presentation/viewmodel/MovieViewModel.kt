@@ -1,6 +1,7 @@
 package artsok.github.io.movie4k.presentation.viewmodel
 
 import android.app.Application
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.*
 import artsok.github.io.movie4k.data.model.toMovieDomainModel
@@ -9,14 +10,23 @@ import artsok.github.io.movie4k.data.retrofit.MovieApi
 import artsok.github.io.movie4k.data.room.AppDatabase
 import artsok.github.io.movie4k.domain.model.MovieDomainModel
 import artsok.github.io.movie4k.domain.usecase.GetMoviesUseCase
+import artsok.github.io.movie4k.extensions.get
+import artsok.github.io.movie4k.extensions.put
+import artsok.github.io.movie4k.lastResponseTime
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.util.concurrent.atomic.AtomicInteger
 
 class MovieViewModel(application: Application) : AndroidViewModel(application) {
 
-    private var page = AtomicInteger(1)
+    private val pageInit = 1
+    private val preferName = "PrefStorage"
+    private val sharedPref = application.getSharedPreferences(preferName, Context.MODE_PRIVATE)
+
+    private var page = AtomicInteger(pageInit)
     private val favoriteLiveData = MutableLiveData<List<MovieDomainModel>>()
     private val moviesLiveData = MutableLiveData<List<MovieDomainModel>>()
     private val errorLiveData = MutableLiveData<String>()
@@ -43,12 +53,22 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
      * Delete data from DB (table: movies)
      */
     fun clearAndInitData() {
-        Log.d(TAG, "delete data from DB")
-        viewModelScope.launch(Dispatchers.IO) {
-            useCase.deleteMoviesFromTable()
-            page.set(1)
-            getMoviesByPage(page.get())
-            Log.d(TAG, "Total records ${useCase.getMovieRecords()}")
+        val currentTime = LocalTime.now()
+        val lastResponseTime =
+            LocalTime.parse(
+                sharedPref.get(lastResponseTime, currentTime.toString()),
+                DateTimeFormatter.ISO_LOCAL_TIME
+            )
+
+        val interval = 1L //Change to 20 minutes
+        if (lastResponseTime.plusMinutes(interval).isBefore(currentTime)) {
+            Log.d(TAG, "delete data from DB")
+            viewModelScope.launch(Dispatchers.IO) {
+                useCase.deleteMoviesFromTable()
+                page.set(pageInit)
+                getMoviesByPage(page.get())
+                Log.d(TAG, "Total records ${useCase.getMovieRecords()}")
+            }
         }
     }
 
@@ -92,6 +112,7 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
                         if (result.data.isEmpty()) {
                             Log.d(TAG, "getMovies. Got empty data")
                         } else {
+                            sharedPref.put(lastResponseTime, LocalTime.now().toString())
                             useCase.insertToDB(result.data)
                         }
                     is GetMoviesUseCase.Result.Error ->

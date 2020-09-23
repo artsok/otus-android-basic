@@ -44,6 +44,10 @@ class GetMoviesUseCase(private val repository: MovieRepository) {
         movies.forEach { repository.insertToDB(it) }
     }
 
+    suspend fun saveRowResponse(page: Int, movies: List<MovieDomainModel>) {
+
+    }
+
     suspend fun deleteFromDB(movie: MovieDomainModel) {
         repository.deleteFromDB(movie)
     }

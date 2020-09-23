@@ -220,6 +220,9 @@ class MovieListFragment : Fragment() {
         }
     }
 
+    /**
+     * Pull down to update movies. Refresh all DB if time count more than 20 min
+     */
     private fun updateMovies() {
         Log.d(TAG, "updateMovies")
         val handle = Handler()
