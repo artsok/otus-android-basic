@@ -162,6 +162,10 @@ https://developer.android.com/topic/libraries/architecture/paging
 
 
 ## Homework #6
+ENG:
+Architectural components (LiveData, ViewModel, lifecycle-aware components)
+
+RUS:
 Архитектурные компоненты.
 1. Переведите свое приложение на архитектурные компоненты и MVVM
 2. Обменивайтесь данными между фрагментами используя ViewModel
@@ -202,6 +206,10 @@ The domain layer is where the business logic happens, which is the code that det
 the app does with the data coming from the repository before it's exposed to the UI for display.
 
 ## Homework #7
+ENG:
+Data storage with Room.
+
+RUS:
 Хранение данных.
 1. Сохраняйте полученные данные фильмов в кэш (базу данных Room) +
 2. Сохраняйте список избранного в базе данных +
