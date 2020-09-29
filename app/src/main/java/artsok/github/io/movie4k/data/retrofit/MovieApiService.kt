@@ -1,7 +1,7 @@
 package artsok.github.io.movie4k.data.retrofit
 
 import artsok.github.io.movie4k.BuildConfig
-import artsok.github.io.movie4k.data.model.MovieListDataModel
+import artsok.github.io.movie4k.data.model.MovieListDto
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -46,10 +46,10 @@ fun <T> buildService(service: Class<T>): T {
 interface MovieApiService {
 
     @GET("movie/popular")
-    suspend fun getPopularFilms(): MovieListDataModel
+    suspend fun getPopularFilms(): MovieListDto
 
     @GET("movie/popular")
-    suspend fun getPopularFilmsByPage(@Query("page") page: Int): MovieListDataModel
+    suspend fun getPopularFilmsByPage(@Query("page") page: Int): MovieListDto
 
 }
 

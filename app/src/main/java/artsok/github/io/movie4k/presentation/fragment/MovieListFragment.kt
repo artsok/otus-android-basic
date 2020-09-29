@@ -34,7 +34,7 @@ class MovieListFragment : Fragment() {
     private var adapter: MovieAdapter? = null
     private var listener: OnMovieClickListener? = null
 
-    private val movieViewModelFactory by lazy { MovieViewModelFactory() }
+    private val movieViewModelFactory by lazy { MovieViewModelFactory(activity!!.application) }
     private val movieViewModel by lazy {
         ViewModelProvider(requireActivity(), movieViewModelFactory).get(
             MovieViewModel::class.java
@@ -77,9 +77,9 @@ class MovieListFragment : Fragment() {
         initLoadProgress()
         initRecycler()
         setGridByOrientation(resources.configuration.orientation)
+        fetchData(state = INIT)
         initViewModel()
         initSwipeRefreshListener()
-        fetchData(state = INIT)
     }
 
     override fun onDestroyView() {
@@ -90,7 +90,7 @@ class MovieListFragment : Fragment() {
     }
 
     private fun initViewModel() {
-        movieViewModel.movies.observe(
+        movieViewModel.getMoviesFromDB().observe(
             this.viewLifecycleOwner,
             Observer<List<MovieDomainModel>> {
                 adapter!!.addMovies(it)
@@ -154,18 +154,26 @@ class MovieListFragment : Fragment() {
     }
 
     private fun fetchData(isLoadProgress: Boolean = true, state: FetchDataFlow, page: Int = 1) {
-        val isEmpty = movieViewModel.isDataStoreEmpty()
+        val isEmpty = movieViewModel.isDbEmpty()
         when (state) {
             INIT -> {
                 if (isEmpty && isLoadProgress) {
+                    Log.d(TAG, "fetchData. Init State $isEmpty && $isLoadProgress")
                     loadProgress.visibility = View.VISIBLE
                     movieViewModel.getMovies()
+                } else {
+                    Log.d(TAG, "fetchData. Init State")
                 }
             }
-            CONTINUE ->
+            START -> {
+                Log.d(TAG, "fetchData. START State")
+                //movieViewModel.getMoviesByPage(page)
                 movieViewModel.getMovies()
-            START ->
-                movieViewModel.getMoviesByPage(page)
+            }
+            CONTINUE -> {
+                Log.d(TAG, "fetchData. CONTINUE State")
+                movieViewModel.getMovies()
+            }
         }
     }
 
@@ -212,7 +220,11 @@ class MovieListFragment : Fragment() {
         }
     }
 
+    /**
+     * Pull down to update movies. Refresh all DB if time count more than 20 min
+     */
     private fun updateMovies() {
+        Log.d(TAG, "updateMovies")
         val handle = Handler()
         val task = Runnable {
             movieViewModel.clearAndInitData()

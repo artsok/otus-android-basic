@@ -162,6 +162,10 @@ https://developer.android.com/topic/libraries/architecture/paging
 
 
 ## Homework #6
+ENG:
+Architectural components (LiveData, ViewModel, lifecycle-aware components)
+
+RUS:
 Архитектурные компоненты.
 1. Переведите свое приложение на архитектурные компоненты и MVVM
 2. Обменивайтесь данными между фрагментами используя ViewModel
@@ -199,4 +203,27 @@ https://medium.com/mindorks/livedata-viewmodel-making-your-own-magic-73facb06fbb
 Про вопросо UseCase и Interactors:
 It introduces a new layer called domain where the Use Cases (also called Interactors) live. 
 The domain layer is where the business logic happens, which is the code that determines what 
-the app does with the data coming from the repository before it's exposed to the UI for display. 
+the app does with the data coming from the repository before it's exposed to the UI for display.
+
+## Homework #7
+ENG:
+Data storage with Room.
+
+RUS:
+Хранение данных.
+1. Сохраняйте полученные данные фильмов в кэш (базу данных Room) +
+2. Сохраняйте список избранного в базе данных +
+3. Во время загрузки фильмов отображайте данные из кэша +
+4. Храните время последнего запроса данных и, если прошло меньше 20 минут, отображайте кэш, запрос в сеть идти не должен. Для хранения времени используйте SharedPreferences +
+5*. В случае ошибки сервера \ отсутствия интернета отобразите snackbar с ошибкой и кнопкой "попытаться снова\обновить" +
+
+Что было прочитано?
+https://startandroid.ru/ru/courses/architecture-components/27-course/architecture-components/529-urok-5-room-osnovy.html
+https://github.com/googlecodelabs/android-room-with-a-view
+https://github.com/DimaKoz/DemoRoom/blob/master/app/build.gradle
+https://devcolibri.com/7-pro-tips-for-room/
+https://quares.ru/?id=2937 - Running on another thread but still blocking the main thread
+
+
+Интересно про Dagger:
+https://medium.com/@marco_cattaneo/android-viewmodel-and-factoryprovider-good-way-to-manage-it-with-dagger-2-d9e20a07084c
