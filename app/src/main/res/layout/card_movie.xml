@@ -20,8 +20,7 @@
             android:layout_height="0dp"
             android:layout_marginTop="12dp"
             android:layout_weight="1.0"
-            android:contentDescription="@string/movie_image"
-            tool:src="@drawable/image_6" />
+            android:contentDescription="@string/movie_image" />
 
         <TextView
             android:id="@+id/card_title"
