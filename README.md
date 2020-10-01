@@ -227,3 +227,15 @@ https://quares.ru/?id=2937 - Running on another thread but still blocking the ma
 
 Интересно про Dagger:
 https://medium.com/@marco_cattaneo/android-viewmodel-and-factoryprovider-good-way-to-manage-it-with-dagger-2-d9e20a07084c
+
+## Homework #8
+ENG:
+Working with AlarmManager
+
+RUS:
+1. Добавьте в приложение функицонал добавление фильма в список "Посмотреть позже"
+2. При добавлении необходимо указывать дату напоминания
+3. При наступлении необходимой даты должно появляться пуш уведомление
+4. Переход по пуш уведомлению должен открывать детальную страницу фильма
+5.* Добавьте в приложение отображение списка "Посмотреть позже", в котором можно будет изменять дату напоминания
+
