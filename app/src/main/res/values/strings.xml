@@ -3,6 +3,7 @@
     <string name="movie_hint">Оставьте свой отзыв</string>
     <string name="movie_feedback">Рецензии</string>
     <string name="movie_like">Лайк</string>
+    <string name="movie_schedule">Watch later</string>
     <string name="share">Поделиться</string>
     <string name="movie_image">Обложка фильма</string>
     <string name="custom_dialog_title">Внимание</string>

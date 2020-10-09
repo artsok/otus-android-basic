@@ -11,7 +11,9 @@ class Movie(
     val posterPath: String,
     val backdropPath: String,
     val favorite: Boolean = false,
-    val selected: Boolean = false
+    val selected: Boolean = false,
+    val scheduled: Boolean = false,
+    val scheduledTime: String?
 ) {
     @PrimaryKey(autoGenerate = true)
     var id: Int? = null

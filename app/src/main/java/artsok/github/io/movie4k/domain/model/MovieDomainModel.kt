@@ -20,6 +20,7 @@ internal fun MovieDomainModel.toModel() = Movie(
     description = this.description,
     posterPath = this.posterPath,
     backdropPath = this.posterPath,
-    favorite = this.favorite
-
+    favorite = this.favorite,
+    scheduled = false,
+    scheduledTime = ""
 )

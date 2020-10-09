@@ -223,19 +223,27 @@ https://github.com/googlecodelabs/android-room-with-a-view
 https://github.com/DimaKoz/DemoRoom/blob/master/app/build.gradle
 https://devcolibri.com/7-pro-tips-for-room/
 https://quares.ru/?id=2937 - Running on another thread but still blocking the main thread
+https://ru.stackoverflow.com/questions/470899/%D0%94%D0%BB%D1%8F-%D1%87%D0%B5%D0%B3%D0%BE-%D0%BD%D1%83%D0%B6%D0%BD%D0%B0-%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B0-eventbus-%D0%B8%D0%BB%D0%B8-%D0%B5%D1%91-%D0%B0%D0%BD%D0%B0%D0%BB%D0%BE%D0%B3-otto -про ЕвентБас
 
 
-Интересно про Dagger:
-https://medium.com/@marco_cattaneo/android-viewmodel-and-factoryprovider-good-way-to-manage-it-with-dagger-2-d9e20a07084c
 
 ## Homework #8
 ENG:
 Working with AlarmManager
 
 RUS:
-1. Добавьте в приложение функицонал добавление фильма в список "Посмотреть позже"
+1. Добавьте в приложение функционал добавление фильма в список "Посмотреть позже"
 2. При добавлении необходимо указывать дату напоминания
 3. При наступлении необходимой даты должно появляться пуш уведомление
 4. Переход по пуш уведомлению должен открывать детальную страницу фильма
 5.* Добавьте в приложение отображение списка "Посмотреть позже", в котором можно будет изменять дату напоминания
 
+https://developer.android.com/guide/components/services?hl=ru
+https://habr.com/ru/post/186434/ - Tasks и Back Stack в Android
+https://habr.com/ru/company/jugru/blog/351166/ - Руководство по фоновой работе в Android. Часть 3: Executors и EventBus
+https://hackernoon.com/how-to-use-new-material-date-picker-for-android-s7k32w0
+https://www.youtube.com/watch?v=D0VpASTpgmw - объясняет пример по работе с datetimepiker
+
+Интересно про Dagger:
+https://medium.com/@marco_cattaneo/android-viewmodel-and-factoryprovider-good-way-to-manage-it-with-dagger-2-d9e20a07084c
+https://proandroiddev.com/forget-rxjava-kotlin-coroutines-are-all-you-need-part-1-2-4f62ecc4f99b

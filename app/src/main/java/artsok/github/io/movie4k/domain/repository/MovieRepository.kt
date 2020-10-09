@@ -4,6 +4,9 @@ import androidx.lifecycle.LiveData
 import artsok.github.io.movie4k.data.model.Movie
 import artsok.github.io.movie4k.domain.model.MovieDomainModel
 
+/*
+ Repository for DB and API calls
+ */
 interface MovieRepository {
     suspend fun getLandingMovies(): List<MovieDomainModel>
     suspend fun getMovies(page: Int): List<MovieDomainModel>
@@ -14,6 +17,7 @@ interface MovieRepository {
     suspend fun getFavoriteTotalRecordsFromDB(): Int
     suspend fun updateDB(favorite: Boolean, id: Int)
     suspend fun updateDB(favorite: Boolean, title: String)
+    suspend fun updateScheduledFields(id: Int, scheduledTime: String)
 
     fun getFavoriteMoviesFromDB(): LiveData<List<Movie>>
     fun getMoviesFromDB(): LiveData<List<Movie>>

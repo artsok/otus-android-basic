@@ -12,6 +12,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import artsok.github.io.movie4k.domain.model.MovieDomainModel
@@ -19,6 +20,12 @@ import artsok.github.io.movie4k.presentation.recycler.path
 import artsok.github.io.movie4k.presentation.viewmodel.MovieViewModel
 import artsok.github.io.movie4k.presentation.viewmodel.MovieViewModelFactory
 import com.bumptech.glide.Glide
+import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat.CLOCK_24H
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 
 class MovieFragment : Fragment() {
@@ -29,10 +36,14 @@ class MovieFragment : Fragment() {
     private lateinit var comment: EditText
     private lateinit var like: ImageView
     private lateinit var share: ImageView
+    private lateinit var schedule: ImageView
     private lateinit var movie: MovieDomainModel
 
     private var favorite: Boolean = false
     private var userComment: StringBuilder = StringBuilder()
+
+    private val fm: FragmentManager
+        get() = activity!!.supportFragmentManager
 
     private val movieViewModelFactory by lazy { MovieViewModelFactory(activity!!.application) }
     private val movieViewModel by lazy {
@@ -42,7 +53,7 @@ class MovieFragment : Fragment() {
     }
 
     companion object {
-        const val TAG = "MovieFragment"
+        val TAG = MovieFragment::class.toString()
     }
 
     override fun onResume() {
@@ -88,6 +99,7 @@ class MovieFragment : Fragment() {
         comment = view.findViewById(R.id.movie_comment)
         like = view.findViewById(R.id.movie_like)
         share = view.findViewById(R.id.movie_share_friend)
+        schedule = view.findViewById(R.id.movie_schedule)
     }
 
     override fun onPause() {
@@ -111,6 +123,7 @@ class MovieFragment : Fragment() {
         })
         like.setOnClickListener { clickOnFavorite() }
         share.setOnClickListener { shareClick() }
+        schedule.setOnClickListener { clickScheduleMovieAlarm() }
     }
 
     private fun shareClick() {
@@ -121,6 +134,34 @@ class MovieFragment : Fragment() {
         }
         sendIntent.resolveActivity(requireActivity().packageManager)?.let {
             startActivity(sendIntent)
+        }
+    }
+
+
+    private fun clickScheduleMovieAlarm() {
+        val builder = MaterialDatePicker.Builder.datePicker()
+        val picker = builder.build()
+        picker.show(fm, picker.toString())
+
+        picker.addOnPositiveButtonClickListener {
+            val localDateTime = LocalDateTime.ofInstant(
+                Instant.ofEpochMilli(picker.selection!!.toLong()),
+                ZoneOffset.UTC
+            ).toLocalDate()
+
+            val materialTimePicker = MaterialTimePicker
+                .Builder()
+                .setTimeFormat(CLOCK_24H)
+                .build()
+
+            materialTimePicker.show(fm, materialTimePicker.toString())
+
+            materialTimePicker.addOnPositiveButtonClickListener {
+                val newHour = materialTimePicker.hour
+                val newMinute = materialTimePicker.minute
+                val scheduleDateTime = localDateTime.atTime(newHour, newMinute)
+                movieViewModel.updateScheduleTime(movie.uniqueId, scheduleDateTime.toString())
+            }
         }
     }
 

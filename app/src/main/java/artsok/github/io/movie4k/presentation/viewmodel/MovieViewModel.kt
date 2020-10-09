@@ -92,10 +92,6 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
         moviesLiveData.postValue(listOf())
     }
 
-    fun resetFavoriteLiveDataValue() {
-        favoriteLiveData.postValue(listOf())
-    }
-
     fun onErrorDisplayed() {
         errorLiveData.postValue(null)
     }
@@ -156,7 +152,7 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
     /**
      * Download movies from network and post to LiveData
      */
-    fun getMoviesByPage(page: Int) {
+    private fun getMoviesByPage(page: Int) {
         viewModelScope.launch {
             useCase.fetchPopularMovies(page).also { result ->
                 when (result) {
@@ -189,6 +185,14 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
         runBlocking {
             launch(Dispatchers.IO) {
                 useCase.updateFavoriteField(false, id)
+            }
+        }
+    }
+
+    fun updateScheduleTime(id: Int, time: String) {
+        runBlocking {
+            launch (Dispatchers.IO) {
+                useCase.updateMovieScheduledTime(id, time)
             }
         }
     }

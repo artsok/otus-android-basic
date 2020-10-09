@@ -19,4 +19,5 @@
     <string name="revert_delete_message">Undo</string>
     <string name="movie_list">Movies</string>
     <string name="theme">Theme</string>
+    <string name="movie_schedule">Theme</string>
 </resources>

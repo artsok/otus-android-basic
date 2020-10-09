@@ -68,6 +68,10 @@ class GetMoviesUseCase(private val repository: MovieRepository) {
         return repository.updateDB(favorite, id)
     }
 
+    suspend fun updateMovieScheduledTime(id: Int, scheduledTime: String) {
+        return repository.updateScheduledFields(id, scheduledTime)
+    }
+
     suspend fun updateFavoriteFieldByTitle(favorite: Boolean, title: String) {
         return repository.updateDB(favorite, title)
     }
