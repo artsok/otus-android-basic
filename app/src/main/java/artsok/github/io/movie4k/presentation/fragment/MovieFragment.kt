@@ -19,13 +19,15 @@ import artsok.github.io.movie4k.domain.model.MovieDomainModel
 import artsok.github.io.movie4k.presentation.recycler.path
 import artsok.github.io.movie4k.presentation.viewmodel.MovieViewModel
 import artsok.github.io.movie4k.presentation.viewmodel.MovieViewModelFactory
+import artsok.github.io.movie4k.service.AlarmService
 import com.bumptech.glide.Glide
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat.CLOCK_24H
 import java.time.Instant
-import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.ZoneOffset
+import java.time.ZonedDateTime
 
 
 class MovieFragment : Fragment() {
@@ -38,6 +40,7 @@ class MovieFragment : Fragment() {
     private lateinit var share: ImageView
     private lateinit var schedule: ImageView
     private lateinit var movie: MovieDomainModel
+    private lateinit var alarmService: AlarmService
 
     private var favorite: Boolean = false
     private var userComment: StringBuilder = StringBuilder()
@@ -74,6 +77,7 @@ class MovieFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         Log.d(TAG, "In onViewCreated method")
         initViews(view)
+        initAlarmService()
 
         movieViewModel.selectedMovie.observe(
             this.viewLifecycleOwner,
@@ -100,6 +104,10 @@ class MovieFragment : Fragment() {
         like = view.findViewById(R.id.movie_like)
         share = view.findViewById(R.id.movie_share_friend)
         schedule = view.findViewById(R.id.movie_schedule)
+    }
+
+    private fun initAlarmService() {
+        alarmService = AlarmService(context!!)
     }
 
     override fun onPause() {
@@ -144,7 +152,7 @@ class MovieFragment : Fragment() {
         picker.show(fm, picker.toString())
 
         picker.addOnPositiveButtonClickListener {
-            val localDateTime = LocalDateTime.ofInstant(
+            val localDateTime = ZonedDateTime.ofInstant(
                 Instant.ofEpochMilli(picker.selection!!.toLong()),
                 ZoneOffset.UTC
             ).toLocalDate()
@@ -159,8 +167,10 @@ class MovieFragment : Fragment() {
             materialTimePicker.addOnPositiveButtonClickListener {
                 val newHour = materialTimePicker.hour
                 val newMinute = materialTimePicker.minute
-                val scheduleDateTime = localDateTime.atTime(newHour, newMinute)
+                val scheduleDateTime =
+                    localDateTime.atTime(newHour, newMinute).atZone(ZoneId.systemDefault())
                 movieViewModel.updateScheduleTime(movie.uniqueId, scheduleDateTime.toString())
+                alarmService.setExactAlarm(scheduleDateTime.toInstant().toEpochMilli())
             }
         }
     }
