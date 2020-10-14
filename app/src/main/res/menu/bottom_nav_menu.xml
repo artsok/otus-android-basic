@@ -11,6 +11,11 @@
         android:title="@string/favorite" />
 
     <item
+        android:id="@+id/bottomSchedule"
+        android:icon="@drawable/ic_baseline_schedule_24"
+        android:title="@string/schedule" />
+
+    <item
         android:id="@+id/bottomNavigationTheme"
         android:icon="@drawable/ic_collections_black_24dp"
         android:title="@string/theme" />

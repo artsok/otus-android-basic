@@ -27,7 +27,6 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
     private val sharedPref = application.getSharedPreferences(preferName, Context.MODE_PRIVATE)
 
     private var page = AtomicInteger(pageInit)
-    private val favoriteLiveData = MutableLiveData<List<MovieDomainModel>>()
     private val moviesLiveData = MutableLiveData<List<MovieDomainModel>>()
     private val errorLiveData = MutableLiveData<String>()
     private val selectedMovieLiveData = MutableLiveData<MovieDomainModel>()
@@ -131,10 +130,21 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /**
-     * Return the LiveData of favorite movies by using MovieDomainModel
+     * Return the LiveData of favorite movies
      */
     fun getFavoriteMovies(): LiveData<List<MovieDomainModel>> {
         return Transformations.map(useCase.getFavoritesMoviesFromDB()) {
+            val moviesDomain = mutableListOf<MovieDomainModel>()
+            it.forEach { k -> moviesDomain.add(k.toMovieDomainModel()) }
+            return@map moviesDomain.toList()
+        }
+    }
+
+    /**
+     * Return the LiveData of schedule movies
+     */
+    fun getScheduleMovies() : LiveData<List<MovieDomainModel>> {
+        return Transformations.map(useCase.getScheduleMoviesFromDB()) {
             val moviesDomain = mutableListOf<MovieDomainModel>()
             it.forEach { k -> moviesDomain.add(k.toMovieDomainModel()) }
             return@map moviesDomain.toList()
@@ -193,6 +203,17 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
         runBlocking {
             launch (Dispatchers.IO) {
                 useCase.updateMovieScheduledTime(id, time)
+            }
+        }
+    }
+
+    /**
+     * Update field for schedule flag
+     */
+    fun updateScheduleFlag(id: Int, flag: Boolean) {
+        runBlocking {
+            launch (Dispatchers.IO) {
+                useCase.updateScheduledField(id, flag)
             }
         }
     }

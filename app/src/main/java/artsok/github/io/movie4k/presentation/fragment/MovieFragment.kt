@@ -30,6 +30,7 @@ import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
 
+//Данные которые кладем в setAlarm, сам movie не обогощен данными. Например зашел в кино, проставил лайк потом хочу заскедулить его на опр.время а приезжает херовый
 class MovieFragment : Fragment() {
 
     private lateinit var imageView: ImageView
@@ -170,7 +171,10 @@ class MovieFragment : Fragment() {
                 val scheduleDateTime =
                     localDateTime.atTime(newHour, newMinute).atZone(ZoneId.systemDefault())
                 movieViewModel.updateScheduleTime(movie.uniqueId, scheduleDateTime.toString())
-                alarmService.setExactAlarm(scheduleDateTime.toInstant().toEpochMilli())
+
+                alarmService.setExactAlarm(movie, ZonedDateTime.now().plusSeconds(6).toInstant().toEpochMilli())
+                //alarmService.setExactAlarm(movie, scheduleDateTime.toInstant().toEpochMilli())
+                alarmService.stopAlarms()
             }
         }
     }
@@ -180,11 +184,13 @@ class MovieFragment : Fragment() {
             Log.d(TAG, "unselect favorite icon")
             like.setImageResource(R.drawable.ic_like)
             movieViewModel.unMoveToFavorite(movie.uniqueId)
+            movie.favorite = false
             false
         } else {
             Log.d(TAG, "select favorite icon")
             like.setImageResource(R.drawable.ic_favorite_border_black_24dp)
             movieViewModel.moveToFavorite(movie.uniqueId)
+            movie.favorite = true
             true
         }
     }

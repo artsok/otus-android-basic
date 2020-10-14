@@ -19,4 +19,6 @@
     <string name="revert_delete_message">Отменить</string>
     <string name="movie_list">КиноПоиск</string>
     <string name="theme">Тема</string>
+    <string name="schedule">Посмотреть позже</string>
+    <string name="edit_icon">Редактирование времении напоминания</string>
 </resources>

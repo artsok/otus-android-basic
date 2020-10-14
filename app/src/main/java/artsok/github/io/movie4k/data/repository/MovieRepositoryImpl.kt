@@ -59,8 +59,16 @@ class MovieRepositoryImpl(
         return movieDao.updateScheduledFields(id, scheduledTime)
     }
 
+    override suspend fun updateScheduledFlag(id: Int, flag: Boolean) {
+        val value = if (flag) 1 else 0
+        return movieDao.updateScheduledFlag(id, value)
+    }
 
     override fun getFavoriteMoviesFromDB(): LiveData<List<Movie>> {
         return movieDao.getFavoriteMovies()
+    }
+
+    override fun getScheduleMoviesFromDB(): LiveData<List<Movie>> {
+        return movieDao.getScheduleMovies()
     }
 }

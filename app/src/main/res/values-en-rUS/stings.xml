@@ -20,4 +20,6 @@
     <string name="movie_list">Movies</string>
     <string name="theme">Theme</string>
     <string name="movie_schedule">Theme</string>
+    <string name="schedule">schedule</string>
+    <string name="edit_icon">Edit schedule time</string>
 </resources>

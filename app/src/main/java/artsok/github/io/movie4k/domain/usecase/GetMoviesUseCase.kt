@@ -29,6 +29,10 @@ class GetMoviesUseCase(private val repository: MovieRepository) {
         return repository.getFavoriteMoviesFromDB()
     }
 
+    fun getScheduleMoviesFromDB(): LiveData<List<Movie>> {
+        return repository.getScheduleMoviesFromDB()
+    }
+
     suspend fun fetchPopularMovies(page: Int): Result {
         Log.d(TAG, "page $page")
         return try {
@@ -42,10 +46,6 @@ class GetMoviesUseCase(private val repository: MovieRepository) {
 
     suspend fun insertToDB(movies: List<MovieDomainModel>) {
         movies.forEach { repository.insertToDB(it) }
-    }
-
-    suspend fun saveRowResponse(page: Int, movies: List<MovieDomainModel>) {
-
     }
 
     suspend fun deleteFromDB(movie: MovieDomainModel) {
@@ -70,6 +70,10 @@ class GetMoviesUseCase(private val repository: MovieRepository) {
 
     suspend fun updateMovieScheduledTime(id: Int, scheduledTime: String) {
         return repository.updateScheduledFields(id, scheduledTime)
+    }
+
+    suspend fun updateScheduledField(id: Int, flag: Boolean) {
+        return repository.updateScheduledFlag(id, flag)
     }
 
     suspend fun updateFavoriteFieldByTitle(favorite: Boolean, title: String) {

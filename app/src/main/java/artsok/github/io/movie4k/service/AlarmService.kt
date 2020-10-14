@@ -4,27 +4,38 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
+import android.os.Bundle
+import android.util.Log
+import artsok.github.io.movie4k.domain.model.MovieDomainModel
 import artsok.github.io.movie4k.receiver.AlarmReceiver
-import java.util.concurrent.atomic.AtomicInteger
+import artsok.github.io.movie4k.util.RandomIntUtil
 
 class AlarmService(private val context: Context) {
 
     private val alarmManager by lazy { context.getSystemService(Context.ALARM_SERVICE) as AlarmManager }
 
-    fun setExactAlarm(time: Long) {
+    companion object {
+        val TAG = AlarmService::class.toString()
+    }
+
+    fun setExactAlarm(movie: MovieDomainModel, time: Long) {
+        Log.d(TAG, "setExactAlarm")
         setAlarm(time, getPendingIntent(getIntent().apply {
-            putExtra("EXACT_ALARM", time)
+            val bundle = Bundle()
+            bundle.putParcelable("MOVIE_INFO", movie)
+            putExtra("myBundle", bundle)
         }))
     }
 
+    fun stopAlarms() {
+        Log.d(TAG, "stopAlarms")
+        getPendingIntent(getIntent()).cancel()
+    }
+
+
     private fun setAlarm(time: Long, pendingIntent: PendingIntent) {
         alarmManager.let {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, time, pendingIntent)
-            } else {
-                alarmManager.setExact(AlarmManager.RTC_WAKEUP, time, pendingIntent)
-            }
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, time, pendingIntent)
         }
     }
 
@@ -38,9 +49,4 @@ class AlarmService(private val context: Context) {
             PendingIntent.FLAG_UPDATE_CURRENT
         )
     }
-}
-
-object RandomIntUtil {
-    private val seed = AtomicInteger()
-    fun getRandomInt() = seed.getAndIncrement() + System.currentTimeMillis().toInt()
 }

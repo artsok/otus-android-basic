@@ -13,7 +13,7 @@ class Movie(
     val favorite: Boolean = false,
     val selected: Boolean = false,
     val scheduled: Boolean = false,
-    val scheduledTime: String?
+    val scheduledTime: String
 ) {
     @PrimaryKey(autoGenerate = true)
     var id: Int? = null
@@ -27,6 +27,8 @@ fun Movie.toMovieDomainModel() = MovieDomainModel(
     posterPath = this.posterPath,
     backdropPath = this.backdropPath,
     favorite = this.favorite,
-    selected = this.selected
+    selected = this.selected,
+    scheduled = this.scheduled,
+    scheduledTime = this.scheduledTime
 )
 

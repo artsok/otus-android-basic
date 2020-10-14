@@ -18,7 +18,9 @@ interface MovieRepository {
     suspend fun updateDB(favorite: Boolean, id: Int)
     suspend fun updateDB(favorite: Boolean, title: String)
     suspend fun updateScheduledFields(id: Int, scheduledTime: String)
+    suspend fun updateScheduledFlag(id: Int, flag: Boolean)
 
     fun getFavoriteMoviesFromDB(): LiveData<List<Movie>>
+    fun getScheduleMoviesFromDB(): LiveData<List<Movie>>
     fun getMoviesFromDB(): LiveData<List<Movie>>
 }
