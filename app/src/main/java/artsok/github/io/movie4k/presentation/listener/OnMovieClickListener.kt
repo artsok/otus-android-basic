@@ -10,6 +10,6 @@ interface OnMovieSelectedListener {
     fun onMovieSelected(movie: MovieDomainModel)
 }
 
-interface OnScheduleListener {
-    fun onEditButtonClick()
+interface OnScheduledListener {
+    fun onEditButtonClick(movie: MovieDomainModel)
 }

@@ -78,7 +78,6 @@ class FavoriteListFragment : Fragment() {
         favoriteRecycler = view.findViewById(R.id.favorite_rc)
         favoriteRecycler.layoutManager =
             GridLayoutManager(requireContext(), GridLayoutManager.VERTICAL)
-
         favoriteAdapter = FavoriteAdapter(object : OnMovieSelectedListener {
             override fun onMovieSelected(movie: MovieDomainModel) {
                 movieViewModel.onMovieSelected(movie)

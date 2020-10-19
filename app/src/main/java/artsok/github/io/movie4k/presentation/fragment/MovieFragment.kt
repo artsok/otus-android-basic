@@ -16,22 +16,14 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import artsok.github.io.movie4k.domain.model.MovieDomainModel
+import artsok.github.io.movie4k.presentation.DateTimePickerUtil
 import artsok.github.io.movie4k.presentation.recycler.path
 import artsok.github.io.movie4k.presentation.viewmodel.MovieViewModel
 import artsok.github.io.movie4k.presentation.viewmodel.MovieViewModelFactory
 import artsok.github.io.movie4k.service.AlarmService
 import com.bumptech.glide.Glide
-import com.google.android.material.datepicker.MaterialDatePicker
-import com.google.android.material.timepicker.MaterialTimePicker
-import com.google.android.material.timepicker.TimeFormat.CLOCK_24H
-import java.time.Instant
-import java.time.ZoneId
-import java.time.ZoneOffset
-import java.time.ZonedDateTime
 
-
-//Данные которые кладем в setAlarm, сам movie не обогощен данными. Например зашел в кино, проставил лайк потом хочу заскедулить его на опр.время а приезжает херовый
-class MovieFragment : Fragment() {
+class MovieFragment : Fragment(), DateTimePickerUtil {
 
     private lateinit var imageView: ImageView
     private lateinit var title: TextView
@@ -132,7 +124,14 @@ class MovieFragment : Fragment() {
         })
         like.setOnClickListener { clickOnFavorite() }
         share.setOnClickListener { shareClick() }
-        schedule.setOnClickListener { clickScheduleMovieAlarm() }
+        schedule.setOnClickListener {
+            clickScheduleMovieAlarm(
+                fm,
+                movie,
+                movieViewModel,
+                alarmService
+            )
+        }
     }
 
     private fun shareClick() {
@@ -143,39 +142,6 @@ class MovieFragment : Fragment() {
         }
         sendIntent.resolveActivity(requireActivity().packageManager)?.let {
             startActivity(sendIntent)
-        }
-    }
-
-
-    private fun clickScheduleMovieAlarm() {
-        val builder = MaterialDatePicker.Builder.datePicker()
-        val picker = builder.build()
-        picker.show(fm, picker.toString())
-
-        picker.addOnPositiveButtonClickListener {
-            val localDateTime = ZonedDateTime.ofInstant(
-                Instant.ofEpochMilli(picker.selection!!.toLong()),
-                ZoneOffset.UTC
-            ).toLocalDate()
-
-            val materialTimePicker = MaterialTimePicker
-                .Builder()
-                .setTimeFormat(CLOCK_24H)
-                .build()
-
-            materialTimePicker.show(fm, materialTimePicker.toString())
-
-            materialTimePicker.addOnPositiveButtonClickListener {
-                val newHour = materialTimePicker.hour
-                val newMinute = materialTimePicker.minute
-                val scheduleDateTime =
-                    localDateTime.atTime(newHour, newMinute).atZone(ZoneId.systemDefault())
-                movieViewModel.updateScheduleTime(movie.uniqueId, scheduleDateTime.toString())
-
-                alarmService.setExactAlarm(movie, ZonedDateTime.now().plusSeconds(6).toInstant().toEpochMilli())
-                //alarmService.setExactAlarm(movie, scheduleDateTime.toInstant().toEpochMilli())
-                alarmService.stopAlarms()
-            }
         }
     }
 

@@ -3,6 +3,7 @@ package artsok.github.io.movie4k.domain.usecase
 import android.util.Log
 import androidx.lifecycle.LiveData
 import artsok.github.io.movie4k.data.model.Movie
+import artsok.github.io.movie4k.data.model.Schedule
 import artsok.github.io.movie4k.domain.model.MovieDomainModel
 import artsok.github.io.movie4k.domain.repository.MovieRepository
 import java.io.IOException
@@ -13,7 +14,7 @@ import java.io.IOException
 class GetMoviesUseCase(private val repository: MovieRepository) {
 
     companion object {
-        const val TAG = "GetMoviesUseCase"
+        val TAG = GetMoviesUseCase::class.toString()
     }
 
     sealed class Result {
@@ -22,7 +23,7 @@ class GetMoviesUseCase(private val repository: MovieRepository) {
     }
 
     fun getMoviesFromDB(): LiveData<List<Movie>> {
-        return repository.getMoviesFromDB();
+        return repository.getMoviesFromDB()
     }
 
     fun getFavoritesMoviesFromDB(): LiveData<List<Movie>> {
@@ -48,17 +49,17 @@ class GetMoviesUseCase(private val repository: MovieRepository) {
         movies.forEach { repository.insertToDB(it) }
     }
 
-    suspend fun deleteFromDB(movie: MovieDomainModel) {
-        repository.deleteFromDB(movie)
+    suspend fun saveScheduleInfoToDB(schedule: Schedule) {
+        repository.saveScheduleInfoToDB(schedule)
     }
 
-    suspend fun deleteMoviesFromTable() {
-        repository.deleteMoviesFromDB()
-    }
+    suspend fun getRequestCodeFromDB(title: String, time: String): Int =
+        repository.getRequestCodeFromDB(title, time)
 
-    suspend fun getMovieRecords(): Int {
-        return repository.getTotalRecordsFromDB()
-    }
+    suspend fun deleteMoviesFromTable() = repository.deleteMoviesFromDB()
+
+    suspend fun getMovieRecords(): Int = repository.getTotalRecordsFromDB()
+
 
     suspend fun getFavoriteMovieRecords(): Int {
         return repository.getFavoriteTotalRecordsFromDB()

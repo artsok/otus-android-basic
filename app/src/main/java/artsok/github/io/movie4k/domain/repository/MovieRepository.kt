@@ -2,6 +2,7 @@ package artsok.github.io.movie4k.domain.repository
 
 import androidx.lifecycle.LiveData
 import artsok.github.io.movie4k.data.model.Movie
+import artsok.github.io.movie4k.data.model.Schedule
 import artsok.github.io.movie4k.domain.model.MovieDomainModel
 
 /*
@@ -19,6 +20,8 @@ interface MovieRepository {
     suspend fun updateDB(favorite: Boolean, title: String)
     suspend fun updateScheduledFields(id: Int, scheduledTime: String)
     suspend fun updateScheduledFlag(id: Int, flag: Boolean)
+    suspend fun saveScheduleInfoToDB(schedule: Schedule)
+    suspend fun getRequestCodeFromDB(title: String, time: String): Int
 
     fun getFavoriteMoviesFromDB(): LiveData<List<Movie>>
     fun getScheduleMoviesFromDB(): LiveData<List<Movie>>

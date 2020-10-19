@@ -17,7 +17,6 @@ class Movie(
 ) {
     @PrimaryKey(autoGenerate = true)
     var id: Int? = null
-
 }
 
 fun Movie.toMovieDomainModel() = MovieDomainModel(

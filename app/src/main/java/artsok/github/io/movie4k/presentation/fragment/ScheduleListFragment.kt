@@ -14,16 +14,18 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import artsok.github.io.movie4k.R
 import artsok.github.io.movie4k.domain.model.MovieDomainModel
+import artsok.github.io.movie4k.presentation.DateTimePickerUtil
+import artsok.github.io.movie4k.presentation.listener.OnScheduledListener
 import artsok.github.io.movie4k.presentation.recycler.ScheduleAdapter
 import artsok.github.io.movie4k.presentation.viewmodel.MovieViewModel
 import artsok.github.io.movie4k.presentation.viewmodel.MovieViewModelFactory
+import artsok.github.io.movie4k.service.AlarmService
 import com.google.android.material.snackbar.Snackbar
 
-class ScheduleListFragment : Fragment() {
 
-    private val fm: FragmentManager
-        get() = activity!!.supportFragmentManager
+class ScheduleListFragment : Fragment(), DateTimePickerUtil {
 
+    private lateinit var alarmService: AlarmService
     private lateinit var scheduleRecycler: RecyclerView
     private lateinit var scheduleAdapter: ScheduleAdapter
     private val movieViewModelFactory by lazy { MovieViewModelFactory(activity!!.application) }
@@ -31,6 +33,12 @@ class ScheduleListFragment : Fragment() {
         ViewModelProvider(requireActivity(), movieViewModelFactory).get(
             MovieViewModel::class.java
         )
+    }
+    private val fm: FragmentManager
+        get() = activity!!.supportFragmentManager
+
+    private fun initAlarmService() {
+        alarmService = AlarmService(context!!)
     }
 
     companion object {
@@ -49,6 +57,7 @@ class ScheduleListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.d(TAG, "onViewCreated")
+        initAlarmService()
         initFavoriteRecycler(view)
         initViewModel()
     }
@@ -64,11 +73,22 @@ class ScheduleListFragment : Fragment() {
         })
     }
 
+
     private fun initFavoriteRecycler(view: View) {
         scheduleRecycler = view.findViewById(R.id.schedule_rc)
         scheduleRecycler.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-        scheduleAdapter = ScheduleAdapter()
+
+        scheduleAdapter = ScheduleAdapter(object : OnScheduledListener {
+            override fun onEditButtonClick(movie: MovieDomainModel) {
+                val stopRequestCode =
+                    movieViewModel.getRequestCodeForAlarmService(movie.title, movie.scheduledTime)
+                alarmService.stopAlarms(stopRequestCode)
+                movieViewModel.updateScheduleFlag(movie.uniqueId, false)
+                scheduleAdapter.removeMovie(movie)
+                clickScheduleMovieAlarm(fm, movie, movieViewModel, alarmService)
+            }
+        })
 
         val itemTouchHelper = object :
             ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
@@ -91,57 +111,11 @@ class ScheduleListFragment : Fragment() {
         }
         ItemTouchHelper(itemTouchHelper).attachToRecyclerView(scheduleRecycler)
         scheduleRecycler.adapter = scheduleAdapter
-        //scheduleAdapter.registerAdapterDataObserver(Observer(scheduleRecycler))
     }
 
 
     private fun showShackBar(movie: MovieDomainModel) {
         val snackBar = Snackbar.make(requireView(), R.string.delete_message, Snackbar.LENGTH_LONG)
         snackBar.show()
-    }
-
-
-    /**
-     * Observer for favorite list layouts. When list is empty inflate another layout.
-     * TODO: refactor - the same as in Favorite List Fragment
-     */
-    inner class Observer(private val recyclerView: RecyclerView) :
-        RecyclerView.AdapterDataObserver() {
-
-        init {
-            isFavoriteRecyclerEmpty()
-        }
-
-        override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
-            super.onItemRangeRemoved(positionStart, itemCount)
-            isFavoriteRecyclerEmpty()
-        }
-
-        override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-            super.onItemRangeInserted(positionStart, itemCount)
-            isFavoriteRecyclerNotEmpty()
-        }
-
-        private fun isFavoriteRecyclerEmpty() {
-            val emptyViewVisible = movieViewModel.getFavoriteMoviesCount() == 0
-            if (recyclerView.adapter != null && emptyViewVisible) {
-                val layout = inflateEmptyView(recyclerView)
-                layout.visibility = if (emptyViewVisible) View.VISIBLE else View.GONE
-                recyclerView.visibility = if (emptyViewVisible) View.GONE else View.VISIBLE
-            }
-        }
-
-        private fun isFavoriteRecyclerNotEmpty() {
-            val emptyViewVisible = movieViewModel.getFavoriteMoviesCount() > 0
-            if (recyclerView.adapter != null && emptyViewVisible) {
-                recyclerView.visibility = if (emptyViewVisible) View.VISIBLE else View.GONE
-            }
-        }
-
-        private fun inflateEmptyView(view: View): View {
-            return LayoutInflater.from(view.context).inflate(
-                R.layout.empty_favorite_list, view.parent as ViewGroup
-            )
-        }
     }
 }

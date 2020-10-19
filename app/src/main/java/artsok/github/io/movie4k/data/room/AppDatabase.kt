@@ -6,15 +6,18 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import artsok.github.io.movie4k.data.model.Movie
+import artsok.github.io.movie4k.data.model.Schedule
 import artsok.github.io.movie4k.data.room.dao.MovieDao
+import artsok.github.io.movie4k.data.room.dao.ScheduleDao
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@Database(entities = [Movie::class], version = 1)
+@Database(entities = [Movie::class, Schedule::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun movieDao(): MovieDao
+    abstract fun scheduleDao(): ScheduleDao
 
     companion object {
         @Volatile
@@ -39,13 +42,14 @@ abstract class AppDatabase : RoomDatabase() {
         private class DatabaseCallback(private val scope: CoroutineScope) :
             RoomDatabase.Callback() {
             /**
-             * Clear the database every time it is created or opened (debug mode)
+             * Clear the database every time it is created or opened (for debug mode)
              */
             override fun onOpen(db: SupportSQLiteDatabase) {
                 super.onOpen(db)
                 INSTANCE?.let { database ->
                     scope.launch(Dispatchers.IO) {
                         database.movieDao().deleteAll()
+                        database.scheduleDao().deleteAll()
                     }
                 }
             }

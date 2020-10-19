@@ -229,19 +229,21 @@ https://ru.stackoverflow.com/questions/470899/%D0%94%D0%BB%D1%8F-%D1%87%D0%B5%D0
 
 ## Homework #8
 ENG:
-Working with AlarmManager
+Working with AlarmManager. New functionality were added:
+1. Add to the application the functionality of adding a movie to the "Watch Later" list
+2. When adding, you must set the date of the reminder
+3. When the required date comes, a push notification should appear
+4. Clicking on the push notification should open the movie's detailed page
+5. * Add a "Watch Later" list display to the application where you can change the date of the reminder
 
 RUS:
 1. Добавьте в приложение функционал добавление фильма в список "Посмотреть позже" +
 2. При добавлении необходимо указывать дату напоминания +
 3. При наступлении необходимой даты должно появляться пуш уведомление +
 4. Переход по пуш уведомлению должен открывать детальную страницу фильма +
-5.* Добавьте в приложение отображение списка "Посмотреть позже", в котором можно будет изменять дату напоминания
+5.* Добавьте в приложение отображение списка "Посмотреть позже", в котором можно будет изменять дату напоминания +
 
-Информация:
-Когда запускаю через IDEA и потом стартую AlarmManager, закрываю приложение, оповещения не приходит.
-Если запустить приложение не через IDEA, а с эмулятора, то все ок.
-
+Что было прочитано?
 https://developer.android.com/guide/components/services?hl=ru
 https://habr.com/ru/post/186434/ - Tasks и Back Stack в Android
 https://habr.com/ru/company/jugru/blog/351166/ - Руководство по фоновой работе в Android. Часть 3: Executors и EventBus

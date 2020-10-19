@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.*
+import artsok.github.io.movie4k.data.model.Schedule
 import artsok.github.io.movie4k.data.model.toMovieDomainModel
 import artsok.github.io.movie4k.data.repository.MovieRepositoryImpl
 import artsok.github.io.movie4k.data.retrofit.MovieApi
@@ -17,6 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.time.LocalTime
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -33,7 +35,8 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
     private val useCase = GetMoviesUseCase(
         MovieRepositoryImpl(
             MovieApi.movieService,
-            AppDatabase.getInstance(getApplication(), viewModelScope).movieDao()
+            AppDatabase.getInstance(getApplication(), viewModelScope).movieDao(),
+            AppDatabase.getInstance(getApplication(), viewModelScope).scheduleDao()
         )
     )
 
@@ -143,7 +146,7 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
     /**
      * Return the LiveData of schedule movies
      */
-    fun getScheduleMovies() : LiveData<List<MovieDomainModel>> {
+    fun getScheduleMovies(): LiveData<List<MovieDomainModel>> {
         return Transformations.map(useCase.getScheduleMoviesFromDB()) {
             val moviesDomain = mutableListOf<MovieDomainModel>()
             it.forEach { k -> moviesDomain.add(k.toMovieDomainModel()) }
@@ -201,10 +204,35 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
 
     fun updateScheduleTime(id: Int, time: String) {
         runBlocking {
-            launch (Dispatchers.IO) {
+            launch(Dispatchers.IO) {
                 useCase.updateMovieScheduledTime(id, time)
             }
         }
+    }
+
+
+    /**
+     * Save schedule information for Alarm canceling or other actions
+     */
+    fun saveScheduleInfo(title: String, requestCode: Int, time: Long) {
+        val schedule = Schedule(title, requestCode, time.toString())
+        runBlocking {
+            launch(Dispatchers.IO) {
+                useCase.saveScheduleInfoToDB(schedule)
+            }
+        }
+    }
+
+    /**
+     * Return Request Code for Alarm Service (Pending Intent). Behavior related with stop alarming of notifications
+     */
+    fun getRequestCodeForAlarmService(title: String, time: String): Int {
+        var requestCode: Int
+        runBlocking(Dispatchers.IO) {
+            val zdt = ZonedDateTime.parse(time).toInstant().toEpochMilli().toString()
+            requestCode = useCase.getRequestCodeFromDB(title, zdt)
+        }
+        return requestCode
     }
 
     /**
@@ -212,7 +240,7 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
      */
     fun updateScheduleFlag(id: Int, flag: Boolean) {
         runBlocking {
-            launch (Dispatchers.IO) {
+            launch(Dispatchers.IO) {
                 useCase.updateScheduledField(id, flag)
             }
         }

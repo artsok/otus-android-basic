@@ -15,6 +15,10 @@ import artsok.github.io.movie4k.domain.model.MovieDomainModel
 import artsok.github.io.movie4k.presentation.MainActivity
 import artsok.github.io.movie4k.util.RandomIntUtil
 
+const val BUNDLE_NAME = "myBundle"
+const val MOVIE_INFO = "MOVIE_INFO"
+const val ALARM_NOTIFICATION_SCHEDULE = "ALARM_NOTIFICATION_SCHEDULE"
+
 class AlarmReceiver : BroadcastReceiver() {
 
     companion object {
@@ -30,16 +34,21 @@ class AlarmReceiver : BroadcastReceiver() {
 
 
     private fun showNotification(context: Context, intent: Intent) {
-        val bundle = intent.getBundleExtra("myBundle")
-        val movie = bundle.getParcelable("MOVIE_INFO") as MovieDomainModel
+        val bundle = intent.getBundleExtra(BUNDLE_NAME)
+        val movie = bundle.getParcelable(MOVIE_INFO) as MovieDomainModel
         val mainActivityIntent = Intent(context, MainActivity::class.java)
-        mainActivityIntent.putExtra("ALARM_NOTIFICATION_SCHEDULE", movie)
-        val pendingIntent = PendingIntent.getActivity(context, 0, mainActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        mainActivityIntent.putExtra(ALARM_NOTIFICATION_SCHEDULE, movie)
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            0,
+            mainActivityIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "Channel name" // getString(R.string.channel_name)
-            val description = "Channel description" //getString(R.string.channel_description)
+            val name = "Channel name"
+            val description = "Channel description"
             val importance = NotificationManager.IMPORTANCE_DEFAULT
             val channel = NotificationChannel(CHANNEL_ID, name, importance)
             channel.description = description
@@ -52,14 +61,8 @@ class AlarmReceiver : BroadcastReceiver() {
             .setContentTitle("Your should to watch it!")
             .setContentText(movie.title)
             .setSmallIcon(R.drawable.ic_like)
-            .setPriority(NotificationCompat.PRIORITY_LOW) // Set the intent that will fire when the user taps the notification
+            .setPriority(NotificationCompat.PRIORITY_LOW)
             .setContentIntent(pendingIntent)
-
-            /*.addAction(R.drawable.baseline_details_24, "Click me", pendingIntent)*/
-            /* .setStyle(NotificationCompat.BigPictureStyle().bigPicture(BitmapFactory.decodeResource(resources,
-                    R.drawable.sq500x500))
-                    .setSummaryText("Summary"))*/
-            /*.setStyle(NotificationCompat.BigTextStyle().bigText(resources.getString(R.string.lorem_ipsum)))*/
             .setAutoCancel(true)
         val notificationManager = NotificationManagerCompat.from(context)
         // notificationId is a unique int for each notification that you must define

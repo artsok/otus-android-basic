@@ -8,7 +8,8 @@ import android.os.Bundle
 import android.util.Log
 import artsok.github.io.movie4k.domain.model.MovieDomainModel
 import artsok.github.io.movie4k.receiver.AlarmReceiver
-import artsok.github.io.movie4k.util.RandomIntUtil
+import artsok.github.io.movie4k.receiver.BUNDLE_NAME
+import artsok.github.io.movie4k.receiver.MOVIE_INFO
 
 class AlarmService(private val context: Context) {
 
@@ -18,20 +19,18 @@ class AlarmService(private val context: Context) {
         val TAG = AlarmService::class.toString()
     }
 
-    fun setExactAlarm(movie: MovieDomainModel, time: Long) {
-        Log.d(TAG, "setExactAlarm")
+    fun setExactAlarm(movie: MovieDomainModel, time: Long, requestCode: Int) {
         setAlarm(time, getPendingIntent(getIntent().apply {
             val bundle = Bundle()
-            bundle.putParcelable("MOVIE_INFO", movie)
-            putExtra("myBundle", bundle)
-        }))
+            bundle.putParcelable(MOVIE_INFO, movie)
+            putExtra(BUNDLE_NAME, bundle)
+        }, requestCode))
     }
 
-    fun stopAlarms() {
-        Log.d(TAG, "stopAlarms")
-        getPendingIntent(getIntent()).cancel()
+    fun stopAlarms(requestCode: Int) {
+        Log.d(TAG, "stopAlarm for $requestCode")
+        getPendingIntent(getIntent(), requestCode).cancel()
     }
-
 
     private fun setAlarm(time: Long, pendingIntent: PendingIntent) {
         alarmManager.let {
@@ -41,12 +40,11 @@ class AlarmService(private val context: Context) {
 
     private fun getIntent(): Intent = Intent(context, AlarmReceiver::class.java)
 
-    private fun getPendingIntent(intent: Intent): PendingIntent {
-        return PendingIntent.getBroadcast(
+    private fun getPendingIntent(intent: Intent, requestCode: Int) =
+        PendingIntent.getBroadcast(
             context,
-            RandomIntUtil.getRandomInt(),
+            requestCode,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT
         )
-    }
 }
