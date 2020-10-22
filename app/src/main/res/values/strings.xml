@@ -3,6 +3,7 @@
     <string name="movie_hint">Оставьте свой отзыв</string>
     <string name="movie_feedback">Рецензии</string>
     <string name="movie_like">Лайк</string>
+    <string name="movie_schedule">Watch later</string>
     <string name="share">Поделиться</string>
     <string name="movie_image">Обложка фильма</string>
     <string name="custom_dialog_title">Внимание</string>
@@ -18,4 +19,6 @@
     <string name="revert_delete_message">Отменить</string>
     <string name="movie_list">КиноПоиск</string>
     <string name="theme">Тема</string>
+    <string name="schedule">Посмотреть позже</string>
+    <string name="edit_icon">Редактирование времении напоминания</string>
 </resources>

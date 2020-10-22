@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.*
+import artsok.github.io.movie4k.data.model.Schedule
 import artsok.github.io.movie4k.data.model.toMovieDomainModel
 import artsok.github.io.movie4k.data.repository.MovieRepositoryImpl
 import artsok.github.io.movie4k.data.retrofit.MovieApi
@@ -17,6 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.time.LocalTime
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -27,14 +29,14 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
     private val sharedPref = application.getSharedPreferences(preferName, Context.MODE_PRIVATE)
 
     private var page = AtomicInteger(pageInit)
-    private val favoriteLiveData = MutableLiveData<List<MovieDomainModel>>()
     private val moviesLiveData = MutableLiveData<List<MovieDomainModel>>()
     private val errorLiveData = MutableLiveData<String>()
     private val selectedMovieLiveData = MutableLiveData<MovieDomainModel>()
     private val useCase = GetMoviesUseCase(
         MovieRepositoryImpl(
             MovieApi.movieService,
-            AppDatabase.getInstance(getApplication(), viewModelScope).movieDao()
+            AppDatabase.getInstance(getApplication(), viewModelScope).movieDao(),
+            AppDatabase.getInstance(getApplication(), viewModelScope).scheduleDao()
         )
     )
 
@@ -92,10 +94,6 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
         moviesLiveData.postValue(listOf())
     }
 
-    fun resetFavoriteLiveDataValue() {
-        favoriteLiveData.postValue(listOf())
-    }
-
     fun onErrorDisplayed() {
         errorLiveData.postValue(null)
     }
@@ -135,10 +133,21 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /**
-     * Return the LiveData of favorite movies by using MovieDomainModel
+     * Return the LiveData of favorite movies
      */
     fun getFavoriteMovies(): LiveData<List<MovieDomainModel>> {
         return Transformations.map(useCase.getFavoritesMoviesFromDB()) {
+            val moviesDomain = mutableListOf<MovieDomainModel>()
+            it.forEach { k -> moviesDomain.add(k.toMovieDomainModel()) }
+            return@map moviesDomain.toList()
+        }
+    }
+
+    /**
+     * Return the LiveData of schedule movies
+     */
+    fun getScheduleMovies(): LiveData<List<MovieDomainModel>> {
+        return Transformations.map(useCase.getScheduleMoviesFromDB()) {
             val moviesDomain = mutableListOf<MovieDomainModel>()
             it.forEach { k -> moviesDomain.add(k.toMovieDomainModel()) }
             return@map moviesDomain.toList()
@@ -156,7 +165,7 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
     /**
      * Download movies from network and post to LiveData
      */
-    fun getMoviesByPage(page: Int) {
+    private fun getMoviesByPage(page: Int) {
         viewModelScope.launch {
             useCase.fetchPopularMovies(page).also { result ->
                 when (result) {
@@ -189,6 +198,50 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
         runBlocking {
             launch(Dispatchers.IO) {
                 useCase.updateFavoriteField(false, id)
+            }
+        }
+    }
+
+    fun updateScheduleTime(id: Int, time: String) {
+        runBlocking {
+            launch(Dispatchers.IO) {
+                useCase.updateMovieScheduledTime(id, time)
+            }
+        }
+    }
+
+
+    /**
+     * Save schedule information for Alarm canceling or other actions
+     */
+    fun saveScheduleInfo(title: String, requestCode: Int, time: Long) {
+        val schedule = Schedule(title, requestCode, time.toString())
+        runBlocking {
+            launch(Dispatchers.IO) {
+                useCase.saveScheduleInfoToDB(schedule)
+            }
+        }
+    }
+
+    /**
+     * Return Request Code for Alarm Service (Pending Intent). Behavior related with stop alarming of notifications
+     */
+    fun getRequestCodeForAlarmService(title: String, time: String): Int {
+        var requestCode: Int
+        runBlocking(Dispatchers.IO) {
+            val zdt = ZonedDateTime.parse(time).toInstant().toEpochMilli().toString()
+            requestCode = useCase.getRequestCodeFromDB(title, zdt)
+        }
+        return requestCode
+    }
+
+    /**
+     * Update field for schedule flag
+     */
+    fun updateScheduleFlag(id: Int, flag: Boolean) {
+        runBlocking {
+            launch(Dispatchers.IO) {
+                useCase.updateScheduledField(id, flag)
             }
         }
     }

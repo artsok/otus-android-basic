@@ -18,7 +18,7 @@ class FavoriteAdapter(
     private val favorites = ArrayList<MovieDomainModel>()
 
     companion object {
-        const val TAG = "FavoriteAdapter"
+        val TAG = FavoriteAdapter::class.toString()
     }
 
     fun addFavoritesMovies(movies: List<MovieDomainModel>) {
@@ -38,12 +38,14 @@ class FavoriteAdapter(
         return MovieViewHolder(cardView)
     }
 
-    //Удалить значения
+    /**
+     * Removed item from favorite list
+     */
     internal fun removeItem(position: Int) {
         this.favorites.removeAt(position)
         Log.d(TAG, "Удалили элемент из массива")
         notifyItemRemoved(position)
-        Log.d(TAG, "Обновить")
+        Log.d(TAG, "Updated items on adapter")
     }
 
     internal fun getItem(position: Int): MovieDomainModel {

@@ -12,16 +12,18 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import artsok.github.io.movie4k.domain.model.MovieDomainModel
+import artsok.github.io.movie4k.presentation.DateTimePickerUtil
 import artsok.github.io.movie4k.presentation.recycler.path
 import artsok.github.io.movie4k.presentation.viewmodel.MovieViewModel
 import artsok.github.io.movie4k.presentation.viewmodel.MovieViewModelFactory
+import artsok.github.io.movie4k.service.AlarmService
 import com.bumptech.glide.Glide
 
-
-class MovieFragment : Fragment() {
+class MovieFragment : Fragment(), DateTimePickerUtil {
 
     private lateinit var imageView: ImageView
     private lateinit var title: TextView
@@ -29,10 +31,15 @@ class MovieFragment : Fragment() {
     private lateinit var comment: EditText
     private lateinit var like: ImageView
     private lateinit var share: ImageView
+    private lateinit var schedule: ImageView
     private lateinit var movie: MovieDomainModel
+    private lateinit var alarmService: AlarmService
 
     private var favorite: Boolean = false
     private var userComment: StringBuilder = StringBuilder()
+
+    private val fm: FragmentManager
+        get() = activity!!.supportFragmentManager
 
     private val movieViewModelFactory by lazy { MovieViewModelFactory(activity!!.application) }
     private val movieViewModel by lazy {
@@ -42,7 +49,7 @@ class MovieFragment : Fragment() {
     }
 
     companion object {
-        const val TAG = "MovieFragment"
+        val TAG = MovieFragment::class.toString()
     }
 
     override fun onResume() {
@@ -63,6 +70,7 @@ class MovieFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         Log.d(TAG, "In onViewCreated method")
         initViews(view)
+        initAlarmService()
 
         movieViewModel.selectedMovie.observe(
             this.viewLifecycleOwner,
@@ -88,6 +96,11 @@ class MovieFragment : Fragment() {
         comment = view.findViewById(R.id.movie_comment)
         like = view.findViewById(R.id.movie_like)
         share = view.findViewById(R.id.movie_share_friend)
+        schedule = view.findViewById(R.id.movie_schedule)
+    }
+
+    private fun initAlarmService() {
+        alarmService = AlarmService(context!!)
     }
 
     override fun onPause() {
@@ -111,6 +124,14 @@ class MovieFragment : Fragment() {
         })
         like.setOnClickListener { clickOnFavorite() }
         share.setOnClickListener { shareClick() }
+        schedule.setOnClickListener {
+            clickScheduleMovieAlarm(
+                fm,
+                movie,
+                movieViewModel,
+                alarmService
+            )
+        }
     }
 
     private fun shareClick() {
@@ -129,11 +150,13 @@ class MovieFragment : Fragment() {
             Log.d(TAG, "unselect favorite icon")
             like.setImageResource(R.drawable.ic_like)
             movieViewModel.unMoveToFavorite(movie.uniqueId)
+            movie.favorite = false
             false
         } else {
             Log.d(TAG, "select favorite icon")
             like.setImageResource(R.drawable.ic_favorite_border_black_24dp)
             movieViewModel.moveToFavorite(movie.uniqueId)
+            movie.favorite = true
             true
         }
     }

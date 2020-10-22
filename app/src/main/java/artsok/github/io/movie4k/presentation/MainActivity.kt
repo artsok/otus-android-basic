@@ -1,5 +1,6 @@
 package artsok.github.io.movie4k.presentation
 
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
@@ -7,20 +8,32 @@ import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate.*
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import artsok.github.io.movie4k.MovieFragment
 import artsok.github.io.movie4k.R
+import artsok.github.io.movie4k.domain.model.MovieDomainModel
 import artsok.github.io.movie4k.presentation.dialog.CustomDialog
 import artsok.github.io.movie4k.presentation.fragment.FavoriteListFragment
 import artsok.github.io.movie4k.presentation.fragment.MovieListFragment
+import artsok.github.io.movie4k.presentation.fragment.ScheduleListFragment
 import artsok.github.io.movie4k.presentation.listener.OnMovieClickListener
+import artsok.github.io.movie4k.presentation.viewmodel.MovieViewModel
+import artsok.github.io.movie4k.presentation.viewmodel.MovieViewModelFactory
+import artsok.github.io.movie4k.receiver.ALARM_NOTIFICATION_SCHEDULE
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity(), OnMovieClickListener {
 
     private lateinit var bottomNavigation: BottomNavigationView
+    private val movieViewModelFactory by lazy { MovieViewModelFactory(application) }
+    private val movieViewModel by lazy {
+        ViewModelProvider(this, movieViewModelFactory).get(
+            MovieViewModel::class.java
+        )
+    }
 
     companion object {
-        const val TAG = "MainActivity"
+        val TAG = MainActivity::class.toString()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,6 +47,20 @@ class MainActivity : AppCompatActivity(), OnMovieClickListener {
         }
         initViews()
         initClickListener()
+        onNewIntent(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        val bundle = intent.extras
+        if (bundle != null) {
+            if (bundle.containsKey(ALARM_NOTIFICATION_SCHEDULE)) {
+                val movie = bundle.getParcelable(ALARM_NOTIFICATION_SCHEDULE) as MovieDomainModel
+                movieViewModel.onMovieSelected(movie)
+                movieViewModel.updateScheduleFlag(movie.uniqueId, false)
+                openMovie()
+            }
+        }
     }
 
     override fun onBackPressed() {
@@ -77,6 +104,14 @@ class MainActivity : AppCompatActivity(), OnMovieClickListener {
         }
     }
 
+    private fun openScheduleMoviesList() {
+        val scheduleListFragment: ScheduleListFragment? =
+            supportFragmentManager.findFragmentByTag(ScheduleListFragment.TAG) as ScheduleListFragment?
+        if (scheduleListFragment == null || !scheduleListFragment.isAdded) {
+            commitFragment(ScheduleListFragment(), ScheduleListFragment.TAG)
+        }
+    }
+
     private fun commitFragment(fragment: Fragment, tag: String, backStackName: String? = null) {
         val beginTransaction = supportFragmentManager.beginTransaction()
         beginTransaction
@@ -101,6 +136,10 @@ class MainActivity : AppCompatActivity(), OnMovieClickListener {
                 }
                 R.id.bottomNavigationTheme -> {
                     changeTheme()
+                    return@setOnNavigationItemSelectedListener true
+                }
+                R.id.bottomSchedule -> {
+                    openScheduleMoviesList()
                     return@setOnNavigationItemSelectedListener true
                 }
             }

@@ -223,7 +223,41 @@ https://github.com/googlecodelabs/android-room-with-a-view
 https://github.com/DimaKoz/DemoRoom/blob/master/app/build.gradle
 https://devcolibri.com/7-pro-tips-for-room/
 https://quares.ru/?id=2937 - Running on another thread but still blocking the main thread
+https://ru.stackoverflow.com/questions/470899/%D0%94%D0%BB%D1%8F-%D1%87%D0%B5%D0%B3%D0%BE-%D0%BD%D1%83%D0%B6%D0%BD%D0%B0-%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B0-eventbus-%D0%B8%D0%BB%D0%B8-%D0%B5%D1%91-%D0%B0%D0%BD%D0%B0%D0%BB%D0%BE%D0%B3-otto -про ЕвентБас
 
+
+
+## Homework #8
+ENG:
+Working with AlarmManager. New functionality were added:
+1. Add to the application the functionality of adding a movie to the "Watch Later" list
+2. When adding, you must set the date of the reminder
+3. When the required date comes, a push notification should appear
+4. Clicking on the push notification should open the movie's detailed page
+5. * Add a "Watch Later" list display to the application where you can change the date of the reminder
+
+RUS:
+1. Добавьте в приложение функционал добавление фильма в список "Посмотреть позже" +
+2. При добавлении необходимо указывать дату напоминания +
+3. При наступлении необходимой даты должно появляться пуш уведомление +
+4. Переход по пуш уведомлению должен открывать детальную страницу фильма +
+5.* Добавьте в приложение отображение списка "Посмотреть позже", в котором можно будет изменять дату напоминания +
+
+Что было прочитано?
+https://developer.android.com/guide/components/services?hl=ru
+https://habr.com/ru/post/186434/ - Tasks и Back Stack в Android
+https://habr.com/ru/company/jugru/blog/351166/ - Руководство по фоновой работе в Android. Часть 3: Executors и EventBus
+https://hackernoon.com/how-to-use-new-material-date-picker-for-android-s7k32w0
+https://www.youtube.com/watch?v=D0VpASTpgmw - объясняет пример по работе с datetimepiker
+https://stackoverflow.com/questions/46728857/kotlin-parcelable-class-throwing-classnotfoundexception/46766285 - Была проблема с передачей parcelable объекта. Потребоволась применять bundle. В дебагере посмотрел было имя другое у бандла.
+https://startandroid.ru/ru/uroki/vse-uroki-spiskom/190-urok-116-povedenie-activity-v-task-intent-flagi-launchmode-affinity.html - про флаги интентов
+https://stackoverflow.com/questions/35451309/open-fragment-from-notification-when-the-app-in-background - как открывать фрагмент через нотификацию
+https://developer.android.com/training/scheduling/alarms#boot - Start an alarm when the device restarts
 
 Интересно про Dagger:
 https://medium.com/@marco_cattaneo/android-viewmodel-and-factoryprovider-good-way-to-manage-it-with-dagger-2-d9e20a07084c
+https://proandroiddev.com/forget-rxjava-kotlin-coroutines-are-all-you-need-part-1-2-4f62ecc4f99b
+
+Note: Initially for me also not worked,After Seeing many posts i realized that the pending intent to be canceled should be same as the
+original pending intent that was used to schedule alarm. The pending intent to be cancelled should have set to same action and same data fields,
+if any have those were used to set the alarm.After setting the same ACTION and data values though i'm not using them,only cancelled the Alarm.

@@ -12,7 +12,9 @@ data class MovieDomainModel(
     val posterPath: String,
     val backdropPath: String,
     var selected: Boolean = false,
-    var favorite: Boolean = false
+    var favorite: Boolean = false,
+    var scheduled: Boolean = false,
+    var scheduledTime: String = ""
 ) : Parcelable
 
 internal fun MovieDomainModel.toModel() = Movie(
@@ -20,6 +22,7 @@ internal fun MovieDomainModel.toModel() = Movie(
     description = this.description,
     posterPath = this.posterPath,
     backdropPath = this.posterPath,
-    favorite = this.favorite
-
+    favorite = this.favorite,
+    scheduled = false,
+    scheduledTime = ""
 )
