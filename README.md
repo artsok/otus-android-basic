@@ -254,6 +254,18 @@ https://startandroid.ru/ru/uroki/vse-uroki-spiskom/190-urok-116-povedenie-activi
 https://stackoverflow.com/questions/35451309/open-fragment-from-notification-when-the-app-in-background - как открывать фрагмент через нотификацию
 https://developer.android.com/training/scheduling/alarms#boot - Start an alarm when the device restarts
 
+## Homework #9
+Сервисы Firebase.
+Цель: +1 балл за попытку
++1 балл за выполнение основного задания
++1 балл за выполнения задания со звездочкой *
+1. Добавьте crashlytics в свое приложение
+2. Добавьте в приложение Firebase Cloud Messaging
+3. Добавьте пуш уведомление из FCM, которое будет содержать всю информацию о фильме и, соответственно, открывать её при клике
+* 4. Добавьте Remote Config в свое приложение и передавайте какие-нибудь данные. Например, "категорию фильма по-умолчанию",
+чтобы удаленно можно было задать, какой список фильмов грузить (топ за неделю, топ за все время, свежие и т.д.)
+
+
 Интересно про Dagger:
 https://medium.com/@marco_cattaneo/android-viewmodel-and-factoryprovider-good-way-to-manage-it-with-dagger-2-d9e20a07084c
 https://proandroiddev.com/forget-rxjava-kotlin-coroutines-are-all-you-need-part-1-2-4f62ecc4f99b
