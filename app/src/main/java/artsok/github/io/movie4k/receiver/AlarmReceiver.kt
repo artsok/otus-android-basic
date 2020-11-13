@@ -35,7 +35,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
     private fun showNotification(context: Context, intent: Intent) {
         val bundle = intent.getBundleExtra(BUNDLE_NAME)
-        val movie = bundle.getParcelable(MOVIE_INFO) as MovieDomainModel
+        val movie = bundle?.getParcelable<MovieDomainModel>(MOVIE_INFO) as MovieDomainModel
         val mainActivityIntent = Intent(context, MainActivity::class.java)
         mainActivityIntent.putExtra(ALARM_NOTIFICATION_SCHEDULE, movie)
         val pendingIntent = PendingIntent.getActivity(

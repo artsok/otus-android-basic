@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity(), OnMovieClickListener {
         val bundle = intent.extras
         if (bundle != null) {
             if (bundle.containsKey(ALARM_NOTIFICATION_SCHEDULE)) {
-                val movie = bundle.getParcelable(ALARM_NOTIFICATION_SCHEDULE) as MovieDomainModel
+                val movie = bundle.getParcelable<MovieDomainModel>(ALARM_NOTIFICATION_SCHEDULE) as MovieDomainModel
                 movieViewModel.onMovieSelected(movie)
                 movieViewModel.updateScheduleFlag(movie.uniqueId, false)
                 openMovie()

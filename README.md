@@ -263,6 +263,24 @@ https://developer.android.com/training/scheduling/alarms#boot - Start an alarm w
 * 4. Добавьте Remote Config в свое приложение и передавайте какие-нибудь данные. Например, "категорию фильма по-умолчанию",
 чтобы удаленно можно было задать, какой список фильмов грузить (топ за неделю, топ за все время, свежие и т.д.)
 
+Что было прочитано?
+https://firebase.google.com/docs/crashlytics/test-implementation?authuser=0&platform=android - Протестируйте свою реализацию Crashlytics
+```
+adb shell setprop log.tag.FirebaseCrashlytics DEBUG
+adb logcat -s FirebaseCrashlytics
+adb shell setprop log.tag.FirebaseCrashlytics INFO
+```
+
+https://firebase.google.com/docs/crashlytics/get-started?authuser=0&platform=android - Подключение Crashlytics
+https://support.google.com/firebase/answer/6317498?hl=en&ref_topic=6317484 - Описание Events: All apps для FirebaseAnalytics
+https://guides.codepath.com/android/Understanding-the-Android-Application-Class - Understanding the Android Application Class
+
+Работа с Events
+```
+adb shell setprop log.tag.FA VERBOSE
+adb shell setprop log.tag.FA-SVC VERBOSE
+adb logcat -v time -s FA FA-SVC
+```
 
 Интересно про Dagger:
 https://medium.com/@marco_cattaneo/android-viewmodel-and-factoryprovider-good-way-to-manage-it-with-dagger-2-d9e20a07084c
