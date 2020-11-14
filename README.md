@@ -257,7 +257,7 @@ https://developer.android.com/training/scheduling/alarms#boot - Start an alarm w
 ## Homework #9
 Сервисы Firebase.
 Цель: +1 балл за попытку
-1. Добавьте crashlytics в свое приложение
++ 1. Добавьте crashlytics в свое приложение //Добавил Events во класс MovieFragment
 2. Добавьте в приложение Firebase Cloud Messaging
 3. Добавьте пуш уведомление из FCM, которое будет содержать всю информацию о фильме и, соответственно, открывать её при клике
 * 4. Добавьте Remote Config в свое приложение и передавайте какие-нибудь данные. Например, "категорию фильма по-умолчанию",
@@ -277,9 +277,22 @@ https://guides.codepath.com/android/Understanding-the-Android-Application-Class 
 
 Работа с Events
 ```
+adb devices
 adb shell setprop log.tag.FA VERBOSE
 adb shell setprop log.tag.FA-SVC VERBOSE
 adb logcat -v time -s FA FA-SVC
+```
+
+
+DebugView
+```
+Чтобы включить режим отладки Google Analytics на устройстве Android, выполните следующие команды:
+
+adb shell setprop debug.firebase.analytics.app artsok.github.io.movie4k 
+
+Это поведение сохраняется до тех пор, пока вы явно не отключите режим отладки, выполнив следующую команду:
+
+adb shell setprop debug.firebase.analytics.app .none.
 ```
 
 Интересно про Dagger:
@@ -288,4 +301,4 @@ https://proandroiddev.com/forget-rxjava-kotlin-coroutines-are-all-you-need-part-
 
 Note: Initially for me also not worked,After Seeing many posts i realized that the pending intent to be canceled should be same as the
 original pending intent that was used to schedule alarm. The pending intent to be cancelled should have set to same action and same data fields,
-if any have those were used to set the alarm.After setting the same ACTION and data values though i'm not using them,only cancelled the Alarm.
+if any have those were used to set the alarm. After setting the same ACTION and data values though i'm not using them,only cancelled the Alarm.

@@ -126,7 +126,6 @@ class MovieFragment : Fragment(), DateTimePickerUtil {
             }
         })
         like.setOnClickListener {
-            firebaseAnalytics.logEventMethod("on_click_favorite", movie)
             clickOnFavorite()
         }
         share.setOnClickListener { shareClick() }
@@ -163,6 +162,7 @@ class MovieFragment : Fragment(), DateTimePickerUtil {
             like.setImageResource(R.drawable.ic_favorite_border_black_24dp)
             movieViewModel.moveToFavorite(movie.uniqueId)
             movie.favorite = true
+            firebaseAnalytics.logEventMethod("on_click_favorite", movie)
             true
         }
     }
