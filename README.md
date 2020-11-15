@@ -284,16 +284,17 @@ adb logcat -v time -s FA FA-SVC
 ```
 
 
-DebugView
+DebugView - очень долгий update у меня был (и большая часть event не доходила.)
 ```
 Чтобы включить режим отладки Google Analytics на устройстве Android, выполните следующие команды:
 
-adb shell setprop debug.firebase.analytics.app artsok.github.io.movie4k 
+adb shell setprop debug.firebase.analytics.app artsok.github.io.movie4k
 
 Это поведение сохраняется до тех пор, пока вы явно не отключите режим отладки, выполнив следующую команду:
 
 adb shell setprop debug.firebase.analytics.app .none.
 ```
+
 
 Интересно про Dagger:
 https://medium.com/@marco_cattaneo/android-viewmodel-and-factoryprovider-good-way-to-manage-it-with-dagger-2-d9e20a07084c
