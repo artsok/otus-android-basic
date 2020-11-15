@@ -20,5 +20,13 @@
             </intent-filter>
         </activity>
         <receiver android:name=".receiver.AlarmReceiver" />
+        <service
+            android:name=".service.MovieFirebaseMessagingService"
+            android:exported="false"> <!--available only for our app-->
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
+    <uses-permission android:name="android.permission.VIBRATE"/>
 </manifest>
