@@ -19,7 +19,8 @@ import artsok.github.io.movie4k.presentation.fragment.ScheduleListFragment
 import artsok.github.io.movie4k.presentation.listener.OnMovieClickListener
 import artsok.github.io.movie4k.presentation.viewmodel.MovieViewModel
 import artsok.github.io.movie4k.presentation.viewmodel.MovieViewModelFactory
-import artsok.github.io.movie4k.receiver.ALARM_NOTIFICATION_SCHEDULE
+import artsok.github.io.movie4k.receiver.NOTIFICATION_SCHEDULE
+import artsok.github.io.movie4k.service.NOTIFICATION_FCM
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity(), OnMovieClickListener {
@@ -54,10 +55,14 @@ class MainActivity : AppCompatActivity(), OnMovieClickListener {
         super.onNewIntent(intent)
         val bundle = intent.extras
         if (bundle != null) {
-            if (bundle.containsKey(ALARM_NOTIFICATION_SCHEDULE)) {
-                val movie = bundle.getParcelable<MovieDomainModel>(ALARM_NOTIFICATION_SCHEDULE) as MovieDomainModel
+            if (bundle.containsKey(NOTIFICATION_SCHEDULE)) {
+                val movie = bundle.getParcelable<MovieDomainModel>(NOTIFICATION_SCHEDULE) as MovieDomainModel
                 movieViewModel.onMovieSelected(movie)
                 movieViewModel.updateScheduleFlag(movie.uniqueId, false)
+                openMovie()
+            } else if (bundle.containsKey(NOTIFICATION_FCM)) {
+                val movie = bundle.getParcelable<MovieDomainModel>(NOTIFICATION_FCM) as MovieDomainModel
+                movieViewModel.onMovieSelected(movie)
                 openMovie()
             }
         }

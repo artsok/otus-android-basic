@@ -45,6 +45,15 @@ class GetMoviesUseCase(private val repository: MovieRepository) {
         }
     }
 
+    suspend fun fetchMovieById(id: Int): Result {
+        Log.d(TAG, "Get movie's info by $id")
+        return try {
+            Result.Success(listOf(repository.getMovie(id)))
+        } catch (e: IOException) {
+            Result.Error(e)
+        }
+    }
+
     suspend fun insertToDB(movies: List<MovieDomainModel>) {
         movies.forEach { repository.insertToDB(it) }
     }
@@ -59,7 +68,6 @@ class GetMoviesUseCase(private val repository: MovieRepository) {
     suspend fun deleteMoviesFromTable() = repository.deleteMoviesFromDB()
 
     suspend fun getMovieRecords(): Int = repository.getTotalRecordsFromDB()
-
 
     suspend fun getFavoriteMovieRecords(): Int {
         return repository.getFavoriteTotalRecordsFromDB()

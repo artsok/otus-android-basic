@@ -10,16 +10,19 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import artsok.github.io.movie4k.R
-import artsok.github.io.movie4k.data.repository.MovieRepositoryImpl
+import artsok.github.io.movie4k.data.model.toDomainModel
 import artsok.github.io.movie4k.data.retrofit.MovieApi
-import artsok.github.io.movie4k.data.room.AppDatabase
-import artsok.github.io.movie4k.domain.usecase.GetMoviesUseCase
 import artsok.github.io.movie4k.presentation.MainActivity
 import artsok.github.io.movie4k.util.RandomIntUtil
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
+
+const val NOTIFICATION_FCM = "ALARM_NOTIFICATION_SCHEDULE"
+const val ANY_MOVIE_RANDOM_ID = 1
 
 class MovieFirebaseMessagingService : FirebaseMessagingService() {
 
@@ -27,17 +30,8 @@ class MovieFirebaseMessagingService : FirebaseMessagingService() {
         val TAG = MovieFirebaseMessagingService::class.toString()
     }
 
-    private val useCase = GetMoviesUseCase(
-        MovieRepositoryImpl(
-            MovieApi.movieService,
-            AppDatabase.getInstance(this, CoroutineScope(Dispatchers.IO)).movieDao(),
-            AppDatabase.getInstance(this, CoroutineScope(Dispatchers.IO)).scheduleDao()
-        )
-    )
+    private val movieService = MovieApi.movieService
 
-    /**
-     * Message from FMS
-     */
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         showNotification(remoteMessage)
     }
@@ -47,22 +41,24 @@ class MovieFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     private fun sendRegistrationToServer(token: String) {
-        Log.d(TAG, token)
+        Log.d(TAG, "FCM token: $token")
     }
-
 
     private fun showNotification(remoteMessage: RemoteMessage) {
         val notificationChannelId = "FCM_Notification"
+        val id = remoteMessage.data["movie"]?.toInt() ?: ANY_MOVIE_RANDOM_ID
+        val messageText = remoteMessage.data["text"]
+        val movie = runBlocking(Dispatchers.IO) {
+            coroutineScope {
+                val movie = async {
+                    movieService.getMovie(id).toDomainModel()
+                }
+                movie.await()
+            }
+        }
 
-        //val bundle = intent.getBundleExtra(BUNDLE_NAME)
-        //val movie = bundle?.getParcelable<MovieDomainModel>(MOVIE_INFO) as MovieDomainModel
-
-
-        val data = remoteMessage.data["movie"]
-
-        val movie = null
         val mainActivityIntent = Intent(this, MainActivity::class.java)
-        //mainActivityIntent.putExtra(ALARM_NOTIFICATION_SCHEDULE, movie)
+        mainActivityIntent.putExtra(NOTIFICATION_FCM, movie)
         val pendingIntent = PendingIntent.getActivity(
             this,
             0,
@@ -70,9 +66,8 @@ class MovieFirebaseMessagingService : FirebaseMessagingService() {
             PendingIntent.FLAG_UPDATE_CURRENT
         )
 
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "Movie_recommendation"
+            val name = "Movie recommendations"
             val description = "The most interesting film to watch"
             val importance = NotificationManager.IMPORTANCE_DEFAULT
             val channel = NotificationChannel(notificationChannelId, name, importance)
@@ -83,15 +78,13 @@ class MovieFirebaseMessagingService : FirebaseMessagingService() {
         val builder = NotificationCompat.Builder(this, notificationChannelId)
             .setVibrate(longArrayOf(1000, 1000, 1000, 1000, 1000))
             .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-            .setContentTitle("Your should to watch it!")
-            //.setContentText(movie.title)
-            .setContentText(data)
+            .setContentTitle(messageText)
+            .setContentText("${movie.title}\n ${movie.description}")
             .setSmallIcon(R.drawable.ic_like)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
         val notificationManager = NotificationManagerCompat.from(this)
-        // notificationId is a unique int for each notification that you must define
         notificationManager.notify(RandomIntUtil.getRandomInt(), builder.build())
     }
 }

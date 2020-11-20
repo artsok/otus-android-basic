@@ -1,12 +1,14 @@
 package artsok.github.io.movie4k.data.retrofit
 
 import artsok.github.io.movie4k.BuildConfig
+import artsok.github.io.movie4k.data.model.MovieDto
 import artsok.github.io.movie4k.data.model.MovieListDto
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 private const val BASE_URL = "https://api.themoviedb.org/3/"
@@ -50,6 +52,9 @@ interface MovieApiService {
 
     @GET("movie/popular")
     suspend fun getPopularFilmsByPage(@Query("page") page: Int): MovieListDto
+
+    @GET("movie/{id}")
+    suspend fun getMovie(@Path("id")  id: Int) : MovieDto
 
 }
 

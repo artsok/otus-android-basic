@@ -17,7 +17,7 @@ import artsok.github.io.movie4k.util.RandomIntUtil
 
 const val BUNDLE_NAME = "myBundle"
 const val MOVIE_INFO = "MOVIE_INFO"
-const val ALARM_NOTIFICATION_SCHEDULE = "ALARM_NOTIFICATION_SCHEDULE"
+const val NOTIFICATION_SCHEDULE = "ALARM_NOTIFICATION_SCHEDULE"
 
 class AlarmReceiver : BroadcastReceiver() {
 
@@ -37,7 +37,7 @@ class AlarmReceiver : BroadcastReceiver() {
         val bundle = intent.getBundleExtra(BUNDLE_NAME)
         val movie = bundle?.getParcelable<MovieDomainModel>(MOVIE_INFO) as MovieDomainModel
         val mainActivityIntent = Intent(context, MainActivity::class.java)
-        mainActivityIntent.putExtra(ALARM_NOTIFICATION_SCHEDULE, movie)
+        mainActivityIntent.putExtra(NOTIFICATION_SCHEDULE, movie)
         val pendingIntent = PendingIntent.getActivity(
             context,
             0,

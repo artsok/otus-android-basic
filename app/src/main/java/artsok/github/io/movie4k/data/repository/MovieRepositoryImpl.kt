@@ -19,6 +19,10 @@ class MovieRepositoryImpl(
     private val scheduleDao: ScheduleDao
 ) : MovieRepository {
 
+    override suspend fun getMovie(id: Int): MovieDomainModel {
+        return retrofitService.getMovie(id).toDomainModel()
+    }
+
     override suspend fun getLandingMovies(): List<MovieDomainModel> =
         retrofitService.getPopularFilmsByPage(INIT_PAGE).results.map { it.toDomainModel() }
 

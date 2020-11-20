@@ -160,6 +160,7 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
             favoriteMovieRecords = useCase.getFavoriteMovieRecords()
         }
         return favoriteMovieRecords
+
     }
 
     /**

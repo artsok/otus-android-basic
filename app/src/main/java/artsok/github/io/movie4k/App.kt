@@ -1,7 +1,12 @@
 package artsok.github.io.movie4k
 
 import android.app.Application
+import android.util.Log
+import artsok.github.io.movie4k.service.MovieFirebaseMessagingService
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.installations.FirebaseInstallations
+import com.google.firebase.messaging.FirebaseMessaging
 
 const val lastResponseTime = "lastResponse"
 
@@ -14,9 +19,19 @@ class App : Application() {
         super.onCreate()
         instance = this
         firebaseAnalytics = FirebaseAnalytics.getInstance(this)
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+
+            val token = task.result
+            Log.d(TAG, "FCM registration token $token")
+        })
     }
 
     companion object {
+        val TAG = App::class.toString()
         lateinit var instance: App
             private set
     }
