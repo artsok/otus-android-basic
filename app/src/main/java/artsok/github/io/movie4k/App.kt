@@ -2,11 +2,11 @@ package artsok.github.io.movie4k
 
 import android.app.Application
 import android.util.Log
-import artsok.github.io.movie4k.service.MovieFirebaseMessagingService
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.installations.FirebaseInstallations
 import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 
 const val lastResponseTime = "lastResponse"
 
@@ -28,6 +28,14 @@ class App : Application() {
             val token = task.result
             Log.d(TAG, "FCM registration token $token")
         })
+        FirebaseRemoteConfig.getInstance().apply {
+            setDefaultsAsync(R.xml.default_config)
+            val configSettings = FirebaseRemoteConfigSettings.Builder()
+            configSettings.minimumFetchIntervalInSeconds = 10L
+            configSettings.fetchTimeoutInSeconds = 5L
+            setConfigSettingsAsync(configSettings.build())
+            fetchAndActivate()
+        }
     }
 
     companion object {
@@ -35,5 +43,4 @@ class App : Application() {
         lateinit var instance: App
             private set
     }
-
 }

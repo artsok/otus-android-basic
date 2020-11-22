@@ -45,16 +45,20 @@ fun <T> buildService(service: Class<T>): T {
 }
 
 
+/**
+ * REST APIs
+ * @URL https://developers.themoviedb.org/3/movies/get-movie-details
+ */
 interface MovieApiService {
-
-    @GET("movie/popular")
-    suspend fun getPopularFilms(): MovieListDto
 
     @GET("movie/popular")
     suspend fun getPopularFilmsByPage(@Query("page") page: Int): MovieListDto
 
+    @GET("movie/upcoming")
+    suspend fun getUpcomingFilmsByPage(@Query("page") page: Int): MovieListDto
+
     @GET("movie/{id}")
-    suspend fun getMovie(@Path("id")  id: Int) : MovieDto
+    suspend fun getMovie(@Path("id") id: Int): MovieDto
 
 }
 

@@ -11,6 +11,7 @@ import artsok.github.io.movie4k.domain.model.MovieDomainModel
 interface MovieRepository {
     suspend fun getLandingMovies(): List<MovieDomainModel>
     suspend fun getMovies(page: Int): List<MovieDomainModel>
+    suspend fun getUpcomingMovies(page: Int): List<MovieDomainModel>
     suspend fun getMovie(id: Int): MovieDomainModel
 
     suspend fun insertToDB(movie: MovieDomainModel)

@@ -34,12 +34,18 @@ class GetMoviesUseCase(private val repository: MovieRepository) {
         return repository.getScheduleMoviesFromDB()
     }
 
-    suspend fun fetchPopularMovies(page: Int): Result {
-        Log.d(TAG, "page $page")
+    suspend fun fetchMovies(page: Int, currentCategory: String): Result {
+        Log.d(TAG, "page $page, category $currentCategory")
         return try {
-            Result.Success(repository.getMovies(page)
-                .filter { it.backdropPath.isNotBlank() && it.posterPath.isNotBlank() }
-            )
+            when (currentCategory) {
+                "UPCOMING" -> Result.Success(
+                    repository.getUpcomingMovies(page)
+                        .filter { it.backdropPath.isNotBlank() && it.posterPath.isNotBlank() })
+
+                else -> Result.Success(
+                    repository.getMovies(page)
+                        .filter { it.backdropPath.isNotBlank() && it.posterPath.isNotBlank() })
+            }
         } catch (e: IOException) {
             Result.Error(e)
         }
