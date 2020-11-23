@@ -255,13 +255,20 @@ https://stackoverflow.com/questions/35451309/open-fragment-from-notification-whe
 https://developer.android.com/training/scheduling/alarms#boot - Start an alarm when the device restarts
 
 ## Homework #9
+ENG:
+1. Add Firebase Crashlytics to the application
+2. Add Firebase Cloud Messaging to the application
+3. Add functionality to the application: when get notification from FCM open fragment with movie information
+*4. Add Firebase Remote Config to the application
+
+RUS:
 Сервисы Firebase.
 Цель: +1 балл за попытку
-+ 1. Добавьте crashlytics в свое приложение //Добавил Events во класс MovieFragment
-+ 2. Добавьте в приложение Firebase Cloud Messaging
-3. Добавьте пуш уведомление из FCM, которое будет содержать всю информацию о фильме и, соответственно, открывать её при клике
+1. Добавьте crashlytics в свое приложение //Добавил Events во класс MovieFragment +
+2. Добавьте в приложение Firebase Cloud Messaging +
+3. Добавьте пуш уведомление из FCM, которое будет содержать всю информацию о фильме и, соответственно, открывать её при клике +
 * 4. Добавьте Remote Config в свое приложение и передавайте какие-нибудь данные. Например, "категорию фильма по-умолчанию",
-чтобы удаленно можно было задать, какой список фильмов грузить (топ за неделю, топ за все время, свежие и т.д.)
+чтобы удаленно можно было задать, какой список фильмов грузить (топ за неделю, топ за все время, свежие и т.д.) +
 
 Что было прочитано?
 https://firebase.google.com/docs/crashlytics/test-implementation?authuser=0&platform=android - Протестируйте свою реализацию Crashlytics
