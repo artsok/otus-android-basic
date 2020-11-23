@@ -167,7 +167,6 @@ class MovieListFragment : Fragment() {
             }
             START -> {
                 Log.d(TAG, "fetchData. START State")
-                //movieViewModel.getMoviesByPage(page)
                 movieViewModel.getMovies()
             }
             CONTINUE -> {

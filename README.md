@@ -353,6 +353,9 @@ https://blog.mestwin.net/send-your-test-fcm-push-notification-quickly-with-curl/
 https://medium.com/@marco_cattaneo/android-viewmodel-and-factoryprovider-good-way-to-manage-it-with-dagger-2-d9e20a07084c
 https://proandroiddev.com/forget-rxjava-kotlin-coroutines-are-all-you-need-part-1-2-4f62ecc4f99b
 
+Перейти на Paging
+https://proandroiddev.com/exploring-paging-library-from-jetpack-c661c7399662
+
 Note: Initially for me also not worked,After Seeing many posts i realized that the pending intent to be canceled should be same as the
 original pending intent that was used to schedule alarm. The pending intent to be cancelled should have set to same action and same data fields,
 if any have those were used to set the alarm. After setting the same ACTION and data values though i'm not using them,only cancelled the Alarm.

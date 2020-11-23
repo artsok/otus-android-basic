@@ -34,6 +34,7 @@ class App : Application() {
             configSettings.minimumFetchIntervalInSeconds = 10L
             configSettings.fetchTimeoutInSeconds = 5L
             setConfigSettingsAsync(configSettings.build())
+            //Remote config will apply on next start of the app
             fetchAndActivate()
         }
     }

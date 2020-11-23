@@ -45,7 +45,6 @@ class AlarmReceiver : BroadcastReceiver() {
             PendingIntent.FLAG_UPDATE_CURRENT
         )
 
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = "Channel name"
             val description = "Channel description"

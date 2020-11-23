@@ -68,12 +68,17 @@ class GetMoviesUseCase(private val repository: MovieRepository) {
         repository.saveScheduleInfoToDB(schedule)
     }
 
-    suspend fun getRequestCodeFromDB(title: String, time: String): Int =
-        repository.getRequestCodeFromDB(title, time)
+    suspend fun getRequestCodeFromDB(title: String, time: String): Int {
+        return repository.getRequestCodeFromDB(title, time)
+    }
 
-    suspend fun deleteMoviesFromTable() = repository.deleteMoviesFromDB()
+    suspend fun deleteMoviesFromTable() {
+        repository.deleteMoviesFromDB()
+    }
 
-    suspend fun getMovieRecords(): Int = repository.getTotalRecordsFromDB()
+    suspend fun getMovieRecords(): Int {
+        return repository.getTotalRecordsFromDB()
+    }
 
     suspend fun getFavoriteMovieRecords(): Int {
         return repository.getFavoriteTotalRecordsFromDB()
