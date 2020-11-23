@@ -14,6 +14,7 @@ import artsok.github.io.movie4k.domain.usecase.GetMoviesUseCase
 import artsok.github.io.movie4k.extensions.get
 import artsok.github.io.movie4k.extensions.put
 import artsok.github.io.movie4k.lastResponseTime
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -26,6 +27,7 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
 
     private val pageInit = 1
     private val preferName = "PrefStorage"
+    private val category = FirebaseRemoteConfig.getInstance().getString("FilmCategory")
     private val sharedPref = application.getSharedPreferences(preferName, Context.MODE_PRIVATE)
 
     private var page = AtomicInteger(pageInit)
@@ -102,9 +104,9 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
      * Download movies from network and save to DB
      */
     fun getMovies() {
-        Log.d(TAG, "call getMovies. Page $page")
+        Log.d(TAG, "call getMovies. Page - $page, category - $category")
         viewModelScope.launch(Dispatchers.IO) {
-            useCase.fetchPopularMovies(page.getAndIncrement()).also { result ->
+            useCase.fetchMovies(page.getAndIncrement(), category).also { result ->
                 when (result) {
                     is GetMoviesUseCase.Result.Success ->
                         if (result.data.isEmpty()) {
@@ -112,6 +114,27 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
                         } else {
                             sharedPref.put(lastResponseTime, LocalTime.now().toString())
                             useCase.insertToDB(result.data)
+                        }
+                    is GetMoviesUseCase.Result.Error ->
+                        errorLiveData.postValue(result.e.message)
+                }
+            }
+        }
+    }
+
+    /**
+     * Download movies from network and post to LiveData
+     */
+    private fun getMoviesByPage(page: Int) {
+        Log.d(TAG, "call getMoviesByPage. Page - $page, category - $category")
+        viewModelScope.launch {
+            useCase.fetchMovies(page, category).also { result ->
+                when (result) {
+                    is GetMoviesUseCase.Result.Success ->
+                        if (result.data.isEmpty()) {
+                            moviesLiveData.postValue(listOf())
+                        } else {
+                            moviesLiveData.postValue(result.data)
                         }
                     is GetMoviesUseCase.Result.Error ->
                         errorLiveData.postValue(result.e.message)
@@ -160,26 +183,7 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
             favoriteMovieRecords = useCase.getFavoriteMovieRecords()
         }
         return favoriteMovieRecords
-    }
 
-    /**
-     * Download movies from network and post to LiveData
-     */
-    private fun getMoviesByPage(page: Int) {
-        viewModelScope.launch {
-            useCase.fetchPopularMovies(page).also { result ->
-                when (result) {
-                    is GetMoviesUseCase.Result.Success ->
-                        if (result.data.isEmpty()) {
-                            moviesLiveData.postValue(listOf())
-                        } else {
-                            moviesLiveData.postValue(result.data)
-                        }
-                    is GetMoviesUseCase.Result.Error ->
-                        errorLiveData.postValue(result.e.message)
-                }
-            }
-        }
     }
 
     fun onMovieSelected(movie: MovieDomainModel) {

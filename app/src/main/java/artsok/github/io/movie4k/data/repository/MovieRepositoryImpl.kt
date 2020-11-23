@@ -19,11 +19,21 @@ class MovieRepositoryImpl(
     private val scheduleDao: ScheduleDao
 ) : MovieRepository {
 
-    override suspend fun getLandingMovies(): List<MovieDomainModel> =
-        retrofitService.getPopularFilmsByPage(INIT_PAGE).results.map { it.toDomainModel() }
+    override suspend fun getMovie(id: Int): MovieDomainModel {
+        return retrofitService.getMovie(id).toDomainModel()
+    }
 
-    override suspend fun getMovies(page: Int): List<MovieDomainModel> =
-        retrofitService.getPopularFilmsByPage(page).results.map { it.toDomainModel() }
+    override suspend fun getLandingMovies(): List<MovieDomainModel> {
+        return retrofitService.getPopularFilmsByPage(INIT_PAGE).results.map { it.toDomainModel() }
+    }
+
+    override suspend fun getMovies(page: Int): List<MovieDomainModel> {
+        return retrofitService.getPopularFilmsByPage(page).results.map { it.toDomainModel() }
+    }
+
+    override suspend fun getUpcomingMovies(page: Int): List<MovieDomainModel> {
+        return retrofitService.getUpcomingFilmsByPage(page).results.map { it.toDomainModel() }
+    }
 
     override suspend fun insertToDB(movie: MovieDomainModel) {
         movieDao.insert(movie.toModel())
