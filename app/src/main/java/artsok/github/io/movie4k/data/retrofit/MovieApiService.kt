@@ -3,9 +3,11 @@ package artsok.github.io.movie4k.data.retrofit
 import artsok.github.io.movie4k.BuildConfig
 import artsok.github.io.movie4k.data.model.MovieDto
 import artsok.github.io.movie4k.data.model.MovieListDto
+import io.reactivex.rxjava3.core.Single
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -38,6 +40,7 @@ private val retrofit = Retrofit.Builder()
     .addConverterFactory(GsonConverterFactory.create())
     .baseUrl(BASE_URL)
     .client(client)
+    .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
     .build()
 
 fun <T> buildService(service: Class<T>): T {
@@ -52,13 +55,13 @@ fun <T> buildService(service: Class<T>): T {
 interface MovieApiService {
 
     @GET("movie/popular")
-    suspend fun getPopularFilmsByPage(@Query("page") page: Int): MovieListDto
+    fun getPopularFilmsByPage(@Query("page") page: Int): Single<MovieListDto>
 
     @GET("movie/upcoming")
-    suspend fun getUpcomingFilmsByPage(@Query("page") page: Int): MovieListDto
+    fun getUpcomingFilmsByPage(@Query("page") page: Int): Single<MovieListDto>
 
     @GET("movie/{id}")
-    suspend fun getMovie(@Path("id") id: Int): MovieDto
+    fun getMovie(@Path("id") id: Int): Single<MovieDto>
 
 }
 

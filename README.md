@@ -258,7 +258,7 @@ https://developer.android.com/training/scheduling/alarms#boot - Start an alarm w
 ENG:
 1. Add Firebase Crashlytics to the application
 2. Add Firebase Cloud Messaging to the application
-3. Add functionality to the application: when get notification from FCM open fragment with movie information
+3. Add functionality to the application: when getting notification from FCM open fragment with movie information
 *4. Add Firebase Remote Config to the application
 
 RUS:
@@ -356,12 +356,26 @@ https://stackoverflow.com/questions/37711082/how-to-handle-notification-when-app
 https://blog.mestwin.net/send-your-test-fcm-push-notification-quickly-with-curl/ - Send your test FCM push notification with cURL
 
 
+
+## Homework #10
+RUS:
+Добавление RxJava в проект
+1. Все запросы к сети переделайте на RxJava
+2. Все запросы к БД переделайте на RxJava
+3. * Добавьте в приложение поиск по фильмам в БД, используя RxJava
+
+
+
+
 Интересно про Dagger:
 https://medium.com/@marco_cattaneo/android-viewmodel-and-factoryprovider-good-way-to-manage-it-with-dagger-2-d9e20a07084c
 https://proandroiddev.com/forget-rxjava-kotlin-coroutines-are-all-you-need-part-1-2-4f62ecc4f99b
 
-Перейти на Paging
+Фичи на проект:
+1) Перейти на Paging
 https://proandroiddev.com/exploring-paging-library-from-jetpack-c661c7399662
+
+2) Во фрагменте добавить карту Google Map и показать точки где фильм был снят
 
 Note: Initially for me also not worked,After Seeing many posts i realized that the pending intent to be canceled should be same as the
 original pending intent that was used to schedule alarm. The pending intent to be cancelled should have set to same action and same data fields,

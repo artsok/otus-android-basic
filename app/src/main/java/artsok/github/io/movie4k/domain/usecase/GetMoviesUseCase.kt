@@ -6,7 +6,7 @@ import artsok.github.io.movie4k.data.model.Movie
 import artsok.github.io.movie4k.data.model.Schedule
 import artsok.github.io.movie4k.domain.model.MovieDomainModel
 import artsok.github.io.movie4k.domain.repository.MovieRepository
-import java.io.IOException
+import io.reactivex.rxjava3.core.Single
 
 /**
  *
@@ -34,30 +34,20 @@ class GetMoviesUseCase(private val repository: MovieRepository) {
         return repository.getScheduleMoviesFromDB()
     }
 
-    suspend fun fetchMovies(page: Int, currentCategory: String): Result {
-        Log.d(TAG, "page $page, category $currentCategory")
-        return try {
-            when (currentCategory) {
-                "UPCOMING" -> Result.Success(
-                    repository.getUpcomingMovies(page)
-                        .filter { it.backdropPath.isNotBlank() && it.posterPath.isNotBlank() })
 
-                else -> Result.Success(
-                    repository.getMovies(page)
-                        .filter { it.backdropPath.isNotBlank() && it.posterPath.isNotBlank() })
-            }
-        } catch (e: IOException) {
-            Result.Error(e)
+    fun fetchMovies(page: Int, currentCategory: String): Single<List<MovieDomainModel>> {
+        Log.d(TAG, "page $page, category $currentCategory")
+        return when (currentCategory) {
+            "UPCOMING" ->
+                repository.getUpcomingMovies(page)
+            else ->
+                repository.getMovies(page)
         }
     }
 
-    suspend fun fetchMovieById(id: Int): Result {
-        Log.d(TAG, "Get movie's info by $id")
-        return try {
-            Result.Success(listOf(repository.getMovie(id)))
-        } catch (e: IOException) {
-            Result.Error(e)
-        }
+    fun fetchMovieById(id: Int): Single<MovieDomainModel> {
+        Log.d(TAG, "Get movie's information by id - $id")
+        return repository.getMovie(id)
     }
 
     suspend fun insertToDB(movies: List<MovieDomainModel>) {

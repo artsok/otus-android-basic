@@ -4,15 +4,15 @@ import androidx.lifecycle.LiveData
 import artsok.github.io.movie4k.data.model.Movie
 import artsok.github.io.movie4k.data.model.Schedule
 import artsok.github.io.movie4k.domain.model.MovieDomainModel
+import io.reactivex.rxjava3.core.Single
 
 /*
  Repository for DB and API calls
  */
 interface MovieRepository {
-    suspend fun getLandingMovies(): List<MovieDomainModel>
-    suspend fun getMovies(page: Int): List<MovieDomainModel>
-    suspend fun getUpcomingMovies(page: Int): List<MovieDomainModel>
-    suspend fun getMovie(id: Int): MovieDomainModel
+    fun getMovies(page: Int): Single<List<MovieDomainModel>>
+    fun getUpcomingMovies(page: Int): Single<List<MovieDomainModel>>
+    fun getMovie(id: Int): Single<MovieDomainModel>
 
     suspend fun insertToDB(movie: MovieDomainModel)
     suspend fun deleteFromDB(movie: MovieDomainModel)

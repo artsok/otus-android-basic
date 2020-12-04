@@ -10,6 +10,9 @@ import artsok.github.io.movie4k.data.room.dao.ScheduleDao
 import artsok.github.io.movie4k.domain.model.MovieDomainModel
 import artsok.github.io.movie4k.domain.model.toModel
 import artsok.github.io.movie4k.domain.repository.MovieRepository
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 const val INIT_PAGE = 1
 
@@ -19,20 +22,25 @@ class MovieRepositoryImpl(
     private val scheduleDao: ScheduleDao
 ) : MovieRepository {
 
-    override suspend fun getMovie(id: Int): MovieDomainModel {
-        return retrofitService.getMovie(id).toDomainModel()
+    override fun getMovie(id: Int): Single<MovieDomainModel> {
+        return retrofitService.getMovie(id)
+            .subscribeOn(Schedulers.io())
+            .map { it.toDomainModel() }
+            .observeOn(AndroidSchedulers.mainThread())
     }
 
-    override suspend fun getLandingMovies(): List<MovieDomainModel> {
-        return retrofitService.getPopularFilmsByPage(INIT_PAGE).results.map { it.toDomainModel() }
+    override fun getMovies(page: Int): Single<List<MovieDomainModel>> {
+        return retrofitService.getPopularFilmsByPage(page)
+            .subscribeOn(Schedulers.io())
+            .map { it.results.map { item -> item.toDomainModel() } }
+            .observeOn(AndroidSchedulers.mainThread())
     }
 
-    override suspend fun getMovies(page: Int): List<MovieDomainModel> {
-        return retrofitService.getPopularFilmsByPage(page).results.map { it.toDomainModel() }
-    }
-
-    override suspend fun getUpcomingMovies(page: Int): List<MovieDomainModel> {
-        return retrofitService.getUpcomingFilmsByPage(page).results.map { it.toDomainModel() }
+    override fun getUpcomingMovies(page: Int): Single<List<MovieDomainModel>> {
+        return retrofitService.getUpcomingFilmsByPage(page)
+            .subscribeOn(Schedulers.io())
+            .map { it.results.map { item -> item.toDomainModel() } }
+            .observeOn(AndroidSchedulers.mainThread())
     }
 
     override suspend fun insertToDB(movie: MovieDomainModel) {

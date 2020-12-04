@@ -15,6 +15,8 @@ import artsok.github.io.movie4k.extensions.get
 import artsok.github.io.movie4k.extensions.put
 import artsok.github.io.movie4k.lastResponseTime
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import io.reactivex.rxjava3.core.SingleObserver
+import io.reactivex.rxjava3.disposables.Disposable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -43,8 +45,9 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
     )
 
     companion object {
-        const val TAG = "MovieViewModel"
+        val TAG = MovieViewModel::class.toString()
     }
+
 
     val error: LiveData<String>
         get() = errorLiveData
@@ -105,21 +108,28 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
      */
     fun getMovies() {
         Log.d(TAG, "call getMovies. Page - $page, category - $category")
-        viewModelScope.launch(Dispatchers.IO) {
-            useCase.fetchMovies(page.getAndIncrement(), category).also { result ->
-                when (result) {
-                    is GetMoviesUseCase.Result.Success ->
-                        if (result.data.isEmpty()) {
-                            Log.d(TAG, "getMovies. Got empty data")
-                        } else {
-                            sharedPref.put(lastResponseTime, LocalTime.now().toString())
-                            useCase.insertToDB(result.data)
-                        }
-                    is GetMoviesUseCase.Result.Error ->
-                        errorLiveData.postValue(result.e.message)
+        useCase.fetchMovies(page.getAndIncrement(), category)
+            .subscribe(object : SingleObserver<List<MovieDomainModel>> {
+                override fun onSubscribe(d: Disposable) {
+                    Log.d(TAG, "onSubscribe")
                 }
-            }
-        }
+
+                override fun onSuccess(list: List<MovieDomainModel>) {
+                    if (list.isEmpty()) {
+                        Log.d(TAG, "getMovies. Got empty data")
+                    } else {
+                        sharedPref.put(lastResponseTime, LocalTime.now().toString())
+                        viewModelScope.launch(Dispatchers.IO) {
+                            useCase.insertToDB(list)
+                        }
+                    }
+                }
+
+                override fun onError(e: Throwable) {
+                    errorLiveData.postValue(e.message)
+                }
+
+            })
     }
 
     /**
@@ -127,20 +137,24 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
      */
     private fun getMoviesByPage(page: Int) {
         Log.d(TAG, "call getMoviesByPage. Page - $page, category - $category")
-        viewModelScope.launch {
-            useCase.fetchMovies(page, category).also { result ->
-                when (result) {
-                    is GetMoviesUseCase.Result.Success ->
-                        if (result.data.isEmpty()) {
-                            moviesLiveData.postValue(listOf())
-                        } else {
-                            moviesLiveData.postValue(result.data)
-                        }
-                    is GetMoviesUseCase.Result.Error ->
-                        errorLiveData.postValue(result.e.message)
+        useCase.fetchMovies(page, category)
+            .subscribe(object : SingleObserver<List<MovieDomainModel>> {
+                override fun onSubscribe(d: Disposable) {
+                    TODO("Not yet implemented")
                 }
-            }
-        }
+
+                override fun onSuccess(list: List<MovieDomainModel>) {
+                    if (list.isEmpty()) {
+                        moviesLiveData.postValue(listOf())
+                    } else {
+                        moviesLiveData.postValue(list)
+                    }
+                }
+
+                override fun onError(e: Throwable) {
+                    errorLiveData.postValue(e.message)
+                }
+            })
     }
 
 
