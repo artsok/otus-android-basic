@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.*
+import artsok.github.io.movie4k.data.model.Movie
 import artsok.github.io.movie4k.data.model.Schedule
 import artsok.github.io.movie4k.data.model.toMovieDomainModel
 import artsok.github.io.movie4k.data.repository.MovieRepositoryImpl
@@ -15,11 +16,17 @@ import artsok.github.io.movie4k.extensions.get
 import artsok.github.io.movie4k.extensions.put
 import artsok.github.io.movie4k.lastResponseTime
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.FlowableSubscriber
+import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.core.SingleObserver
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.reactivestreams.Subscription
 import java.time.LocalTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -33,7 +40,9 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
     private val sharedPref = application.getSharedPreferences(preferName, Context.MODE_PRIVATE)
 
     private var page = AtomicInteger(pageInit)
+    private val disposableBag = CompositeDisposable()
     private val moviesLiveData = MutableLiveData<List<MovieDomainModel>>()
+    private val moviesLiveDataDB = MutableLiveData<List<MovieDomainModel>>()
     private val errorLiveData = MutableLiveData<String>()
     private val selectedMovieLiveData = MutableLiveData<MovieDomainModel>()
     private val useCase = GetMoviesUseCase(
@@ -48,12 +57,14 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
         val TAG = MovieViewModel::class.toString()
     }
 
-
     val error: LiveData<String>
         get() = errorLiveData
 
     val selectedMovie: LiveData<MovieDomainModel>
         get() = selectedMovieLiveData
+
+    val moviesFromDB: LiveData<List<MovieDomainModel>>
+        get() = moviesLiveDataDB
 
 
     /**
@@ -67,7 +78,7 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
                 DateTimeFormatter.ISO_LOCAL_TIME
             )
 
-        val interval = 1L //Change to 20 minutes
+        val interval = 1L //1 minutes
         if (lastResponseTime.plusMinutes(interval).isBefore(currentTime)) {
             Log.d(TAG, "delete data from DB")
             viewModelScope.launch(Dispatchers.IO) {
@@ -85,9 +96,8 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
      */
     fun isDbEmpty(): Boolean {
         var records = 0
-        viewModelScope.launch(Dispatchers.IO) {
-            records = useCase.getMovieRecords()
-        }
+        useCase.getMovieRecords()
+            .subscribe({ value -> records = value }, { records = 0 })
         return records == 0
     }
 
@@ -112,6 +122,7 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
             .subscribe(object : SingleObserver<List<MovieDomainModel>> {
                 override fun onSubscribe(d: Disposable) {
                     Log.d(TAG, "onSubscribe")
+                    disposableBag.add(d)
                 }
 
                 override fun onSuccess(list: List<MovieDomainModel>) {
@@ -121,6 +132,7 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
                         sharedPref.put(lastResponseTime, LocalTime.now().toString())
                         viewModelScope.launch(Dispatchers.IO) {
                             useCase.insertToDB(list)
+                            moviesLiveDataDB.postValue(list)
                         }
                     }
                 }
@@ -128,7 +140,6 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
                 override fun onError(e: Throwable) {
                     errorLiveData.postValue(e.message)
                 }
-
             })
     }
 
@@ -140,7 +151,7 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
         useCase.fetchMovies(page, category)
             .subscribe(object : SingleObserver<List<MovieDomainModel>> {
                 override fun onSubscribe(d: Disposable) {
-                    TODO("Not yet implemented")
+                    disposableBag.add(d)
                 }
 
                 override fun onSuccess(list: List<MovieDomainModel>) {
@@ -161,13 +172,12 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
     /**
      * Return the LiveData of movies by using MovieDomainModel
      */
-    fun getMoviesFromDB(): LiveData<List<MovieDomainModel>> {
-        return Transformations.map(useCase.getMoviesFromDB()) {
-            val moviesDomain = mutableListOf<MovieDomainModel>()
-            it.forEach { k -> moviesDomain.add(k.toMovieDomainModel()) }
-            return@map moviesDomain.toList()
-        }
-    }
+//    fun getMoviesFromDB(): LiveData<List<MovieDomainModel>> {
+//
+//    }
+//    val moviesDomain = mutableListOf<MovieDomainModel>()
+//    it.forEach { k -> moviesDomain.add(k.toMovieDomainModel()) }
+//    return@map moviesDomain.toList()
 
     /**
      * Return the LiveData of favorite movies
@@ -284,12 +294,8 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-//    fun getFavoriteMoviesCount(): Int {
-//        var favoriteMovieRecords: Int
-//        runBlocking(Dispatchers.IO) {
-//            favoriteMovieRecords = useCase.getFavoriteMovieRecords()
-//        }
-//        return favoriteMovieRecords
-//    }
-
+    override fun onCleared() {
+        super.onCleared()
+        disposableBag.clear()
+    }
 }

@@ -364,7 +364,10 @@ RUS:
 2. Все запросы к БД переделайте на RxJava
 3. * Добавьте в приложение поиск по фильмам в БД, используя RxJava
 
-
+Что прочитано:
+https://blog.rocketinsights.com/rx-to-livedata/
+https://github.com/MindorksOpenSource/RxJava3-Android-Examples
+https://medium.com/@gabrieldemattosleon/fundamentals-of-rxjava-with-kotlin-for-absolute-beginners-3d811350b701
 
 
 Интересно про Dagger:
