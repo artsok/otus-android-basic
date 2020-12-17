@@ -3,10 +3,11 @@ package artsok.github.io.movie4k.presentation.viewmodel
 import android.app.Application
 import android.content.Context
 import android.util.Log
-import androidx.lifecycle.*
-import artsok.github.io.movie4k.data.model.Movie
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import artsok.github.io.movie4k.data.model.Schedule
-import artsok.github.io.movie4k.data.model.toMovieDomainModel
 import artsok.github.io.movie4k.data.repository.MovieRepositoryImpl
 import artsok.github.io.movie4k.data.retrofit.MovieApi
 import artsok.github.io.movie4k.data.room.AppDatabase
@@ -16,13 +17,10 @@ import artsok.github.io.movie4k.extensions.get
 import artsok.github.io.movie4k.extensions.put
 import artsok.github.io.movie4k.lastResponseTime
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.FlowableSubscriber
-import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.core.SingleObserver
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -42,9 +40,14 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
     private var page = AtomicInteger(pageInit)
     private val disposableBag = CompositeDisposable()
     private val moviesLiveData = MutableLiveData<List<MovieDomainModel>>()
-    private val moviesLiveDataDB = MutableLiveData<List<MovieDomainModel>>()
     private val errorLiveData = MutableLiveData<String>()
+
+    private val moviesLiveDataDB = MutableLiveData<List<MovieDomainModel>>()
+    private val favoritesMoviesLiveDataDB = MutableLiveData<List<MovieDomainModel>>()
+    private val scheduleMoviesLiveDataDB = MutableLiveData<List<MovieDomainModel>>()
     private val selectedMovieLiveData = MutableLiveData<MovieDomainModel>()
+
+
     private val useCase = GetMoviesUseCase(
         MovieRepositoryImpl(
             MovieApi.movieService,
@@ -65,6 +68,12 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
 
     val moviesFromDB: LiveData<List<MovieDomainModel>>
         get() = moviesLiveDataDB
+
+    private val favoritesMoviesFromDB: LiveData<List<MovieDomainModel>>
+        get() = favoritesMoviesLiveDataDB
+
+    private val scheduleMoviesFromDB: LiveData<List<MovieDomainModel>>
+        get() = scheduleMoviesLiveDataDB
 
 
     /**
@@ -132,7 +141,6 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
                         sharedPref.put(lastResponseTime, LocalTime.now().toString())
                         viewModelScope.launch(Dispatchers.IO) {
                             useCase.insertToDB(list)
-                            moviesLiveDataDB.postValue(list)
                         }
                     }
                 }
@@ -141,6 +149,35 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
                     errorLiveData.postValue(e.message)
                 }
             })
+    }
+
+    /**
+     * Return the LiveData of movies by using MovieDomainModel
+     */
+    fun getMoviesDB(): LiveData<List<MovieDomainModel>> {
+        useCase.getMoviesFromDB().subscribe(object : FlowableSubscriber<List<MovieDomainModel>> {
+            override fun onSubscribe(s: Subscription?) {
+                Log.e(TAG, "getMoviesDB. onSubscribe")
+            }
+
+            override fun onNext(value: List<MovieDomainModel>) {
+                moviesLiveDataDB.postValue(value)
+            }
+
+            override fun onError(t: Throwable) {
+                Log.e(TAG, "getMoviesDB. Got empty data")
+                moviesLiveDataDB.postValue(listOf())
+
+            }
+
+            override fun onComplete() {
+                Log.e(TAG, "getMoviesDB. onComplete")
+            }
+
+        })
+
+
+        return moviesFromDB
     }
 
     /**
@@ -170,44 +207,68 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
 
 
     /**
-     * Return the LiveData of movies by using MovieDomainModel
-     */
-//    fun getMoviesFromDB(): LiveData<List<MovieDomainModel>> {
-//
-//    }
-//    val moviesDomain = mutableListOf<MovieDomainModel>()
-//    it.forEach { k -> moviesDomain.add(k.toMovieDomainModel()) }
-//    return@map moviesDomain.toList()
-
-    /**
      * Return the LiveData of favorite movies
      */
     fun getFavoriteMovies(): LiveData<List<MovieDomainModel>> {
-        return Transformations.map(useCase.getFavoritesMoviesFromDB()) {
-            val moviesDomain = mutableListOf<MovieDomainModel>()
-            it.forEach { k -> moviesDomain.add(k.toMovieDomainModel()) }
-            return@map moviesDomain.toList()
-        }
+        useCase.getFavoritesMoviesFromDB()
+            .subscribe(object : FlowableSubscriber<List<MovieDomainModel>> {
+                override fun onSubscribe(s: Subscription) {
+                    Log.d(TAG, "getFavoriteMovies on onSubscribe")
+                }
+
+                override fun onNext(value: List<MovieDomainModel>) {
+                    favoritesMoviesLiveDataDB.postValue(value)
+                }
+
+                override fun onError(t: Throwable) {
+                    favoritesMoviesLiveDataDB.postValue(listOf())
+                }
+
+                override fun onComplete() {
+                    Log.d(TAG, "getFavoriteMovies on onComplete")
+                }
+
+            })
+        return favoritesMoviesFromDB
     }
 
     /**
      * Return the LiveData of schedule movies
      */
     fun getScheduleMovies(): LiveData<List<MovieDomainModel>> {
-        return Transformations.map(useCase.getScheduleMoviesFromDB()) {
-            val moviesDomain = mutableListOf<MovieDomainModel>()
-            it.forEach { k -> moviesDomain.add(k.toMovieDomainModel()) }
-            return@map moviesDomain.toList()
-        }
+        useCase.getScheduleMoviesFromDB()
+            .subscribe(object : FlowableSubscriber<List<MovieDomainModel>> {
+                override fun onSubscribe(s: Subscription) {
+                    Log.d(TAG, "getScheduleMovies - onSubscribe")
+                }
+
+                override fun onNext(value: List<MovieDomainModel>) {
+                    scheduleMoviesLiveDataDB.postValue(value)
+                }
+
+                override fun onError(t: Throwable) {
+                    Log.d(TAG, "getScheduleMovies - onError")
+                    favoritesMoviesLiveDataDB.postValue(listOf())
+                }
+
+                override fun onComplete() {
+                    Log.d(TAG, "getScheduleMovies - onComplete")
+                }
+
+            })
+        return scheduleMoviesFromDB
     }
 
+    /**
+     * Return number of favorite movies
+     */
     fun getFavoriteMoviesCount(): Int {
-        var favoriteMovieRecords: Int
-        runBlocking(Dispatchers.IO) {
-            favoriteMovieRecords = useCase.getFavoriteMovieRecords()
-        }
+        var favoriteMovieRecords = 0
+        useCase.getFavoriteMovieRecords().subscribe(
+            { value -> favoriteMovieRecords = value },
+            { favoriteMovieRecords = 0 }
+        )
         return favoriteMovieRecords
-
     }
 
     fun onMovieSelected(movie: MovieDomainModel) {
@@ -255,11 +316,11 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
      * Return Request Code for Alarm Service (Pending Intent). Behavior related with stop alarming of notifications
      */
     fun getRequestCodeForAlarmService(title: String, time: String): Int {
-        var requestCode: Int
-        runBlocking(Dispatchers.IO) {
-            val zdt = ZonedDateTime.parse(time).toInstant().toEpochMilli().toString()
-            requestCode = useCase.getRequestCodeFromDB(title, zdt)
-        }
+        var requestCode = 0
+        val zdt = ZonedDateTime.parse(time).toInstant().toEpochMilli().toString()
+        useCase.getRequestCodeFromDB(title, zdt).subscribe(
+            { code -> requestCode = code },
+            { Log.d(TAG, "Can't get requestCode") })
         return requestCode
     }
 

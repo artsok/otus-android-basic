@@ -82,6 +82,8 @@ class MovieRepositoryImpl(
 
     override fun getFavoriteTotalRecordsFromDB(): Single<Int> {
         return movieDao.getFavoriteTotalRecordOfMovies()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
     }
 
     override suspend fun updateDB(favorite: Boolean, id: Int) {

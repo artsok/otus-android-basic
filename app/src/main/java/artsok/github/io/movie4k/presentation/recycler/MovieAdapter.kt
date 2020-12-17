@@ -58,10 +58,7 @@ class MovieAdapter(
     }
 
     fun addMovies(movies: List<MovieDomainModel>) {
-        //DataStore.movies.addAll(movies)
         this.movies = movies
-        //val storeSize = this.movies.size
-        //Log.d(TAG, "In addMovies method. Number of size = $storeSize")
 
         //notifyItemRangeInserted(storeSize, storeSize + movies.size)
         notifyDataSetChanged()

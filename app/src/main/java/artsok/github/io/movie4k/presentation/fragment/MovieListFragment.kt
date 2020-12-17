@@ -90,7 +90,7 @@ class MovieListFragment : Fragment() {
     }
 
     private fun initViewModel() {
-        movieViewModel.moviesFromDB.observe(
+        movieViewModel.getMoviesDB().observe(
             this.viewLifecycleOwner,
             Observer<List<MovieDomainModel>> {
                 adapter!!.addMovies(it)
