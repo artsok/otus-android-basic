@@ -369,6 +369,13 @@ https://blog.rocketinsights.com/rx-to-livedata/
 https://github.com/MindorksOpenSource/RxJava3-Android-Examples
 https://medium.com/@gabrieldemattosleon/fundamentals-of-rxjava-with-kotlin-for-absolute-beginners-3d811350b701
 
+Please read any of the subscribeOn/observeOn articles:
+https://proandroiddev.com/understanding-rxjava-subscribeon-and-observeon-744b0c6a41ea
+https://medium.com/upday-devs/rxjava-subscribeon-vs-observeon-9af518ded53a
+http://rx-marin.com/post/observeon-vs-subscribeon/
+https://www.google.hu/search?q=subscribeon+observeon&oq=subscribeon+observeon
+
+
 
 Интересно про Dagger:
 https://medium.com/@marco_cattaneo/android-viewmodel-and-factoryprovider-good-way-to-manage-it-with-dagger-2-d9e20a07084c

@@ -90,16 +90,16 @@ class MovieListFragment : Fragment() {
     }
 
     private fun initViewModel() {
-        movieViewModel.getMoviesDB().observe(
+        movieViewModel.getMoviesFromDB().observe(
             this.viewLifecycleOwner,
-            Observer<List<MovieDomainModel>> {
+            Observer {
                 adapter!!.addMovies(it)
                 loadProgress.visibility = View.GONE
             })
 
         movieViewModel.error.observe(
             this.viewLifecycleOwner,
-            Observer<String> { error ->
+            Observer { error ->
                 if (!error.isNullOrBlank()) {
                     showShackBar(error)
                 }

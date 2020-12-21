@@ -26,7 +26,6 @@ class MovieAdapter(
         const val TAG = "MovieAdapter"
     }
 
-    //private val movies = DataStore.movies
     private var movies = emptyList<MovieDomainModel>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

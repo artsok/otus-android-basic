@@ -66,7 +66,7 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
     val selectedMovie: LiveData<MovieDomainModel>
         get() = selectedMovieLiveData
 
-    val moviesFromDB: LiveData<List<MovieDomainModel>>
+    private val moviesFrom: LiveData<List<MovieDomainModel>>
         get() = moviesLiveDataDB
 
     private val favoritesMoviesFromDB: LiveData<List<MovieDomainModel>>
@@ -151,34 +151,6 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
             })
     }
 
-    /**
-     * Return the LiveData of movies by using MovieDomainModel
-     */
-    fun getMoviesDB(): LiveData<List<MovieDomainModel>> {
-        useCase.getMoviesFromDB().subscribe(object : FlowableSubscriber<List<MovieDomainModel>> {
-            override fun onSubscribe(s: Subscription?) {
-                Log.e(TAG, "getMoviesDB. onSubscribe")
-            }
-
-            override fun onNext(value: List<MovieDomainModel>) {
-                moviesLiveDataDB.postValue(value)
-            }
-
-            override fun onError(t: Throwable) {
-                Log.e(TAG, "getMoviesDB. Got empty data")
-                moviesLiveDataDB.postValue(listOf())
-
-            }
-
-            override fun onComplete() {
-                Log.e(TAG, "getMoviesDB. onComplete")
-            }
-
-        })
-
-
-        return moviesFromDB
-    }
 
     /**
      * Download movies from network and post to LiveData
@@ -205,30 +177,28 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
             })
     }
 
+    /**
+     * Return the LiveData of MovieDomainModel's movies
+     */
+    fun getMoviesFromDB(): LiveData<List<MovieDomainModel>> {
+        val disposable = useCase.getMoviesFromDB()
+            .subscribe(
+                { value -> moviesLiveDataDB.postValue(value) },
+                { error -> errorLiveData.postValue(error.message) })
+        disposableBag.add(disposable)
+        return moviesFrom
+    }
 
     /**
      * Return the LiveData of favorite movies
      */
-    fun getFavoriteMovies(): LiveData<List<MovieDomainModel>> {
+    fun getFavoriteMoviesFromDB(): LiveData<List<MovieDomainModel>> {
         useCase.getFavoritesMoviesFromDB()
-            .subscribe(object : FlowableSubscriber<List<MovieDomainModel>> {
-                override fun onSubscribe(s: Subscription) {
-                    Log.d(TAG, "getFavoriteMovies on onSubscribe")
-                }
-
-                override fun onNext(value: List<MovieDomainModel>) {
-                    favoritesMoviesLiveDataDB.postValue(value)
-                }
-
-                override fun onError(t: Throwable) {
+            .subscribe({ value -> favoritesMoviesLiveDataDB.postValue(value) },
+                { error ->
+                    Log.d(TAG, "Error during showing favorites movies ${error.message.toString()}")
                     favoritesMoviesLiveDataDB.postValue(listOf())
-                }
-
-                override fun onComplete() {
-                    Log.d(TAG, "getFavoriteMovies on onComplete")
-                }
-
-            })
+                })
         return favoritesMoviesFromDB
     }
 
@@ -260,14 +230,16 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /**
-     * Return number of favorite movies
+     * Return number of favorite movies.
+     * From documentation: BlockingObservable is a variety of Observable that provides blocking operators.
+     * It can be useful for testing and demo purposes, but is generally inappropriate for production applications (if you think you need to use a BlockingObservable this is usually a sign that you should rethink your design).
      */
     fun getFavoriteMoviesCount(): Int {
         var favoriteMovieRecords = 0
-        useCase.getFavoriteMovieRecords().subscribe(
-            { value -> favoriteMovieRecords = value },
-            { favoriteMovieRecords = 0 }
-        )
+        useCase.getFavoriteMovieRecords().toObservable().blockingForEach { value ->
+            Log.d(TAG, "Get count of favorite movies '$value'")
+            favoriteMovieRecords = value
+        }
         return favoriteMovieRecords
     }
 

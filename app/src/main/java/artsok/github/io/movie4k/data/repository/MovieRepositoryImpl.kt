@@ -52,21 +52,19 @@ class MovieRepositoryImpl(
     override fun getMoviesFromDB(): Flowable<List<MovieDomainModel>> {
         return movieDao.getMovies()
             .map { it.map { item -> item.toMovieDomainModel() } }
-            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }
 
     override fun getFavoriteMoviesFromDB(): Flowable<List<MovieDomainModel>> {
         return movieDao.getFavoriteMovies()
+            .doOnNext { print(" dfdfsd " + it.size) }
             .map { it.map { item -> item.toMovieDomainModel() } }
-            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }
 
     override fun getScheduleMoviesFromDB(): Flowable<List<MovieDomainModel>> {
         return movieDao.getScheduleMovies()
             .map { it.map { item -> item.toMovieDomainModel() } }
-            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }
 
@@ -83,7 +81,7 @@ class MovieRepositoryImpl(
     override fun getFavoriteTotalRecordsFromDB(): Single<Int> {
         return movieDao.getFavoriteTotalRecordOfMovies()
             .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+           // .observeOn(AndroidSchedulers.mainThread())
     }
 
     override suspend fun updateDB(favorite: Boolean, id: Int) {

@@ -69,7 +69,7 @@ class FavoriteListFragment : Fragment() {
 
 
     private fun initViewModel() {
-        movieViewModel.getFavoriteMovies().observe(this.viewLifecycleOwner, Observer {
+        movieViewModel.getFavoriteMoviesFromDB().observe(this.viewLifecycleOwner, Observer {
             favoriteAdapter.addFavoritesMovies(it)
         })
     }
