@@ -28,6 +28,7 @@ class FavoriteListFragment : Fragment() {
     private lateinit var favoriteAdapter: FavoriteAdapter
     private var listener: OnMovieClickListener? = null
 
+
     private val movieViewModelFactory by lazy { MovieViewModelFactory(activity!!.application) }
     private val movieViewModel by lazy {
         ViewModelProvider(requireActivity(), movieViewModelFactory).get(
@@ -52,7 +53,7 @@ class FavoriteListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         Log.d(TAG, "onViewCreated")
         initFavoriteRecycler(view)
-        initViewModel()
+        initViewModel() //Сначала получаем данные а потом инициируем адаптер
     }
 
     override fun onDestroyView() {
@@ -99,7 +100,7 @@ class FavoriteListFragment : Fragment() {
                 val position = viewHolder.adapterPosition
                 Log.d(TAG, "Position for deleting $position")
                 val movie = favoriteAdapter.getItem(position)
-                movieViewModel.deleteMovieFromFavoriteList(movie.title)
+                movieViewModel.deleteMovieFromFavoriteList(movie.title) //TODO!!!
                 favoriteAdapter.removeItem(position)
                 showShackBar(movie)
             }
@@ -107,6 +108,7 @@ class FavoriteListFragment : Fragment() {
         ItemTouchHelper(itemTouchHelper).attachToRecyclerView(favoriteRecycler)
         favoriteRecycler.adapter = favoriteAdapter
         favoriteAdapter.registerAdapterDataObserver(Observer(favoriteRecycler))
+
     }
 
     private fun showShackBar(movie: MovieDomainModel) {
@@ -123,35 +125,73 @@ class FavoriteListFragment : Fragment() {
      */
     inner class Observer(private val recyclerView: RecyclerView) : AdapterDataObserver() {
 
+        private var emptyLayout: View
+
         init {
-            isFavoriteRecyclerEmpty()
+            emptyLayout = inflateEmptyView(recyclerView)
+            emptyLayout.visibility = View.GONE
+            isEmpty()
         }
 
         override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
             super.onItemRangeRemoved(positionStart, itemCount)
-            isFavoriteRecyclerEmpty()
+            isEmpty()
+            //isFavoriteRecyclerEmpty()
         }
 
         override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
             super.onItemRangeInserted(positionStart, itemCount)
-            isFavoriteRecyclerNotEmpty()
+            isEmpty()
+            //isFavoriteRecyclerNotEmpty()
         }
 
-        private fun isFavoriteRecyclerEmpty() {
-            val emptyViewVisible = movieViewModel.getFavoriteMoviesCount() == 0
-            if (recyclerView.adapter != null && emptyViewVisible) {
-                val layout = inflateEmptyView(recyclerView)
-                layout.visibility = if (emptyViewVisible) View.VISIBLE else View.GONE
-                recyclerView.visibility = if (emptyViewVisible) View.GONE else View.VISIBLE
+//        private fun isFavoriteRecyclerEmpty() {
+//            val emptyViewVisible = movieViewModel.getFavoriteMoviesCount() == 0
+//            if (recyclerView.adapter != null && emptyViewVisible) {
+//                val layout = inflateEmptyView(recyclerView)
+//                layout.visibility = if (emptyViewVisible) View.VISIBLE else View.GONE
+//                recyclerView.visibility = if (emptyViewVisible) View.GONE else View.VISIBLE
+//            }
+//        }
+//
+//        private fun isFavoriteRecyclerNotEmpty() {
+//            val emptyViewVisible = movieViewModel.getFavoriteMoviesCount() > 0
+//            if (recyclerView.adapter != null && emptyViewVisible) {
+//                recyclerView.visibility = if (emptyViewVisible) View.VISIBLE else View.GONE
+//            }
+//        }
+
+
+        private fun isEmpty() {
+            if (recyclerView.adapter != null) {
+                when (favoriteAdapter.itemCount) {
+                    0 -> {
+                        recyclerView.visibility = View.GONE
+                        emptyLayout.visibility = View.VISIBLE
+                    }
+                    else -> {
+                        recyclerView.visibility = View.VISIBLE
+                    }
+                }
             }
         }
 
-        private fun isFavoriteRecyclerNotEmpty() {
-            val emptyViewVisible = movieViewModel.getFavoriteMoviesCount() > 0
-            if (recyclerView.adapter != null && emptyViewVisible) {
-                recyclerView.visibility = if (emptyViewVisible) View.VISIBLE else View.GONE
-            }
-        }
+//        private fun test() {
+//            movieViewModel.getFavoriteMoviesCountTest().subscribe({ value ->
+//                val emptyViewVisible = value == 0
+//                Thread.sleep(5000L)
+//                if (recyclerView.adapter != null && value > 0) {
+//                    val layout = inflateEmptyView(recyclerView)
+//                    layout.visibility = if (emptyViewVisible) View.VISIBLE else View.GONE
+//                    recyclerView.visibility = if (emptyViewVisible) View.GONE else View.VISIBLE
+//
+//                } else if (recyclerView.adapter != null && emptyViewVisible) {
+//                    recyclerView.visibility = if (emptyViewVisible) View.VISIBLE else View.GONE
+//                }
+//            },
+//                { error -> print(error) })
+//        }
+
 
         private fun inflateEmptyView(view: View): View {
             return LayoutInflater.from(view.context).inflate(

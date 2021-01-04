@@ -18,6 +18,7 @@ import artsok.github.io.movie4k.extensions.put
 import artsok.github.io.movie4k.lastResponseTime
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import io.reactivex.rxjava3.core.FlowableSubscriber
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.core.SingleObserver
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
@@ -241,6 +242,10 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
             favoriteMovieRecords = value
         }
         return favoriteMovieRecords
+    }
+
+    fun getFavoriteMoviesCountTest(): Single<Int> {
+        return useCase.getFavoriteMovieRecords()
     }
 
     fun onMovieSelected(movie: MovieDomainModel) {
