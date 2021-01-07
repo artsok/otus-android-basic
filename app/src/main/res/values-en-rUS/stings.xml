@@ -22,5 +22,5 @@
     <string name="movie_schedule">Theme</string>
     <string name="schedule">schedule</string>
     <string name="edit_icon">Edit schedule time</string>
-    <string name="search">Search</string>
+    <string name="search">Search movies</string>
 </resources>

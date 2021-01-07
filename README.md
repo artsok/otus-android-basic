@@ -368,6 +368,7 @@ RUS:
 https://blog.rocketinsights.com/rx-to-livedata/
 https://github.com/MindorksOpenSource/RxJava3-Android-Examples
 https://medium.com/@gabrieldemattosleon/fundamentals-of-rxjava-with-kotlin-for-absolute-beginners-3d811350b701
+https://spin.atomicobject.com/2019/11/11/how-to-create-a-searchview-with-suggestions-in-kotlin/ - SearchView with Suggestions
 
 Please read any of the subscribeOn/observeOn articles:
 https://proandroiddev.com/understanding-rxjava-subscribeon-and-observeon-744b0c6a41ea

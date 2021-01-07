@@ -80,7 +80,6 @@ class MovieListFragment : Fragment() {
         fetchData(state = INIT)
         initViewModel()
         initSwipeRefreshListener()
-        //setHasOptionsMenu(true)
     }
 
     override fun onDestroyView() {
@@ -210,11 +209,7 @@ class MovieListFragment : Fragment() {
         }
     }
 
-//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-//        super.onCreateOptionsMenu(menu, inflater)
-//        inflater.inflate(R.menu.top_nav_menu, menu)
-//
-//    }
+
 
     private fun initSwipeRefreshListener() {
         swipeRefreshLayout.setColorSchemeResources(
