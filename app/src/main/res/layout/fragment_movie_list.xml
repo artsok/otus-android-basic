@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tool="http://schemas.android.com/tools"
@@ -10,7 +9,7 @@
         android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF"
+        android:background="@color/white_50"
         app:elevation="0dp">
 
         <com.google.android.material.card.MaterialCardView
@@ -31,7 +30,6 @@
                 android:layout_centerHorizontal="true"
                 android:queryBackground="@android:color/transparent"
                 android:queryHint="@string/search" />
-
         </com.google.android.material.card.MaterialCardView>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -60,5 +58,4 @@
         android:indeterminate="true"
         android:visibility="invisible"
         tool:ignore="MissingConstraints" />
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
