@@ -3,6 +3,7 @@ package artsok.github.io.movie4k.data.retrofit
 import artsok.github.io.movie4k.BuildConfig
 import artsok.github.io.movie4k.data.model.MovieDto
 import artsok.github.io.movie4k.data.model.MovieListDto
+import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -55,10 +56,16 @@ fun <T> buildService(service: Class<T>): T {
 interface MovieApiService {
 
     @GET("movie/popular")
-    fun getPopularFilmsByPage(@Query("page") page: Int): Single<MovieListDto>
+    fun popularFilmsByPage(@Query("page") page: Int): Single<MovieListDto>
 
     @GET("movie/upcoming")
-    fun getUpcomingFilmsByPage(@Query("page") page: Int): Single<MovieListDto>
+    fun upcomingFilmsByPage(@Query("page") page: Int): Single<MovieListDto>
+
+    @GET("search/movie")
+    fun searchMovies(
+        @Query("query") query: String,
+        @Query("page") page: Int = 1
+    ): Flowable<MovieListDto>
 
     @GET("movie/{id}")
     fun getMovie(@Path("id") id: Int): Single<MovieDto>

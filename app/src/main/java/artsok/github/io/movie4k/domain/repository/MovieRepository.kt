@@ -12,6 +12,7 @@ interface MovieRepository {
     fun getMovies(page: Int): Single<List<MovieDomainModel>>
     fun getUpcomingMovies(page: Int): Single<List<MovieDomainModel>>
     fun getMovie(id: Int): Single<MovieDomainModel>
+    fun searchMovies(query: String): Flowable<List<MovieDomainModel>>
 
     suspend fun insertToDB(movie: MovieDomainModel)
     suspend fun deleteFromDB(movie: MovieDomainModel)
@@ -22,6 +23,7 @@ interface MovieRepository {
     suspend fun updateScheduledFlag(id: Int, flag: Boolean)
     suspend fun saveScheduleInfoToDB(schedule: Schedule)
 
+    fun searchMoviesInDB(title: String): Flowable<List<MovieDomainModel>>
     fun getTotalRecordsFromDB(): Single<Int>
     fun getFavoriteTotalRecordsFromDB(): Single<Int>
     fun getRequestCodeFromDB(title: String, time: String): Single<Int>

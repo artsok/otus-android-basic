@@ -37,6 +37,14 @@ class GetMoviesUseCase(private val repository: MovieRepository) {
         return repository.getRequestCodeFromDB(title, time)
     }
 
+    fun searchMoviesInDB(title: String) : Flowable<List<MovieDomainModel>> {
+        return repository.searchMoviesInDB(title)
+    }
+
+    fun searchMoviesInNetwork(title: String) : Flowable<List<MovieDomainModel>> {
+        return repository.searchMovies(title)
+    }
+
     fun getMovieRecords(): Single<Int> {
         return repository.getTotalRecordsFromDB()
     }

@@ -17,6 +17,7 @@ import artsok.github.io.movie4k.extensions.get
 import artsok.github.io.movie4k.extensions.put
 import artsok.github.io.movie4k.lastResponseTime
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.FlowableSubscriber
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.core.SingleObserver
@@ -44,6 +45,7 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
     private val errorLiveData = MutableLiveData<String>()
 
     private val moviesLiveDataDB = MutableLiveData<List<MovieDomainModel>>()
+    private val searchedMoviesLiveData = MutableLiveData<List<MovieDomainModel>>()
     private val favoritesMoviesLiveDataDB = MutableLiveData<List<MovieDomainModel>>()
     private val scheduleMoviesLiveDataDB = MutableLiveData<List<MovieDomainModel>>()
     private val selectedMovieLiveData = MutableLiveData<MovieDomainModel>()
@@ -67,6 +69,10 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
     val selectedMovie: LiveData<MovieDomainModel>
         get() = selectedMovieLiveData
 
+    val searchedMovies: LiveData<List<MovieDomainModel>>
+        get() = searchedMoviesLiveData
+
+    //TODO: rename
     private val moviesFrom: LiveData<List<MovieDomainModel>>
         get() = moviesLiveDataDB
 
@@ -190,6 +196,27 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
         return moviesFrom
     }
 
+    fun searchMovies(title: String): LiveData<List<MovieDomainModel>> {
+
+        val searchedMoviesInDB = useCase.searchMoviesInDB(title).doOnNext { println("Вызван поиск в БД " + LocalTime.now()) }
+        val searchedMoviesInNetwork = useCase.searchMoviesInNetwork(title).doOnNext { println("Вызван поиск в Сети") }
+
+        //Почему то debeonce не спасает. Быстро поиск идет
+        val disposable = Flowable.concat(searchedMoviesInDB, searchedMoviesInNetwork)
+            .filter{ it.isNotEmpty() }
+            .first(emptyList())
+            .subscribe(
+                { value -> searchedMoviesLiveData.postValue(value) },
+                { error -> errorLiveData.postValue(error.message) })
+
+//        val disposable = useCase.searchMoviesInDB(title)
+//            .subscribe(
+//                { value -> searchedMoviesLiveData.postValue(value) },
+//                { error -> errorLiveData.postValue(error.message) })
+        disposableBag.add(disposable)
+        return searchedMovies
+    }
+
     /**
      * Return the LiveData of favorite movies
      */
@@ -219,7 +246,7 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
 
                 override fun onError(t: Throwable) {
                     Log.d(TAG, "getScheduleMovies - onError")
-                    favoritesMoviesLiveDataDB.postValue(listOf())
+                    scheduleMoviesLiveDataDB.postValue(listOf())
                 }
 
                 override fun onComplete() {
@@ -290,7 +317,7 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /**
-     * Return Request Code for Alarm Service (Pending Intent). Behavior related with stop alarming of notifications
+     * Return Request Code for Alarm Service (Pending Intent). Behavior related with stop alarm of notifications
      */
     fun getRequestCodeForAlarmService(title: String, time: String): Int {
         var requestCode = 0
@@ -337,3 +364,18 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
         disposableBag.clear()
     }
 }
+
+
+//fun <T> LiveData<T>.debounce(duration: Long = 1000L) = MediatorLiveData<T>().also { mld ->
+//    val source = this
+//    val handler = Handler(Looper.getMainLooper())
+//
+//    val runnable = Runnable {
+//        mld.value = source.value
+//    }
+//
+//    mld.addSource(source) {
+//        handler.removeCallbacks(runnable)
+//        handler.postDelayed(runnable, duration)
+//    }
+//}

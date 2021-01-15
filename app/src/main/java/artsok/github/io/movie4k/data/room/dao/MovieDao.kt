@@ -17,6 +17,9 @@ interface MovieDao {
     @Query("SELECT * from movie_table WHERE scheduled = 1")
     fun getScheduleMovies(): Flowable<List<Movie>>
 
+    @Query("SELECT * from movie_table WHERE title LIKE :title")
+    fun searchMovies(title: String): Flowable<List<Movie>>
+
     @Query("SELECT COUNT(id) from movie_table WHERE favorite = 1")
     fun getFavoriteTotalRecordOfMovies(): Single<Int>
 

@@ -369,12 +369,19 @@ https://blog.rocketinsights.com/rx-to-livedata/
 https://github.com/MindorksOpenSource/RxJava3-Android-Examples
 https://medium.com/@gabrieldemattosleon/fundamentals-of-rxjava-with-kotlin-for-absolute-beginners-3d811350b701
 https://spin.atomicobject.com/2019/11/11/how-to-create-a-searchview-with-suggestions-in-kotlin/ - SearchView with Suggestions
+https://kotlin-android.com/android-searchview-kotlin/ - Android SearchView Tutorial in Kotlin with Example
+https://www.journaldev.com/12478/android-searchview-example-tutorial
+https://startandroid.ru/ru/blog/516-rxjava-primery.html - Обзоры работы с RXJAVA
+https://devcolibri.com/implementing-search-on-type-in-android-with-rxjava/ - Примеры работы с RXJAVA
+https://developer.android.com/jetpack/androidx/releases/lifecycle - пришлось вспомнить
 
 Please read any of the subscribeOn/observeOn articles:
 https://proandroiddev.com/understanding-rxjava-subscribeon-and-observeon-744b0c6a41ea
 https://medium.com/upday-devs/rxjava-subscribeon-vs-observeon-9af518ded53a
 http://rx-marin.com/post/observeon-vs-subscribeon/
 https://www.google.hu/search?q=subscribeon+observeon&oq=subscribeon+observeon
+https://medium.com/@poudanen/%D0%BF%D0%BE%D0%BD%D0%B8%D0%BC%D0%B0%D0%BD%D0%B8%D0%B5-rxjava-subject-publish-replay-behavior-%D0%B8-async-subject-35ad50cd1064
+https://www.raywenderlich.com/books/reactive-programming-with-kotlin/v2.0/chapters/9-combining-operators#toc-chapter-012-anchor-001
 
 
 

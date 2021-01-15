@@ -21,6 +21,7 @@
             android:layout_marginBottom="6dp"
             app:cardCornerRadius="1dp"
             app:cardElevation="2dp"
+
             app:layout_scrollFlags="scroll|snap">
 
             <SearchView
@@ -28,6 +29,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
+
+                android:focusableInTouchMode="true"
+                android:iconifiedByDefault="true"
                 android:queryBackground="@android:color/transparent"
                 android:queryHint="@string/search" />
         </com.google.android.material.card.MaterialCardView>
@@ -38,6 +42,8 @@
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/white_50"
+
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <androidx.recyclerview.widget.RecyclerView
@@ -45,7 +51,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:background="#FFFFFF"
             tool:listitem="@layout/card_movie" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

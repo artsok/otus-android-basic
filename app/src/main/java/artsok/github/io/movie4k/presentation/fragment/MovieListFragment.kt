@@ -9,9 +9,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import android.widget.SearchView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -24,6 +25,11 @@ import artsok.github.io.movie4k.presentation.recycler.MovieAdapter
 import artsok.github.io.movie4k.presentation.viewmodel.MovieViewModel
 import artsok.github.io.movie4k.presentation.viewmodel.MovieViewModelFactory
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.fragment_movie_list.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MovieListFragment : Fragment() {
 
@@ -33,6 +39,7 @@ class MovieListFragment : Fragment() {
 
     private var adapter: MovieAdapter? = null
     private var listener: OnMovieClickListener? = null
+    private var queryTextChangedJob: Job? = null
 
     private val movieViewModelFactory by lazy { MovieViewModelFactory(activity!!.application) }
     private val movieViewModel by lazy {
@@ -80,6 +87,48 @@ class MovieListFragment : Fragment() {
         fetchData(state = INIT)
         initViewModel()
         initSwipeRefreshListener()
+
+
+//        searchView.setOnQueryTextFocusChangeListener(object : View.OnFocusChangeListener {
+//            override fun onFocusChange(v: View?, hasFocus: Boolean) {
+//                println("asdfd $hasFocus")
+//            }
+//        })
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                return if (newText.isNotEmpty()) {
+                    Log.d(TAG, "Введенный текст $newText")
+                    queryTextChangedJob?.cancel()
+                    queryTextChangedJob =
+                        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                            delay(1000)
+                            searchMovies(newText)
+                        }
+                    false
+                } else {
+                    false
+                }
+
+            }
+        })
+    }
+
+
+    private fun searchMovies(title: String) {
+        println("Вызов поиска")
+        movieViewModel.searchMovies(title)
+            .observe(
+                this.viewLifecycleOwner,
+                { value ->
+                    value?.let {
+                        adapter!!.addSearchedValue(it)
+                    }
+                })
     }
 
     override fun onDestroyView() {
@@ -92,14 +141,14 @@ class MovieListFragment : Fragment() {
     private fun initViewModel() {
         movieViewModel.getMoviesFromDB().observe(
             this.viewLifecycleOwner,
-            Observer {
+            {
                 adapter!!.addMovies(it)
                 loadProgress.visibility = View.GONE
             })
 
         movieViewModel.error.observe(
             this.viewLifecycleOwner,
-            Observer { error ->
+            { error ->
                 if (!error.isNullOrBlank()) {
                     showShackBar(error)
                 }
@@ -149,6 +198,12 @@ class MovieListFragment : Fragment() {
                     )
                     fetchData(state = CONTINUE)
                 }
+            }
+        })
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                searchView.clearFocus()
             }
         })
     }
@@ -210,7 +265,6 @@ class MovieListFragment : Fragment() {
     }
 
 
-
     private fun initSwipeRefreshListener() {
         swipeRefreshLayout.setColorSchemeResources(
             android.R.color.holo_purple
@@ -238,3 +292,5 @@ class MovieListFragment : Fragment() {
         INIT, CONTINUE, START
     }
 }
+
+

@@ -5,6 +5,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Filter
+import android.widget.Filterable
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat.getColor
@@ -13,6 +15,7 @@ import artsok.github.io.movie4k.R
 import artsok.github.io.movie4k.domain.model.MovieDomainModel
 import artsok.github.io.movie4k.presentation.listener.OnMovieSelectedListener
 import com.bumptech.glide.Glide
+import java.time.LocalTime
 
 const val path = "https://image.tmdb.org/t/p/w500"
 
@@ -20,13 +23,14 @@ class MovieAdapter(
     private val context: Context,
     private val listener: OnMovieSelectedListener
 ) :
-    RecyclerView.Adapter<MovieAdapter.ViewHolder>() {
+    RecyclerView.Adapter<MovieAdapter.ViewHolder>(), Filterable {
 
     companion object {
         const val TAG = "MovieAdapter"
     }
 
     private var movies = emptyList<MovieDomainModel>()
+    private var searchedMovies = mutableSetOf<MovieDomainModel>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val cardView = LayoutInflater.from(parent.context)
@@ -58,14 +62,31 @@ class MovieAdapter(
 
     fun addMovies(movies: List<MovieDomainModel>) {
         this.movies = movies
-
-        //notifyItemRangeInserted(storeSize, storeSize + movies.size)
+        //notifyItemRangeInserted(storeSize, storeSize + movies.size) TODO: use it
         notifyDataSetChanged()
         Log.d(TAG, "In addMovies method. Number of size = ${movies.size}")
+    }
+
+    fun addSearchedValue(list: List<MovieDomainModel>) {
+        this.searchedMovies.addAll(list)
+        Log.d(TAG, "Корзина элементов searchedMovies ${searchedMovies.size} + $list \n "  + LocalTime.now())
     }
 
     inner class ViewHolder(item: View) : RecyclerView.ViewHolder(item) {
         var itemImage: ImageView = item.findViewById(R.id.card_image)
         var itemTitle: TextView = item.findViewById(R.id.card_title)
+    }
+
+    override fun getFilter(): Filter {
+        return object : Filter() {
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+                TODO("Not yet implemented")
+            }
+
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                TODO("Not yet implemented")
+            }
+
+        }
     }
 }
