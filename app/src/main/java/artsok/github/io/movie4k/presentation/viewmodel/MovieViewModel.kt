@@ -125,6 +125,13 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
         moviesLiveData.postValue(listOf())
     }
 
+    /**
+     *
+     */
+    fun resetSearchedLiveData() {
+        searchedMoviesLiveData.postValue(listOf())
+    }
+
     fun onErrorDisplayed() {
         errorLiveData.postValue(null)
     }
@@ -197,25 +204,21 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun searchMovies(title: String): LiveData<List<MovieDomainModel>> {
-
-        val searchedMoviesInDB = useCase.searchMoviesInDB(title).doOnNext { println("Вызван поиск в БД " + LocalTime.now()) }
-        val searchedMoviesInNetwork = useCase.searchMoviesInNetwork(title).doOnNext { println("Вызван поиск в Сети") }
-
-        //Почему то debeonce не спасает. Быстро поиск идет
-        val disposable = Flowable.concat(searchedMoviesInDB, searchedMoviesInNetwork)
-            .filter{ it.isNotEmpty() }
-            .first(emptyList())
+        val searchedMoviesInDB = useCase.searchMoviesInDB(title)
+            .doOnNext { println("Вызван поиск в БД " + LocalTime.now()) }
+        val searchedMoviesInNetwork = useCase.searchMoviesInNetwork(title)
+            .doOnNext { println("Вызван поиск в Сети / " + LocalTime.now()) }
+        val disposable = Flowable
+            .merge(searchedMoviesInDB, searchedMoviesInNetwork)
+            .doOnNext { Log.d(TAG, "HEREEE " + it.toString()) }
+            .filter { it.isNotEmpty() }
             .subscribe(
                 { value -> searchedMoviesLiveData.postValue(value) },
                 { error -> errorLiveData.postValue(error.message) })
-
-//        val disposable = useCase.searchMoviesInDB(title)
-//            .subscribe(
-//                { value -> searchedMoviesLiveData.postValue(value) },
-//                { error -> errorLiveData.postValue(error.message) })
         disposableBag.add(disposable)
         return searchedMovies
     }
+
 
     /**
      * Return the LiveData of favorite movies

@@ -1,6 +1,7 @@
 package artsok.github.io.movie4k.presentation.recycler
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +16,10 @@ import artsok.github.io.movie4k.R
 import artsok.github.io.movie4k.domain.model.MovieDomainModel
 import artsok.github.io.movie4k.presentation.listener.OnMovieSelectedListener
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import java.time.LocalTime
 
 const val path = "https://image.tmdb.org/t/p/w500"
@@ -30,6 +35,7 @@ class MovieAdapter(
     }
 
     private var movies = emptyList<MovieDomainModel>()
+    private var moviesFilter = emptyList<MovieDomainModel>()
     private var searchedMovies = mutableSetOf<MovieDomainModel>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -57,6 +63,28 @@ class MovieAdapter(
         Glide.with(viewHolder.itemImage.context)
             .load("$path${movies[position].backdropPath}")
             .error(R.drawable.ic_error)
+            .listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    Log.d(TAG, "Failed to load image")
+                    return false
+                }
+
+                override fun onResourceReady(
+                    resource: Drawable?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    return false
+                }
+
+            })
             .into(viewHolder.itemImage)
     }
 
@@ -69,7 +97,10 @@ class MovieAdapter(
 
     fun addSearchedValue(list: List<MovieDomainModel>) {
         this.searchedMovies.addAll(list)
-        Log.d(TAG, "Корзина элементов searchedMovies ${searchedMovies.size} + $list \n "  + LocalTime.now())
+        Log.d(
+            TAG,
+            "Корзина элементов searchedMovies ${searchedMovies.size}" + LocalTime.now()
+        )
     }
 
     inner class ViewHolder(item: View) : RecyclerView.ViewHolder(item) {
@@ -79,12 +110,20 @@ class MovieAdapter(
 
     override fun getFilter(): Filter {
         return object : Filter() {
-            override fun performFiltering(constraint: CharSequence?): FilterResults {
-                TODO("Not yet implemented")
+
+            override fun performFiltering(constraint: CharSequence): FilterResults {
+                Log.d(TAG, "Вызов performFiltering")
+                val filterResults = FilterResults()
+                filterResults.values = searchedMovies.toList()
+                return filterResults
             }
 
-            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-                TODO("Not yet implemented")
+            override fun publishResults(constraint: CharSequence, results: FilterResults) {
+                Log.d(TAG, "Вызов publishResults")
+                movies = results?.values as List<MovieDomainModel>
+                notifyDataSetChanged()
+                searchedMovies.clear()
+                println("Завершение publishResults")
             }
 
         }

@@ -29,9 +29,7 @@ class MovieRepositoryImpl(
 
     override fun searchMovies(query: String): Flowable<List<MovieDomainModel>> {
         return retrofitService.searchMovies(query)
-            .subscribeOn(Schedulers.io())
             .map { it.results.map { item -> item.toDomainModel() } }
-            //.observeOn(AndroidSchedulers.mainThread())
     }
 
     override fun getMovies(page: Int): Single<List<MovieDomainModel>> {

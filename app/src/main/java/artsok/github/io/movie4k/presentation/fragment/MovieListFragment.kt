@@ -18,7 +18,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import artsok.github.io.movie4k.R
 import artsok.github.io.movie4k.domain.model.MovieDomainModel
-import artsok.github.io.movie4k.presentation.fragment.MovieListFragment.FetchDataFlow.*
+import artsok.github.io.movie4k.presentation.fragment.MovieListFragment.FetchDataFlow.INIT
+import artsok.github.io.movie4k.presentation.fragment.MovieListFragment.FetchDataFlow.START
 import artsok.github.io.movie4k.presentation.listener.OnMovieClickListener
 import artsok.github.io.movie4k.presentation.listener.OnMovieSelectedListener
 import artsok.github.io.movie4k.presentation.recycler.MovieAdapter
@@ -101,6 +102,7 @@ class MovieListFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
+                movieViewModel.resetSearchedLiveData()
                 return if (newText.isNotEmpty()) {
                     Log.d(TAG, "Введенный текст $newText")
                     queryTextChangedJob?.cancel()
@@ -127,6 +129,7 @@ class MovieListFragment : Fragment() {
                 { value ->
                     value?.let {
                         adapter!!.addSearchedValue(it)
+                        adapter?.filter?.filter("_")
                     }
                 })
     }
@@ -135,6 +138,7 @@ class MovieListFragment : Fragment() {
         super.onDestroyView()
         Log.d(TAG, "onDestroyView")
         movieViewModel.resetLiveDataValue()
+        movieViewModel.resetSearchedLiveData()
         movieViewModel.onErrorDisplayed()
     }
 
@@ -191,12 +195,14 @@ class MovieListFragment : Fragment() {
                     TAG,
                     "totalItemCount = $totalItemCount, lastVisibleItemPosition = $lastVisibleItemPosition"
                 )
+
                 if (totalItemCount <= (lastVisibleItemPosition + visibleThreshold)) {
                     Log.d(
                         TAG,
                         "Подгрузить еще данные ${gridLayoutManager.findLastVisibleItemPosition()}"
                     )
-                    fetchData(state = CONTINUE)
+                    //TODO: вернуть обратно, так как отключил чтобы проверить поиск
+                    //fetchData(state = CONTINUE)
                 }
             }
         })
@@ -224,10 +230,10 @@ class MovieListFragment : Fragment() {
                 Log.d(TAG, "fetchData. START State")
                 movieViewModel.getMovies()
             }
-            CONTINUE -> {
-                Log.d(TAG, "fetchData. CONTINUE State")
-                movieViewModel.getMovies()
-            }
+//            CONTINUE -> {
+//                Log.d(TAG, "fetchData. CONTINUE State")
+//                movieViewModel.getMovies()
+//            }
         }
     }
 
