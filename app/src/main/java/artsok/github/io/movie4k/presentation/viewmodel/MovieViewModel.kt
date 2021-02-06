@@ -204,19 +204,22 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun searchMovies(title: String): LiveData<List<MovieDomainModel>> {
-        val searchedMoviesInDB = useCase.searchMoviesInDB(title)
-            .doOnNext { println("Вызван поиск в БД " + LocalTime.now()) }
-        val searchedMoviesInNetwork = useCase.searchMoviesInNetwork(title)
-            .doOnNext { println("Вызван поиск в Сети / " + LocalTime.now()) }
-        val disposable = Flowable
-            .merge(searchedMoviesInDB, searchedMoviesInNetwork)
-            .doOnNext { Log.d(TAG, "HEREEE " + it.toString()) }
-            .filter { it.isNotEmpty() }
-            .subscribe(
-                { value -> searchedMoviesLiveData.postValue(value) },
-                { error -> errorLiveData.postValue(error.message) })
-        disposableBag.add(disposable)
-        return searchedMovies
+        if (title.isNotEmpty()) {
+            val searchedMoviesInDB = useCase.searchMoviesInDB(title)
+                .doOnNext { Log.d(TAG, "Use local search in DB + ${LocalTime.now()}") }
+            val searchedMoviesInNetwork = useCase.searchMoviesInNetwork(title)
+                .doOnNext { Log.d(TAG, "Use network search  ${LocalTime.now()}") }
+            val disposable = Flowable
+                .merge(searchedMoviesInDB, searchedMoviesInNetwork)
+                .filter { it.isNotEmpty() }
+                .subscribe(
+                    { value -> searchedMoviesLiveData.postValue(value) },
+                    { error -> errorLiveData.postValue(error.message) })
+            disposableBag.add(disposable)
+            return searchedMovies
+        } else {
+            return getMoviesFromDB()
+        }
     }
 
 
@@ -367,18 +370,3 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
         disposableBag.clear()
     }
 }
-
-
-//fun <T> LiveData<T>.debounce(duration: Long = 1000L) = MediatorLiveData<T>().also { mld ->
-//    val source = this
-//    val handler = Handler(Looper.getMainLooper())
-//
-//    val runnable = Runnable {
-//        mld.value = source.value
-//    }
-//
-//    mld.addSource(source) {
-//        handler.removeCallbacks(runnable)
-//        handler.postDelayed(runnable, duration)
-//    }
-//}

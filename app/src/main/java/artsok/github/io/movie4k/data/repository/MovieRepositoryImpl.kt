@@ -63,7 +63,6 @@ class MovieRepositoryImpl(
 
     override fun getFavoriteMoviesFromDB(): Flowable<List<MovieDomainModel>> {
         return movieDao.getFavoriteMovies()
-            .doOnNext { print(" dfdfsd " + it.size) }
             .map { it.map { item -> item.toMovieDomainModel() } }
             .observeOn(AndroidSchedulers.mainThread())
     }
@@ -77,7 +76,6 @@ class MovieRepositoryImpl(
     override fun searchMoviesInDB(title: String): Flowable<List<MovieDomainModel>> {
         return movieDao.searchMovies(title)
             .map { it.map { item -> item.toMovieDomainModel() } }
-            //.observeOn(AndroidSchedulers.mainThread())
     }
 
     override suspend fun deleteMoviesFromDB() {

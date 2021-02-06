@@ -18,8 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import artsok.github.io.movie4k.R
 import artsok.github.io.movie4k.domain.model.MovieDomainModel
-import artsok.github.io.movie4k.presentation.fragment.MovieListFragment.FetchDataFlow.INIT
-import artsok.github.io.movie4k.presentation.fragment.MovieListFragment.FetchDataFlow.START
+import artsok.github.io.movie4k.presentation.fragment.MovieListFragment.FetchDataFlow.*
 import artsok.github.io.movie4k.presentation.listener.OnMovieClickListener
 import artsok.github.io.movie4k.presentation.listener.OnMovieSelectedListener
 import artsok.github.io.movie4k.presentation.recycler.MovieAdapter
@@ -90,12 +89,6 @@ class MovieListFragment : Fragment() {
         initSwipeRefreshListener()
 
 
-//        searchView.setOnQueryTextFocusChangeListener(object : View.OnFocusChangeListener {
-//            override fun onFocusChange(v: View?, hasFocus: Boolean) {
-//                println("asdfd $hasFocus")
-//            }
-//        })
-
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 return false
@@ -103,33 +96,26 @@ class MovieListFragment : Fragment() {
 
             override fun onQueryTextChange(newText: String): Boolean {
                 movieViewModel.resetSearchedLiveData()
-                return if (newText.isNotEmpty()) {
-                    Log.d(TAG, "Введенный текст $newText")
-                    queryTextChangedJob?.cancel()
-                    queryTextChangedJob =
-                        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                            delay(1000)
-                            searchMovies(newText)
-                        }
-                    false
-                } else {
-                    false
-                }
-
+                queryTextChangedJob?.cancel()
+                queryTextChangedJob =
+                    viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                        delay(1000)
+                        searchMovies(newText)
+                    }
+                return false
             }
         })
     }
 
 
     private fun searchMovies(title: String) {
-        println("Вызов поиска")
         movieViewModel.searchMovies(title)
             .observe(
                 this.viewLifecycleOwner,
                 { value ->
                     value?.let {
                         adapter!!.addSearchedValue(it)
-                        adapter?.filter?.filter("_")
+                        adapter?.filter?.filter(title)
                     }
                 })
     }
@@ -230,10 +216,10 @@ class MovieListFragment : Fragment() {
                 Log.d(TAG, "fetchData. START State")
                 movieViewModel.getMovies()
             }
-//            CONTINUE -> {
-//                Log.d(TAG, "fetchData. CONTINUE State")
-//                movieViewModel.getMovies()
-//            }
+            CONTINUE -> {
+                Log.d(TAG, "fetchData. CONTINUE State")
+                movieViewModel.getMovies()
+            }
         }
     }
 
@@ -279,6 +265,7 @@ class MovieListFragment : Fragment() {
             updateMovies()
             swipeRefreshLayout.isRefreshing = false
         }
+
     }
 
     /**

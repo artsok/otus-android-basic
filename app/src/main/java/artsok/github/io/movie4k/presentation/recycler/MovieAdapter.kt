@@ -20,7 +20,6 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import java.time.LocalTime
 
 const val path = "https://image.tmdb.org/t/p/w500"
 
@@ -35,7 +34,6 @@ class MovieAdapter(
     }
 
     private var movies = emptyList<MovieDomainModel>()
-    private var moviesFilter = emptyList<MovieDomainModel>()
     private var searchedMovies = mutableSetOf<MovieDomainModel>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -99,7 +97,7 @@ class MovieAdapter(
         this.searchedMovies.addAll(list)
         Log.d(
             TAG,
-            "Корзина элементов searchedMovies ${searchedMovies.size}" + LocalTime.now()
+            "Корзина элементов searchedMovies ${searchedMovies.size}"
         )
     }
 
@@ -112,18 +110,20 @@ class MovieAdapter(
         return object : Filter() {
 
             override fun performFiltering(constraint: CharSequence): FilterResults {
-                Log.d(TAG, "Вызов performFiltering")
+                Log.d(TAG, "Вызов performFiltering ${constraint.length}")
                 val filterResults = FilterResults()
                 filterResults.values = searchedMovies.toList()
                 return filterResults
             }
 
             override fun publishResults(constraint: CharSequence, results: FilterResults) {
-                Log.d(TAG, "Вызов publishResults")
-                movies = results?.values as List<MovieDomainModel>
-                notifyDataSetChanged()
+                Log.d(TAG, "Вызов publishResults ${constraint.length}")
+                if (results.values != null && (results.values as List<MovieDomainModel>).size > 0) {
+                    movies = results.values as List<MovieDomainModel>
+                    notifyDataSetChanged()
+                }
                 searchedMovies.clear()
-                println("Завершение publishResults")
+                Log.d(TAG, "Завершение publishResults")
             }
 
         }
