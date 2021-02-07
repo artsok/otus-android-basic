@@ -254,10 +254,147 @@ https://startandroid.ru/ru/uroki/vse-uroki-spiskom/190-urok-116-povedenie-activi
 https://stackoverflow.com/questions/35451309/open-fragment-from-notification-when-the-app-in-background - как открывать фрагмент через нотификацию
 https://developer.android.com/training/scheduling/alarms#boot - Start an alarm when the device restarts
 
+## Homework #9
+ENG:
+1. Add Firebase Crashlytics to the application
+2. Add Firebase Cloud Messaging to the application
+3. Add functionality to the application: when getting notification from FCM open fragment with movie information
+*4. Add Firebase Remote Config to the application
+
+RUS:
+Сервисы Firebase.
+Цель: +1 балл за попытку
+1. Добавьте crashlytics в свое приложение //Добавил Events во класс MovieFragment +
+2. Добавьте в приложение Firebase Cloud Messaging +
+3. Добавьте пуш уведомление из FCM, которое будет содержать всю информацию о фильме и, соответственно, открывать её при клике +
+* 4. Добавьте Remote Config в свое приложение и передавайте какие-нибудь данные. Например, "категорию фильма по-умолчанию",
+чтобы удаленно можно было задать, какой список фильмов грузить (топ за неделю, топ за все время, свежие и т.д.) +
+
+Что было прочитано?
+https://firebase.google.com/docs/crashlytics/test-implementation?authuser=0&platform=android - Протестируйте свою реализацию Crashlytics
+```
+adb shell setprop log.tag.FirebaseCrashlytics DEBUG
+adb logcat -s FirebaseCrashlytics
+adb shell setprop log.tag.FirebaseCrashlytics INFO
+```
+
+https://firebase.google.com/docs/crashlytics/get-started?authuser=0&platform=android - Подключение Crashlytics
+https://support.google.com/firebase/answer/6317498?hl=en&ref_topic=6317484 - Описание Events: All apps для FirebaseAnalytics
+https://guides.codepath.com/android/Understanding-the-Android-Application-Class - Understanding the Android Application Class
+
+Работа с Events
+```
+adb devices
+adb shell setprop log.tag.FA VERBOSE
+adb shell setprop log.tag.FA-SVC VERBOSE
+adb logcat -v time -s FA FA-SVC
+```
+
+
+DebugView - очень долгий update у меня был (и большая часть event не доходила.)
+```
+Чтобы включить режим отладки Google Analytics на устройстве Android, выполните следующие команды:
+
+adb shell setprop debug.firebase.analytics.app artsok.github.io.movie4k
+
+Это поведение сохраняется до тех пор, пока вы явно не отключите режим отладки, выполнив следующую команду:
+
+adb shell setprop debug.firebase.analytics.app .none.
+```
+
+Если мы хотим, чтобы нотификация от FCM открывала нужную активити, когда приложение в background, killed, то требуется отправлять данные data, а не notification.
+Описание запроса, который уходит:
+https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#Message
+
+
+Пример запроса:
+```
+POST /v1/projects/movies-d5387/messages:send HTTP/1.1
+Host: fcm.googleapis.com
+Content-length: 266
+Content-type: application/json
+Authorization: Bearer ya29.a0AfH6SMD_x4TZKFZMqOpF_S_MHQ4UufaS2yuC0RH7gVkf2buNCKCKJoyMUxr-AjScWvzd1DYKijbYYuzcYemVXGK0EE4nnoGmxDAJgjgkmMg3-U4sphqcPU8fK0SmoiZZAtqpyBnIKfAFJLar6Uxpoq5FL35Ij3UXsYDeWmu3ghg
+{
+  "message":{
+    "data": {
+     "movie" : "766165",
+     "text" : "etc"
+   },
+    "token" : "c753C6ZQSKCd2AA58ipq18:APA91bHG9psCIhobqGN3kqWcmh8mzXh5b434XxI4HZwCe2emm-aygVqxXufwsoy1Nbepgku6aAENht6XtO3DVEiA2oMpuVKjrmKQdsxjymQPizCEGcym8c4kcsrf0d8QoLz2JAZ0H9Fe"
+  }
+}
+```
+
+Пример ответа:
+
+```
+HTTP/1.1 200 OK
+Content-length: 83
+X-xss-protection: 0
+X-content-type-options: nosniff
+Transfer-encoding: chunked
+Vary: Origin, X-Origin, Referer
+Server: ESF
+-content-encoding: gzip
+Cache-control: private
+Date: Fri, 20 Nov 2020 19:26:10 GMT
+X-frame-options: SAMEORIGIN
+Alt-svc: h3-29=":443"; ma=2592000,h3-T051=":443"; ma=2592000,h3-Q050=":443"; ma=2592000,h3-Q046=":443"; ma=2592000,h3-Q043=":443"; ma=2592000,quic=":443"; ma=2592000; v="46,43"
+Content-type: application/json; charset=UTF-8
+{
+  "name": "projects/movies-d5387/messages/0:1605900370647291%73a642e8f9fd7ecd"
+}
+```
+
+Использовал сервис для отладки:
+https://developers.google.com/oauthplayground/?code=4/0AY0e-g55d7lCLHU7CJa-IlFWkMkYl0W_3_39ITQlmKrXRf6lkp3qd9QffAXlJxw17OktDg&scope=email%20https://www.googleapis.com/auth/userinfo.email%20https://www.googleapis.com/auth/firebase.messaging%20openid&authuser=0&prompt=consent
+
+
+Получить FCM Token:
+https://firebase.google.com/docs/cloud-messaging/android/client#retrieve-the-current-registration-token
+https://stackoverflow.com/questions/37711082/how-to-handle-notification-when-app-in-background-in-firebase/37845174 - How to handle notification when app in background in Firebase
+https://blog.mestwin.net/send-your-test-fcm-push-notification-quickly-with-curl/ - Send your test FCM push notification with cURL
+
+
+
+## Homework #10
+RUS:
+Добавление RxJava в проект
+1. Все запросы к сети переделайте на RxJava
+2. Все запросы к БД переделайте на RxJava
+3. * Добавьте в приложение поиск по фильмам в БД, используя RxJava
+
+Что прочитано:
+https://blog.rocketinsights.com/rx-to-livedata/
+https://github.com/MindorksOpenSource/RxJava3-Android-Examples
+https://medium.com/@gabrieldemattosleon/fundamentals-of-rxjava-with-kotlin-for-absolute-beginners-3d811350b701
+https://spin.atomicobject.com/2019/11/11/how-to-create-a-searchview-with-suggestions-in-kotlin/ - SearchView with Suggestions
+https://kotlin-android.com/android-searchview-kotlin/ - Android SearchView Tutorial in Kotlin with Example
+https://www.journaldev.com/12478/android-searchview-example-tutorial
+https://startandroid.ru/ru/blog/516-rxjava-primery.html - Обзоры работы с RXJAVA
+https://devcolibri.com/implementing-search-on-type-in-android-with-rxjava/ - Примеры работы с RXJAVA
+https://developer.android.com/jetpack/androidx/releases/lifecycle - пришлось вспомнить
+
+Please read any of the subscribeOn/observeOn articles:
+https://proandroiddev.com/understanding-rxjava-subscribeon-and-observeon-744b0c6a41ea
+https://medium.com/upday-devs/rxjava-subscribeon-vs-observeon-9af518ded53a
+http://rx-marin.com/post/observeon-vs-subscribeon/
+https://www.google.hu/search?q=subscribeon+observeon&oq=subscribeon+observeon
+https://medium.com/@poudanen/%D0%BF%D0%BE%D0%BD%D0%B8%D0%BC%D0%B0%D0%BD%D0%B8%D0%B5-rxjava-subject-publish-replay-behavior-%D0%B8-async-subject-35ad50cd1064
+https://www.raywenderlich.com/books/reactive-programming-with-kotlin/v2.0/chapters/9-combining-operators#toc-chapter-012-anchor-001
+
+
+
 Интересно про Dagger:
 https://medium.com/@marco_cattaneo/android-viewmodel-and-factoryprovider-good-way-to-manage-it-with-dagger-2-d9e20a07084c
 https://proandroiddev.com/forget-rxjava-kotlin-coroutines-are-all-you-need-part-1-2-4f62ecc4f99b
 
+Фичи на проект:
+1) Перейти на Paging
+https://proandroiddev.com/exploring-paging-library-from-jetpack-c661c7399662
+
+2) Во фрагменте добавить карту Google Map и показать точки где фильм был снят
+
 Note: Initially for me also not worked,After Seeing many posts i realized that the pending intent to be canceled should be same as the
 original pending intent that was used to schedule alarm. The pending intent to be cancelled should have set to same action and same data fields,
-if any have those were used to set the alarm.After setting the same ACTION and data values though i'm not using them,only cancelled the Alarm.
+if any have those were used to set the alarm. After setting the same ACTION and data values though i'm not using them,only cancelled the Alarm.

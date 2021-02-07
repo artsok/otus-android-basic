@@ -11,7 +11,7 @@ import artsok.github.io.movie4k.presentation.listener.OnMovieSelectedListener
 import com.bumptech.glide.Glide
 import java.util.*
 
-class FavoriteAdapter(
+class `FavoriteAdapter`(
     private val listener: OnMovieSelectedListener
 ) : RecyclerView.Adapter<ViewHolder>() {
 
