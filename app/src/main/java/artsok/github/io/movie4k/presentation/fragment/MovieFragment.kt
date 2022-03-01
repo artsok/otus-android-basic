@@ -16,6 +16,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import artsok.github.io.movie4k.domain.model.MovieDomainModel
+import artsok.github.io.movie4k.extensions.logEventMethod
 import artsok.github.io.movie4k.presentation.DateTimePickerUtil
 import artsok.github.io.movie4k.presentation.recycler.path
 import artsok.github.io.movie4k.presentation.viewmodel.MovieViewModel
@@ -34,6 +35,8 @@ class MovieFragment : Fragment(), DateTimePickerUtil {
     private lateinit var schedule: ImageView
     private lateinit var movie: MovieDomainModel
     private lateinit var alarmService: AlarmService
+    private val firebaseAnalytics by lazy { App.instance.firebaseAnalytics }
+
 
     private var favorite: Boolean = false
     private var userComment: StringBuilder = StringBuilder()
@@ -122,7 +125,9 @@ class MovieFragment : Fragment(), DateTimePickerUtil {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
             }
         })
-        like.setOnClickListener { clickOnFavorite() }
+        like.setOnClickListener {
+            clickOnFavorite()
+        }
         share.setOnClickListener { shareClick() }
         schedule.setOnClickListener {
             clickScheduleMovieAlarm(
@@ -157,6 +162,7 @@ class MovieFragment : Fragment(), DateTimePickerUtil {
             like.setImageResource(R.drawable.ic_favorite_border_black_24dp)
             movieViewModel.moveToFavorite(movie.uniqueId)
             movie.favorite = true
+            firebaseAnalytics.logEventMethod("on_click_favorite", movie)
             true
         }
     }
