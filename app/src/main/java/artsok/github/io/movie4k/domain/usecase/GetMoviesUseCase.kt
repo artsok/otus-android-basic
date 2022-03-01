@@ -1,12 +1,11 @@
 package artsok.github.io.movie4k.domain.usecase
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import artsok.github.io.movie4k.data.model.Movie
 import artsok.github.io.movie4k.data.model.Schedule
 import artsok.github.io.movie4k.domain.model.MovieDomainModel
 import artsok.github.io.movie4k.domain.repository.MovieRepository
-import java.io.IOException
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.core.Single
 
 /**
  *
@@ -22,41 +21,45 @@ class GetMoviesUseCase(private val repository: MovieRepository) {
         data class Error(val e: Throwable) : Result()
     }
 
-    fun getMoviesFromDB(): LiveData<List<Movie>> {
+    fun getMoviesFromDB(): Flowable<List<MovieDomainModel>> {
         return repository.getMoviesFromDB()
     }
 
-    fun getFavoritesMoviesFromDB(): LiveData<List<Movie>> {
+    fun getFavoritesMoviesFromDB(): Flowable<List<MovieDomainModel>> {
         return repository.getFavoriteMoviesFromDB()
     }
 
-    fun getScheduleMoviesFromDB(): LiveData<List<Movie>> {
+    fun getScheduleMoviesFromDB(): Flowable<List<MovieDomainModel>> {
         return repository.getScheduleMoviesFromDB()
     }
 
-    suspend fun fetchMovies(page: Int, currentCategory: String): Result {
-        Log.d(TAG, "page $page, category $currentCategory")
-        return try {
-            when (currentCategory) {
-                "UPCOMING" -> Result.Success(
-                    repository.getUpcomingMovies(page)
-                        .filter { it.backdropPath.isNotBlank() && it.posterPath.isNotBlank() })
-
-                else -> Result.Success(
-                    repository.getMovies(page)
-                        .filter { it.backdropPath.isNotBlank() && it.posterPath.isNotBlank() })
-            }
-        } catch (e: IOException) {
-            Result.Error(e)
-        }
+    fun getRequestCodeFromDB(title: String, time: String): Single<Int> {
+        return repository.getRequestCodeFromDB(title, time)
     }
 
-    suspend fun fetchMovieById(id: Int): Result {
-        Log.d(TAG, "Get movie's info by $id")
-        return try {
-            Result.Success(listOf(repository.getMovie(id)))
-        } catch (e: IOException) {
-            Result.Error(e)
+    fun searchMoviesInDB(title: String) : Flowable<List<MovieDomainModel>> {
+        return repository.searchMoviesInDB(title)
+    }
+
+    fun searchMoviesInNetwork(title: String) : Flowable<List<MovieDomainModel>> {
+        return repository.searchMovies(title)
+    }
+
+    fun getMovieRecords(): Single<Int> {
+        return repository.getTotalRecordsFromDB()
+    }
+
+    fun getFavoriteMovieRecords(): Single<Int> {
+        return repository.getFavoriteTotalRecordsFromDB()
+    }
+
+    fun fetchMovies(page: Int, currentCategory: String): Single<List<MovieDomainModel>> {
+        Log.d(TAG, "page $page, category $currentCategory")
+        return when (currentCategory) {
+            "UPCOMING" ->
+                repository.getUpcomingMovies(page)
+            else ->
+                repository.getMovies(page)
         }
     }
 
@@ -68,20 +71,8 @@ class GetMoviesUseCase(private val repository: MovieRepository) {
         repository.saveScheduleInfoToDB(schedule)
     }
 
-    suspend fun getRequestCodeFromDB(title: String, time: String): Int {
-        return repository.getRequestCodeFromDB(title, time)
-    }
-
     suspend fun deleteMoviesFromTable() {
         repository.deleteMoviesFromDB()
-    }
-
-    suspend fun getMovieRecords(): Int {
-        return repository.getTotalRecordsFromDB()
-    }
-
-    suspend fun getFavoriteMovieRecords(): Int {
-        return repository.getFavoriteTotalRecordsFromDB()
     }
 
     suspend fun updateFavoriteField(favorite: Boolean, id: Int) {
@@ -89,7 +80,7 @@ class GetMoviesUseCase(private val repository: MovieRepository) {
     }
 
     suspend fun updateMovieScheduledTime(id: Int, scheduledTime: String) {
-        return repository.updateScheduledFields(id, scheduledTime)
+        return repository.updateScheduledFieldsInDB(id, scheduledTime)
     }
 
     suspend fun updateScheduledField(id: Int, flag: Boolean) {

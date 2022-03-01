@@ -258,7 +258,7 @@ https://developer.android.com/training/scheduling/alarms#boot - Start an alarm w
 ENG:
 1. Add Firebase Crashlytics to the application
 2. Add Firebase Cloud Messaging to the application
-3. Add functionality to the application: when get notification from FCM open fragment with movie information
+3. Add functionality to the application: when getting notification from FCM open fragment with movie information
 *4. Add Firebase Remote Config to the application
 
 RUS:
@@ -356,12 +356,44 @@ https://stackoverflow.com/questions/37711082/how-to-handle-notification-when-app
 https://blog.mestwin.net/send-your-test-fcm-push-notification-quickly-with-curl/ - Send your test FCM push notification with cURL
 
 
+
+## Homework #10
+RUS:
+Добавление RxJava в проект
+1. Все запросы к сети переделайте на RxJava
+2. Все запросы к БД переделайте на RxJava
+3. * Добавьте в приложение поиск по фильмам в БД, используя RxJava
+
+Что прочитано:
+https://blog.rocketinsights.com/rx-to-livedata/
+https://github.com/MindorksOpenSource/RxJava3-Android-Examples
+https://medium.com/@gabrieldemattosleon/fundamentals-of-rxjava-with-kotlin-for-absolute-beginners-3d811350b701
+https://spin.atomicobject.com/2019/11/11/how-to-create-a-searchview-with-suggestions-in-kotlin/ - SearchView with Suggestions
+https://kotlin-android.com/android-searchview-kotlin/ - Android SearchView Tutorial in Kotlin with Example
+https://www.journaldev.com/12478/android-searchview-example-tutorial
+https://startandroid.ru/ru/blog/516-rxjava-primery.html - Обзоры работы с RXJAVA
+https://devcolibri.com/implementing-search-on-type-in-android-with-rxjava/ - Примеры работы с RXJAVA
+https://developer.android.com/jetpack/androidx/releases/lifecycle - пришлось вспомнить
+
+Please read any of the subscribeOn/observeOn articles:
+https://proandroiddev.com/understanding-rxjava-subscribeon-and-observeon-744b0c6a41ea
+https://medium.com/upday-devs/rxjava-subscribeon-vs-observeon-9af518ded53a
+http://rx-marin.com/post/observeon-vs-subscribeon/
+https://www.google.hu/search?q=subscribeon+observeon&oq=subscribeon+observeon
+https://medium.com/@poudanen/%D0%BF%D0%BE%D0%BD%D0%B8%D0%BC%D0%B0%D0%BD%D0%B8%D0%B5-rxjava-subject-publish-replay-behavior-%D0%B8-async-subject-35ad50cd1064
+https://www.raywenderlich.com/books/reactive-programming-with-kotlin/v2.0/chapters/9-combining-operators#toc-chapter-012-anchor-001
+
+
+
 Интересно про Dagger:
 https://medium.com/@marco_cattaneo/android-viewmodel-and-factoryprovider-good-way-to-manage-it-with-dagger-2-d9e20a07084c
 https://proandroiddev.com/forget-rxjava-kotlin-coroutines-are-all-you-need-part-1-2-4f62ecc4f99b
 
-Перейти на Paging
+Фичи на проект:
+1) Перейти на Paging
 https://proandroiddev.com/exploring-paging-library-from-jetpack-c661c7399662
+
+2) Во фрагменте добавить карту Google Map и показать точки где фильм был снят
 
 Note: Initially for me also not worked,After Seeing many posts i realized that the pending intent to be canceled should be same as the
 original pending intent that was used to schedule alarm. The pending intent to be cancelled should have set to same action and same data fields,

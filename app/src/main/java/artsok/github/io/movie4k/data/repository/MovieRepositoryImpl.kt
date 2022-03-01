@@ -1,17 +1,18 @@
 package artsok.github.io.movie4k.data.repository
 
-import androidx.lifecycle.LiveData
-import artsok.github.io.movie4k.data.model.Movie
 import artsok.github.io.movie4k.data.model.Schedule
 import artsok.github.io.movie4k.data.model.toDomainModel
+import artsok.github.io.movie4k.data.model.toMovieDomainModel
 import artsok.github.io.movie4k.data.retrofit.MovieApiService
 import artsok.github.io.movie4k.data.room.dao.MovieDao
 import artsok.github.io.movie4k.data.room.dao.ScheduleDao
 import artsok.github.io.movie4k.domain.model.MovieDomainModel
 import artsok.github.io.movie4k.domain.model.toModel
 import artsok.github.io.movie4k.domain.repository.MovieRepository
-
-const val INIT_PAGE = 1
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 class MovieRepositoryImpl(
     private val retrofitService: MovieApiService,
@@ -19,21 +20,32 @@ class MovieRepositoryImpl(
     private val scheduleDao: ScheduleDao
 ) : MovieRepository {
 
-    override suspend fun getMovie(id: Int): MovieDomainModel {
-        return retrofitService.getMovie(id).toDomainModel()
+    override fun getMovie(id: Int): Single<MovieDomainModel> {
+        return retrofitService.getMovie(id)
+            .subscribeOn(Schedulers.io())
+            .map { it.toDomainModel() }
+            .observeOn(AndroidSchedulers.mainThread())
     }
 
-    override suspend fun getLandingMovies(): List<MovieDomainModel> {
-        return retrofitService.getPopularFilmsByPage(INIT_PAGE).results.map { it.toDomainModel() }
+    override fun searchMovies(query: String): Flowable<List<MovieDomainModel>> {
+        return retrofitService.searchMovies(query)
+            .map { it.results.map { item -> item.toDomainModel() } }
     }
 
-    override suspend fun getMovies(page: Int): List<MovieDomainModel> {
-        return retrofitService.getPopularFilmsByPage(page).results.map { it.toDomainModel() }
+    override fun getMovies(page: Int): Single<List<MovieDomainModel>> {
+        return retrofitService.popularFilmsByPage(page)
+            .subscribeOn(Schedulers.io())
+            .map { it.results.map { item -> item.toDomainModel() } }
+            .observeOn(AndroidSchedulers.mainThread())
     }
 
-    override suspend fun getUpcomingMovies(page: Int): List<MovieDomainModel> {
-        return retrofitService.getUpcomingFilmsByPage(page).results.map { it.toDomainModel() }
+    override fun getUpcomingMovies(page: Int): Single<List<MovieDomainModel>> {
+        return retrofitService.upcomingFilmsByPage(page)
+            .subscribeOn(Schedulers.io())
+            .map { it.results.map { item -> item.toDomainModel() } }
+            .observeOn(AndroidSchedulers.mainThread())
     }
+
 
     override suspend fun insertToDB(movie: MovieDomainModel) {
         movieDao.insert(movie.toModel())
@@ -43,20 +55,43 @@ class MovieRepositoryImpl(
         movieDao.deleteFromDB(movie.toModel())
     }
 
-    override fun getMoviesFromDB(): LiveData<List<Movie>> {
+    override fun getMoviesFromDB(): Flowable<List<MovieDomainModel>> {
         return movieDao.getMovies()
+            .map { it.map { item -> item.toMovieDomainModel() } }
+            .observeOn(AndroidSchedulers.mainThread())
+    }
+
+    override fun getFavoriteMoviesFromDB(): Flowable<List<MovieDomainModel>> {
+        return movieDao.getFavoriteMovies()
+            .map { it.map { item -> item.toMovieDomainModel() } }
+            .observeOn(AndroidSchedulers.mainThread())
+    }
+
+    override fun getScheduleMoviesFromDB(): Flowable<List<MovieDomainModel>> {
+        return movieDao.getScheduleMovies()
+            .map { it.map { item -> item.toMovieDomainModel() } }
+            .observeOn(AndroidSchedulers.mainThread())
+    }
+
+    override fun searchMoviesInDB(title: String): Flowable<List<MovieDomainModel>> {
+        return movieDao.searchMovies(title)
+            .map { it.map { item -> item.toMovieDomainModel() } }
     }
 
     override suspend fun deleteMoviesFromDB() {
         return movieDao.deleteAll()
     }
 
-    override suspend fun getTotalRecordsFromDB(): Int {
+    override fun getTotalRecordsFromDB(): Single<Int> {
         return movieDao.getTotalRecordOfMovies()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
     }
 
-    override suspend fun getFavoriteTotalRecordsFromDB(): Int {
+    override fun getFavoriteTotalRecordsFromDB(): Single<Int> {
         return movieDao.getFavoriteTotalRecordOfMovies()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
     }
 
     override suspend fun updateDB(favorite: Boolean, id: Int) {
@@ -69,7 +104,7 @@ class MovieRepositoryImpl(
         return movieDao.update(value, title)
     }
 
-    override suspend fun updateScheduledFields(id: Int, scheduledTime: String) {
+    override suspend fun updateScheduledFieldsInDB(id: Int, scheduledTime: String) {
         return movieDao.updateScheduledFields(id, scheduledTime)
     }
 
@@ -82,15 +117,11 @@ class MovieRepositoryImpl(
         scheduleDao.insert(schedule)
     }
 
-    override suspend fun getRequestCodeFromDB(title: String, time: String): Int {
-        return scheduleDao.getRequestCodeForScheduledMovie(title, time)
+    override fun getRequestCodeFromDB(title: String, time: String): Single<Int> {
+        return scheduleDao
+            .getRequestCodeForScheduledMovie(title, time)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
     }
 
-    override fun getFavoriteMoviesFromDB(): LiveData<List<Movie>> {
-        return movieDao.getFavoriteMovies()
-    }
-
-    override fun getScheduleMoviesFromDB(): LiveData<List<Movie>> {
-        return movieDao.getScheduleMovies()
-    }
 }

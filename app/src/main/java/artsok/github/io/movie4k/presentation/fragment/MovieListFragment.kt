@@ -9,9 +9,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import android.widget.SearchView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -24,6 +25,11 @@ import artsok.github.io.movie4k.presentation.recycler.MovieAdapter
 import artsok.github.io.movie4k.presentation.viewmodel.MovieViewModel
 import artsok.github.io.movie4k.presentation.viewmodel.MovieViewModelFactory
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.fragment_movie_list.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MovieListFragment : Fragment() {
 
@@ -33,6 +39,7 @@ class MovieListFragment : Fragment() {
 
     private var adapter: MovieAdapter? = null
     private var listener: OnMovieClickListener? = null
+    private var queryTextChangedJob: Job? = null
 
     private val movieViewModelFactory by lazy { MovieViewModelFactory(activity!!.application) }
     private val movieViewModel by lazy {
@@ -80,26 +87,58 @@ class MovieListFragment : Fragment() {
         fetchData(state = INIT)
         initViewModel()
         initSwipeRefreshListener()
+
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                movieViewModel.resetSearchedLiveData()
+                queryTextChangedJob?.cancel()
+                queryTextChangedJob =
+                    viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                        delay(1000)
+                        searchMovies(newText)
+                    }
+                return false
+            }
+        })
+    }
+
+
+    private fun searchMovies(title: String) {
+        movieViewModel.searchMovies(title)
+            .observe(
+                this.viewLifecycleOwner,
+                { value ->
+                    value?.let {
+                        adapter!!.addSearchedValue(it)
+                        adapter?.filter?.filter(title)
+                    }
+                })
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         Log.d(TAG, "onDestroyView")
         movieViewModel.resetLiveDataValue()
+        movieViewModel.resetSearchedLiveData()
         movieViewModel.onErrorDisplayed()
     }
 
     private fun initViewModel() {
         movieViewModel.getMoviesFromDB().observe(
             this.viewLifecycleOwner,
-            Observer<List<MovieDomainModel>> {
+            {
                 adapter!!.addMovies(it)
                 loadProgress.visibility = View.GONE
             })
 
         movieViewModel.error.observe(
             this.viewLifecycleOwner,
-            Observer<String> { error ->
+            { error ->
                 if (!error.isNullOrBlank()) {
                     showShackBar(error)
                 }
@@ -142,13 +181,21 @@ class MovieListFragment : Fragment() {
                     TAG,
                     "totalItemCount = $totalItemCount, lastVisibleItemPosition = $lastVisibleItemPosition"
                 )
+
                 if (totalItemCount <= (lastVisibleItemPosition + visibleThreshold)) {
                     Log.d(
                         TAG,
                         "Подгрузить еще данные ${gridLayoutManager.findLastVisibleItemPosition()}"
                     )
-                    fetchData(state = CONTINUE)
+                    //TODO: вернуть обратно, так как отключил чтобы проверить поиск
+                    //fetchData(state = CONTINUE)
                 }
+            }
+        })
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                searchView.clearFocus()
             }
         })
     }
@@ -209,6 +256,7 @@ class MovieListFragment : Fragment() {
         }
     }
 
+
     private fun initSwipeRefreshListener() {
         swipeRefreshLayout.setColorSchemeResources(
             android.R.color.holo_purple
@@ -217,6 +265,7 @@ class MovieListFragment : Fragment() {
             updateMovies()
             swipeRefreshLayout.isRefreshing = false
         }
+
     }
 
     /**
@@ -236,3 +285,5 @@ class MovieListFragment : Fragment() {
         INIT, CONTINUE, START
     }
 }
+
+

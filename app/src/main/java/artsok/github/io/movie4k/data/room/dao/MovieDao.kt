@@ -1,23 +1,36 @@
 package artsok.github.io.movie4k.data.room.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import artsok.github.io.movie4k.data.model.Movie
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.core.Single
 
 @Dao
 interface MovieDao {
 
     @Query("SELECT * from movie_table")
-    fun getMovies(): LiveData<List<Movie>>
+    fun getMovies(): Flowable<List<Movie>>
+
+    @Query("SELECT * from movie_table WHERE favorite = 1")
+    fun getFavoriteMovies(): Flowable<List<Movie>>
+
+    @Query("SELECT * from movie_table WHERE scheduled = 1")
+    fun getScheduleMovies(): Flowable<List<Movie>>
+
+    @Query("SELECT * from movie_table WHERE title LIKE :title")
+    fun searchMovies(title: String): Flowable<List<Movie>>
+
+    @Query("SELECT COUNT(id) from movie_table WHERE favorite = 1")
+    fun getFavoriteTotalRecordOfMovies(): Single<Int>
+
+    @Query("SELECT COUNT(id) from movie_table")
+    fun getTotalRecordOfMovies(): Single<Int>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(movie: Movie)
 
     @Query("DELETE FROM movie_table")
     fun deleteAll()
-
-    @Query("SELECT COUNT(id) from movie_table")
-    fun getTotalRecordOfMovies(): Int
 
     @Query("UPDATE movie_table SET favorite = :favorite WHERE id LIKE :id")
     fun update(favorite: Int, id: Int)
@@ -30,15 +43,6 @@ interface MovieDao {
 
     @Query("UPDATE movie_table SET scheduled = :scheduledFlag WHERE id LIKE :id")
     fun updateScheduledFlag(id: Int, scheduledFlag: Int)
-
-    @Query("SELECT * from movie_table WHERE favorite = 1")
-    fun getFavoriteMovies(): LiveData<List<Movie>>
-
-    @Query("SELECT * from movie_table WHERE scheduled = 1")
-    fun getScheduleMovies(): LiveData<List<Movie>>
-
-    @Query("SELECT COUNT(id) from movie_table WHERE favorite = 1")
-    fun getFavoriteTotalRecordOfMovies(): Int
 
     @Delete
     fun deleteFromDB(movie: Movie)
