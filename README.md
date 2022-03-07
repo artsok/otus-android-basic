@@ -12,19 +12,6 @@ Getting started on the movie search application. Create a project and movie page
 7. Add the “Invite a Friend” button and send the invitation of your choice.
 8. *Add a Like icon and a text box for the comments on the second screen. Returning the value of the checkbox and the text of the comment when switching back to the first screen in console (use log.i/d). Checkbox and text comment return values
 
-RUS:
-Начало работы над приложением по поиску фильмов. Создание проекта и страницы с фильмами.
-1. Создайте проект
-2. Залейте проект на GitHub
-3. Добавьте описание проекта в заголовке и Read.me
-4. На первом экране своего приложения создайте несколько картинок с фильмами.
-К каждой картинке добавьте название фильма и кнопку “Детали”. Изображения любые, название и описание произвольные
-5. По нажатию на Детали - выделяйте другим цветом название выбранного фильма, открывайте новое окно, где показывайте картинку и описание фильма
-6. Сохраняйте выделение фильма при повороте и при возвращении со второго экрана
-7. Добавьте кнопку “Пригласить друга” и отправляйте приглашение по вашему выбору (почта, смс, социальные сети)
-8. *Добавьте на втором экране checkbox “Нравится” и текстовое поле для комментария. Возвращайте значение чекбокса и текст комментария при переходе обратно на первый экран. Возвращенные значения чекбокса и текстового комментария выводим в лог
-
-
 ## Homework #2
 ENG:
 Using themes and qualifiers.
@@ -35,19 +22,6 @@ Using themes and qualifiers.
 5. Add landscape support. The interface should be different. For example, in portrait 2 films in the list line, and in landscape 4
 6. Create a custom confirmation dialog when you exit the application by pressing the back button (use the onBackPressed method)
 7. * Add a button to switch themes in the application, for example, day/night
-
-RUS:
-Использование тем и квалификаторов.
-1. Создайте различные стили для текста заголовка и описания 
-2. Используйте стили на экране со списком и детальном экране 
-3. Добавьте поддержку английского и русского языков для элементов интерфейса, например, для кнопки "детали" и "пригласить друга" 
-4. Используйте векторное изображение из стандартного набора для кнопки пригласить друга 
-5. Добавьте поддержку альбомной ориентации. Интерфейс должен отличаться. Например, в портретной 2 фильма в строке списка, а в альбомной 4 
-6. Создайте кастомный диалог подтверждения при выходе из приложения при нажатии кнопки back (использовать метод onBackPressed) 
-7. * Добавьте кнопку переключения темы в приложении, например дневной\ночной 
-
-P.S. Задание со звездочкой * - повышенной сложности. Если вы с ним не справитесь - ничего страшного, оно не является обязательным. 
-
 
 ## Homework #3
 ENG:
@@ -65,7 +39,81 @@ Evaluation Criteria: +1 point per attempt
 +1 point for completing the main task
 +1 point for completing a task with *
 
+## Homework #4
+ENG:
+Fragments and navigation.
+1. Change your application to a single Activity and fragments
+2. Use NavigationDrawer or BottomNavigation to navigate between fragments.
+3. Add CoordinatorLayout + CollapsingToolbar to the movie detail screen
+4. Add a Snackbar or Toast, indicating the success of adding / removing from favorites
+5. * Add undo option to snackbar in favorite list
 
+## Homework #5
+ENG:
+Connecting the application to the Internet.
+1. Connect the movie server API and download movie data from the server when the application starts. At the load indicator of data
+2. Use Glide to upload images
+3. Add pagination (loading new films when scrolling)
+4. * Add pull to refresh
+
+## Homework #6
+ENG:
+Using the architectural components (LiveData, ViewModel, lifecycle-aware components)
+
+## Homework #7
+ENG:
+Using the data storage with Room
+
+## Homework #8
+ENG:
+Working with AlarmManager. New functionality were added:
+1. Add to the application the functionality of adding a movie to the "Watch Later" list
+2. When adding, you must set the date of the reminder
+3. When the required date comes, a push notification should appear
+4. Clicking on the push notification should open the movie's detailed page
+5. * Add a "Watch Later" list display to the application where you can change the date of the reminder
+
+## Homework #9
+ENG:
+1. Add Firebase Crashlytics to the application
+2. Add Firebase Cloud Messaging to the application
+3. Add functionality to the application: when getting notification from FCM open fragment with movie information
+*4. Add Firebase Remote Config to the application
+
+## Homework #10
+ENG:
+1. Using RXJava
+
+
+
+## Homework #1
+RUS:
+Начало работы над приложением по поиску фильмов. Создание проекта и страницы с фильмами.
+1. Создайте проект
+2. Залейте проект на GitHub
+3. Добавьте описание проекта в заголовке и Read.me
+4. На первом экране своего приложения создайте несколько картинок с фильмами.
+К каждой картинке добавьте название фильма и кнопку “Детали”. Изображения любые, название и описание произвольные
+5. По нажатию на Детали - выделяйте другим цветом название выбранного фильма, открывайте новое окно, где показывайте картинку и описание фильма
+6. Сохраняйте выделение фильма при повороте и при возвращении со второго экрана
+7. Добавьте кнопку “Пригласить друга” и отправляйте приглашение по вашему выбору (почта, смс, социальные сети)
+8. *Добавьте на втором экране checkbox “Нравится” и текстовое поле для комментария. Возвращайте значение чекбокса и текст комментария при переходе обратно на первый экран. Возвращенные значения чекбокса и текстового комментария выводим в лог
+
+## Homework #2
+RUS:
+Использование тем и квалификаторов.
+1. Создайте различные стили для текста заголовка и описания 
+2. Используйте стили на экране со списком и детальном экране 
+3. Добавьте поддержку английского и русского языков для элементов интерфейса, например, для кнопки "детали" и "пригласить друга" 
+4. Используйте векторное изображение из стандартного набора для кнопки пригласить друга 
+5. Добавьте поддержку альбомной ориентации. Интерфейс должен отличаться. Например, в портретной 2 фильма в строке списка, а в альбомной 4 
+6. Создайте кастомный диалог подтверждения при выходе из приложения при нажатии кнопки back (использовать метод onBackPressed) 
+7. * Добавьте кнопку переключения темы в приложении, например дневной\ночной 
+
+P.S. Задание со звездочкой * - повышенной сложности. Если вы с ним не справитесь - ничего страшного, оно не является обязательным. 
+
+
+## Homework #3
 RUS:
 Работа со списками.
 1. Переведите ваше приложение на отображение списков с помощью RecyclerView 
@@ -83,14 +131,6 @@ P.S. Задание со звездочкой * - повышенной слож�
 
 
 ## Homework #4
-ENG:
-Fragments and navigation.
-1. Change your application to a single Activity and fragments
-2. Use NavigationDrawer or BottomNavigation to navigate between fragments.
-3. Add CoordinatorLayout + CollapsingToolbar to the movie detail screen
-4. Add a Snackbar or Toast, indicating the success of adding / removing from favorites
-5. * Add undo option to snackbar in favorite list
-
 RUS:
 Фрагменты и навигация.
 1. Переведите свое приложение на единственную Activity и несколько фрагментов  (https://medium.com/androiddevelopers/the-android-lifecycle-cheat-sheet-part-i-single-activities-e49fd3d202ab)
@@ -129,13 +169,6 @@ P.S. Задание со звездочкой * - повышенной слож�
 ```
 
 ## Homework #5
-ENG:
-Connecting the application to the Internet.
-1. Connect the movie server API and download movie data from the server when the application starts. At the load indicator of data
-2. Use Glide to upload images
-3. Add pagination (loading new films when scrolling)
-4. * Add pull to refresh
-
 RUS:
 Подключение приложения к интернету.
 1. Подключите API сервера с фильмами и загружайте данные о фильмах с сервера при запуске приложения. Во время загрузки должен отображаться индикатор на ваш выбор +
@@ -162,9 +195,6 @@ https://developer.android.com/topic/libraries/architecture/paging
 
 
 ## Homework #6
-ENG:
-Architectural components (LiveData, ViewModel, lifecycle-aware components)
-
 RUS:
 Архитектурные компоненты.
 1. Переведите свое приложение на архитектурные компоненты и MVVM
@@ -206,9 +236,6 @@ The domain layer is where the business logic happens, which is the code that det
 the app does with the data coming from the repository before it's exposed to the UI for display.
 
 ## Homework #7
-ENG:
-Data storage with Room.
-
 RUS:
 Хранение данных.
 1. Сохраняйте полученные данные фильмов в кэш (базу данных Room) +
@@ -228,14 +255,6 @@ https://ru.stackoverflow.com/questions/470899/%D0%94%D0%BB%D1%8F-%D1%87%D0%B5%D0
 
 
 ## Homework #8
-ENG:
-Working with AlarmManager. New functionality were added:
-1. Add to the application the functionality of adding a movie to the "Watch Later" list
-2. When adding, you must set the date of the reminder
-3. When the required date comes, a push notification should appear
-4. Clicking on the push notification should open the movie's detailed page
-5. * Add a "Watch Later" list display to the application where you can change the date of the reminder
-
 RUS:
 1. Добавьте в приложение функционал добавление фильма в список "Посмотреть позже" +
 2. При добавлении необходимо указывать дату напоминания +
@@ -255,12 +274,6 @@ https://stackoverflow.com/questions/35451309/open-fragment-from-notification-whe
 https://developer.android.com/training/scheduling/alarms#boot - Start an alarm when the device restarts
 
 ## Homework #9
-ENG:
-1. Add Firebase Crashlytics to the application
-2. Add Firebase Cloud Messaging to the application
-3. Add functionality to the application: when getting notification from FCM open fragment with movie information
-*4. Add Firebase Remote Config to the application
-
 RUS:
 Сервисы Firebase.
 Цель: +1 балл за попытку
